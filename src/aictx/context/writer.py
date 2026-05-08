@@ -20,6 +20,19 @@ from aictx.models.inventory import RepositoryInventory
 from aictx.public_docs.mapper import build_public_docs_map_from_inventory
 from aictx.verify.hashes import sha256_file, sha256_text
 
+GENERATED_CONTEXT_FILES = {
+    "docs/AIprojectcontext/ai-index.md",
+    "docs/AIprojectcontext/project-state.md",
+    "docs/AIprojectcontext/code-map.md",
+    "docs/AIprojectcontext/architecture.md",
+    "docs/AIprojectcontext/workflows.md",
+    "docs/AIprojectcontext/public-docs-map.md",
+    "docs/AIprojectcontext/change-impact-map.md",
+    "docs/AIprojectcontext/schema.md",
+    "docs/AIprojectcontext/validation-report.md",
+    "AGENTS.md",
+}
+
 
 def write_context_scaffold(
     repo_root: Path,
@@ -27,6 +40,7 @@ def write_context_scaffold(
     inventory: RepositoryInventory,
     plan: dict[str, Any],
     fact_packs: list[dict[str, Any]],
+    refresh_paths: set[str] | None = None,
 ) -> list[Path]:
     """Write compact AI-facing context files to *out_dir*."""
     generated: list[Path] = []
@@ -51,6 +65,10 @@ def write_context_scaffold(
     }
 
     for relative_name, content in files_to_content.items():
+        if refresh_paths is not None and relative_name not in refresh_paths:
+            existing = repo_root / relative_name
+            if existing.exists():
+                content = existing.read_text(encoding="utf-8")
         target = out_dir / relative_name
         safe_write(target, content)
         generated.append(target)
@@ -78,6 +96,7 @@ def build_context_lock(
     model_name: str,
     existing_lock: ContextLock | None = None,
     changed_files: list[str] | None = None,
+    preserve_existing_sections: bool = False,
 ) -> ContextLock:
     """Build a Phase 1 lockfile for generated context artifacts."""
     selected_set = set(plan["selected_files"])
@@ -98,16 +117,16 @@ def build_context_lock(
     source_files.sort(key=lambda entry: entry.path)
     source_hashes_by_path = {entry.path: entry.sha256 for entry in source_files}
 
-    sections: list[SectionEntry] = []
+    new_sections: list[SectionEntry] = []
     for pack in fact_packs:
         for fact in pack["facts"]:
             source_hashes = []
             for source_path in fact["source_paths"]:
                 source_hashes.append(source_hashes_by_path.get(str(source_path), "unknown"))
-            sections.append(
+            new_sections.append(
                 SectionEntry(
                     section_id=fact["id"],
-                    generated_file=_target_file_for_pack(pack["name"]),
+                    generated_file=target_file_for_pack(pack["name"]),
                     heading=pack["name"],
                     source_paths=fact["source_paths"],
                     source_hashes=source_hashes,
@@ -115,12 +134,15 @@ def build_context_lock(
                     status="current",
                 )
             )
-
-    public_docs_map = _build_public_docs_lock_entries(
-        inventory=inventory,
+    sections = _merge_changed_scope_sections(
         existing_lock=existing_lock,
-        changed_files=changed_files or [],
+        new_sections=new_sections,
+        changed_files=set(changed_files or []),
+        source_hashes_by_path=source_hashes_by_path,
+        preserve_existing_sections=preserve_existing_sections,
     )
+
+    public_docs_map = _build_public_docs_lock_entries(inventory=inventory)
 
     section_ids_by_source: dict[str, set[str]] = {}
     for section in sections:
@@ -169,35 +191,50 @@ def build_context_lock(
     )
 
 
-def _build_public_docs_lock_entries(
-    inventory: RepositoryInventory,
-    existing_lock: ContextLock | None,
-    changed_files: list[str],
-) -> list[PublicDocsMapEntry]:
-    """Build public-doc lock entries without prematurely clearing doc review impact."""
-    entries = [
+def _build_public_docs_lock_entries(inventory: RepositoryInventory) -> list[PublicDocsMapEntry]:
+    """Build public-doc lock entries from current source hashes."""
+    return [
         PublicDocsMapEntry(**entry.model_dump())
         for entry in build_public_docs_map_from_inventory(inventory).entries
     ]
-    if existing_lock is None:
-        return entries
 
-    changed_set = set(changed_files)
-    old_entries = {entry.path: entry for entry in existing_lock.public_docs_map}
-    for entry in entries:
-        old_entry = old_entries.get(entry.path)
-        if old_entry is None or entry.path in changed_set:
+
+def _merge_changed_scope_sections(
+    existing_lock: ContextLock | None,
+    new_sections: list[SectionEntry],
+    changed_files: set[str],
+    source_hashes_by_path: dict[str, str],
+    preserve_existing_sections: bool,
+) -> list[SectionEntry]:
+    """Preserve unchanged lock sections during changed-scope refresh."""
+    if existing_lock is None or not preserve_existing_sections:
+        return sorted(new_sections, key=lambda entry: entry.section_id)
+    if not changed_files:
+        return sorted(existing_lock.sections, key=lambda entry: entry.section_id)
+
+    new_ids = {section.section_id for section in new_sections}
+    preserved: list[SectionEntry] = []
+    for section in existing_lock.sections:
+        if section.section_id in new_ids:
             continue
-        old_hashes = dict(
-            zip(old_entry.source_paths, old_entry.last_verified_source_hashes, strict=False)
-        )
-        entry.last_verified_source_hashes = [
-            old_hashes.get(source_path, source_hash)
-            for source_path, source_hash in zip(
-                entry.source_paths, entry.last_verified_source_hashes, strict=True
-            )
-        ]
-    return entries
+        if changed_files.intersection(section.source_paths):
+            continue
+        if not _section_sources_current(section, source_hashes_by_path):
+            continue
+        preserved.append(section)
+    return sorted([*preserved, *new_sections], key=lambda entry: entry.section_id)
+
+
+def _section_sources_current(
+    section: SectionEntry,
+    source_hashes_by_path: dict[str, str],
+) -> bool:
+    if len(section.source_paths) != len(section.source_hashes):
+        return False
+    for source_path, source_hash in zip(section.source_paths, section.source_hashes, strict=True):
+        if source_hashes_by_path.get(source_path) != source_hash:
+            return False
+    return True
 
 
 def _render_ai_index() -> str:
@@ -298,7 +335,8 @@ def path_relative_to_out(path: Path, out_dir: Path) -> str:
     return path.relative_to(out_dir).as_posix()
 
 
-def _target_file_for_pack(pack_name: str) -> str:
+def target_file_for_pack(pack_name: str) -> str:
+    """Return generated context file for a fact pack name."""
     return {
         "project_identity": "docs/AIprojectcontext/project-state.md",
         "architecture": "docs/AIprojectcontext/architecture.md",

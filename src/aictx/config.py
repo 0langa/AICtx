@@ -40,7 +40,7 @@ class LimitsConfig(BaseModel):
 class LLMConfig(BaseModel):
     """LLM provider settings."""
 
-    provider: Literal["dry_run", "oci_genai"] = Field(default="dry_run")
+    provider: str = Field(default="dry_run")
     model: str = Field(default="dry_run")
     temperature: float = Field(default=0.0)
     compartment_id: str | None = Field(default=None)

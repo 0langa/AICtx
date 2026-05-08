@@ -33,6 +33,10 @@ class ChatResponse:
 class ModelProvider(ABC):
     """Abstract base for LLM providers."""
 
+    def metadata(self) -> dict[str, str]:
+        """Return provider metadata safe for run logs."""
+        return {"provider": self.__class__.__name__}
+
     @abstractmethod
     def chat(self, request: ChatRequest) -> ChatResponse:
         """Send a chat request and return the response."""

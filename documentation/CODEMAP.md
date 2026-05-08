@@ -30,14 +30,15 @@
         base.py        provider ABC + request/response types
         dry_run.py     only working provider
         providers.py   guarded provider factory; non-dry requires opt-in
+        transfer.py    file safety + token/file budget preflight
         oci_genai.py   stub; `chat()` raises `NotImplementedError`
 
       context/
         agents_md.py   static `AGENTS.md` generator
-        pipeline.py    local Phase 1 run orchestration
-        planner.py     deterministic file-selection plan + token estimate
+        pipeline.py    local Phase 1 run orchestration + preflight/report artifacts
+        planner.py     deterministic file-selection plan + changed-scope impact selection
         fact_extractor.py deterministic fact extraction via provider
-        writer.py      context scaffold + generated lock builder + public-doc hash preservation
+        writer.py      context scaffold + generated lock builder + public-doc source hash refresh
         compressor.py  pass-through stub
         lockfile.py    baseline lock build/load/write
 
@@ -73,7 +74,7 @@
       unit/test_scanner.py     scanner utility + secret tests
       unit/test_scan_integration.py integration scanner tests
       unit/test_verify.py      init + verifier tests
-      unit/test_run_phase1.py  local Phase 1 pipeline tests
+      unit/test_run_phase1.py  local Phase 1, changed-scope, transfer/budget tests
       unit/test_operational_readiness.py provider/OCI/patch/public-doc/clean tests
 
 ## Runtime / generated

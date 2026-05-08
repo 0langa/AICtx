@@ -75,13 +75,17 @@ Behavior:
 1. validate args
 2. load `.aictx/config.toml` if present
 3. scan repo; fail on detected secrets
-4. fail `--write apply` on dirty worktree unless `--allow-dirty` or config allows it
+4. fail `--write apply` when dirty paths are outside context-source/generated outputs unless `--allow-dirty` or config allows it
 5. compute changed files against existing lock
 6. build deterministic selection plan
-7. extract deterministic fact packs via configured provider (`dry_run` default)
-8. generate staged context files + `AGENTS.md` under `.aictx/runs/<timestamp>-run/out/`
-9. write `.aictx/runs/<timestamp>-run/aictx.patch`
-10. if `--write apply`, copy staged outputs into repo
+7. enforce model-transfer file safety
+8. enforce input/output/file-count/file-size budgets
+9. write safe provider metadata, excluding prompt content
+10. extract deterministic fact packs via configured provider (`dry_run` default)
+11. generate staged context files + `AGENTS.md` under `.aictx/runs/<timestamp>-run/out/`
+12. write `.aictx/runs/<timestamp>-run/aictx.patch`
+13. write `.aictx/runs/<timestamp>-run/run-report.json`
+14. if `--write apply`, copy staged outputs into repo
 
 Applied outputs:
 
@@ -101,11 +105,13 @@ Notes:
 
 - `--write patch` = staged files + patch only
 - `--write apply` = copy staged outputs into repo
-- `--scope changed` currently records changed files and regenerates deterministic context through the same full-safe writer path
+- `--scope changed` selects impacted files and preserves unaffected generated shards when possible
 - generated context artifacts are excluded from future source selection
 - unmanaged second-level sections in existing generated `AGENTS.md` are preserved
-- public-doc source verification hashes stay stale until the mapped public doc changes
-- non-dry provider use requires explicit `--allow-ai`; `oci_genai` runtime still raises `NotImplementedError`
+- public-doc source verification hashes refresh during context regeneration
+- non-dry provider use requires explicit `--allow-ai`; `oci_genai` also requires `llm.compartment_id` and runtime still raises `NotImplementedError`
+- ignored, binary, generated, `.git`, `.aictx/runs`, cache/build, oversize, or secret-bearing files cannot enter model-transfer selection
+- prompt content is not written to provider metadata by default
 
 ## `verify --strict`
 
@@ -120,7 +126,7 @@ Current checks:
 - strict mode requires the expected generated context files
 - strict mode verifies section source paths and source hashes
 - strict mode verifies generated `AGENTS.md` links to `docs/AIprojectcontext/ai-index.md`
-- public docs impacts are reported from lockfile doc/source maps
+- public docs impacts are reported from lockfile doc/source maps before context refresh
 - `--json` emits structured verification details and next-command hints
 
 Current scope = deterministic hash/linkage only. No semantic freshness.
@@ -131,6 +137,8 @@ Current scope = deterministic hash/linkage only. No semantic freshness.
 - `aictx clean --project <path> --run-id <id> --yes` → delete one local run
 - `aictx clean --project <path> --keep-runs <n> --yes` → keep newest N local runs
 - `aictx public-docs update --project <path> --scope changed --write patch` → write deterministic review patch
+- `aictx public-docs update --project <path> --scope full --write patch` → review all mapped public docs
+- `aictx public-docs update --project <path> --write apply` → write `docs/AIprojectcontext/public-docs-review.md`; does not rewrite public docs prose
 - `aictx oci doctor --json` → local SDK/config/compartment readiness; no network mutation
 
 ## Typical workflows
@@ -152,9 +160,9 @@ Generated-context:
 Public-doc review:
 
 1. change source
-2. `uv run aictx run --project . --mode setup-context --execution local --scope changed --write patch`
-3. `uv run aictx public-docs update --project . --scope changed --write patch`
-4. manually update impacted public docs from source facts
+2. `uv run aictx public-docs update --project . --scope changed --write patch`
+3. manually update impacted public docs from source facts
+4. `uv run aictx run --project . --mode setup-context --execution local --scope changed --write apply`
 5. `uv run aictx verify --project . --strict`
 
 ## Scanner output shape
@@ -192,6 +200,7 @@ uv run mypy src
 - real secret findings → remove real secret; do not suppress
 - `.pytest-tmp` ignored intentionally to avoid transient scan/test/lint drift
 - dirty apply rejected → rerun with `--allow-dirty` only when dirty files are intentional
+- budget exceeded → reduce selected files or raise `.aictx/config.toml` limits intentionally
 - unsupported `run` mode/execution → only local `setup-context` implemented
 - fresh clone verify fail → create/commit `docs/AIprojectcontext/context.lock.json` first via `init`
 

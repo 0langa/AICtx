@@ -23,17 +23,21 @@ Trust code over docs. Read `docs/AIprojectcontext/ai-index.md` first. Do not exp
 - init: writes `docs/AIprojectcontext/context.lock.json`; preserves existing generated metadata if lock already has it.
 - run local:
   - blocks on detected secrets
-  - blocks dirty `--write apply` unless allowed
+  - blocks dirty `--write apply` when dirty paths are outside context-source/output paths unless allowed
   - records changed files against existing lock for `--scope changed`
   - builds deterministic plan
+  - enforces model-transfer boundary before provider creation
+  - enforces input/output/file-count/file-size budgets before provider creation
   - uses provider factory; `dry_run` default; non-dry requires `--allow-ai`
   - writes run artifacts under `.aictx/runs/<run-id>/`
   - writes scaffold to `.aictx/runs/<run-id>/out/`
+  - writes `provider-metadata.json` and `run-report.json` without prompt content
   - writes patch file `aictx.patch`
   - `--write apply` copies staged files into repo
   - generated context artifacts are excluded from future source selection
+  - `--scope changed` refreshes impacted context shards and preserves unaffected shard content
   - unmanaged second-level sections in generated `AGENTS.md` are preserved
-  - public-doc source verification hashes preserve review impact until mapped doc changes
+  - public-doc source verification hashes refresh during context regeneration
   - applied lockfile path = `docs/AIprojectcontext/context.lock.json`
   - root `context.lock.json` must not exist
 - verify: checks lock exists, schema supported, source files exist/hash-match, generated files exist/hash-match, expected generated files, section source/hash links, generated `AGENTS.md` index link, and public-doc source impacts.
@@ -59,6 +63,8 @@ Trust code over docs. Read `docs/AIprojectcontext/ai-index.md` first. Do not exp
 - `.aictx/runs/<run-id>/facts/*_facts.json`
 - `.aictx/runs/<run-id>/coverage-report.json`
 - `.aictx/runs/<run-id>/contradictions.json`
+- `.aictx/runs/<run-id>/provider-metadata.json`
+- `.aictx/runs/<run-id>/run-report.json`
 - `.aictx/runs/<run-id>/out/**`
 - `.aictx/runs/<run-id>/aictx.patch`
 
@@ -74,9 +80,9 @@ Trust code over docs. Read `docs/AIprojectcontext/ai-index.md` first. Do not exp
 
 1. Dogfood local flow on AICtx end-to-end until stable.
 2. Improve deterministic fact quality/source tracing.
-3. Make changed-scope regeneration partial instead of full-safe.
+3. Improve deterministic fact quality/source tracing.
 4. Convert public-doc review into source-grounded doc patching.
-5. Implement OCI provider/runtime behind current opt-in seam.
+5. Implement minimal optional OCI GenAI local provider smoke test behind current opt-in seam.
 6. Add CI/release hardening after local contracts stay stable.
 
 ## Immediate tasks
@@ -127,13 +133,18 @@ Add deterministic checks for:
 
 ### P2 changed-scope
 
-Upgrade changed refresh:
+Current changed refresh is operational:
 
-- diff base
-- map impacted source paths
-- regenerate only impacted context files/sections
-- update lockfile
-- keep patch targeted
+- detects source changes against lock
+- selects impacted source/doc/manifest paths
+- preserves unaffected generated shards
+- updates lockfile/source hashes
+- restores strict verify after apply
+
+Need later:
+
+- richer diff base selection
+- finer section-level rendering inside large shards
 
 ### P3 public docs
 
@@ -147,7 +158,7 @@ Need:
 
 ## Deferred until local flow solid
 
-- OCI GenAI provider runtime
+- OCI GenAI provider runtime beyond optional local smoke test
 - OCI snapshot/object storage
 - OCI remote jobs/workers
 - CI workflow generation
@@ -158,9 +169,9 @@ Need:
 
 - local-first
 - no auto-commit/push
-- no silent overwrite beyond explicit apply; dirty apply must be opt-in
+- no silent overwrite beyond explicit apply; dirty apply must block unplanned paths unless opted in
 - no claiming planned work as implemented
-- no sending secrets to model providers
+- no sending secrets or blocked files to model providers
 - no monolithic rewrite
 
 ## True current architecture map
@@ -173,6 +184,7 @@ Need:
 - `src/aictx/public_docs/` = deterministic mapping/review flow
 - `src/aictx/llm/dry_run.py` = only working provider
 - `src/aictx/llm/providers.py` = guarded provider factory
+- `src/aictx/llm/transfer.py` = model-transfer safety + budget preflight
 - `src/aictx/llm/oci_genai.py` = stub
 - `src/aictx/oci/doctor.py` = local readiness check
 - OCI remote modules = stubs
@@ -190,7 +202,7 @@ After source change:
 
 must fail correctly, then:
 
-    aictx run --project <repo> --mode setup-context --scope changed --write apply --allow-dirty
+    aictx run --project <repo> --mode setup-context --scope changed --write apply
     aictx public-docs update --project <repo> --scope changed --write patch
     aictx verify --project <repo> --strict
 

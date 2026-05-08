@@ -30,10 +30,12 @@ Implemented:
 - generated artifact isolation during scan/planning
 - patch output + apply-by-copy
 - safe patch apply helper with `git apply --check`
-- changed-scope detection recorded in run plan
-- deterministic public-doc impact review artifact
-- public-doc verification hashes preserved until mapped doc changes
-- dirty-worktree apply gate with `--allow-dirty`
+- targeted changed-scope refresh for impacted context shards
+- deterministic public-doc impact review artifacts
+- model-transfer safety boundary before any provider call
+- input/output/file-count/file-size budget preflight
+- provider metadata + run-report artifacts without prompt content
+- dirty-worktree apply gate for unplanned paths; context-source/output paths are allowed
 - tests + Ruff + mypy + pytest setup
 
 Still stubbed/not implemented:
@@ -41,6 +43,7 @@ Still stubbed/not implemented:
 - `oci_genai` provider runtime
 - semantic freshness verification
 - remote OCI execution
+- Object Storage / remote workers / Terraform / hosted services
 - CI workflow generation
 
 ## Install
@@ -75,7 +78,7 @@ uv run aictx oci doctor --json
 | --- | --- | --- |
 | `scan` | implemented | deterministic inventory + secret scan |
 | `init` | implemented | writes/refreshes `docs/AIprojectcontext/context.lock.json`; preserves generated metadata when present |
-| `run` | implemented | local Phase 1 only; `setup-context`; `scope=full|changed`; patch/apply; apply blocks dirty unless allowed |
+| `run` | implemented | local Phase 1 only; `setup-context`; `scope=full|changed`; patch/apply; budget + transfer preflight |
 | `verify` | implemented | hash verification plus strict generated-file/source-link checks; JSON report |
 | `status` | implemented | scan + verify summary for automation |
 | `clean` | implemented | safe local run cleanup; dry-run until `--yes`; OCI cleanup still unsupported |
@@ -97,7 +100,7 @@ uv run aictx oci doctor --json
 - `AGENTS.md`
 
 Existing unmanaged second-level sections in `AGENTS.md` are preserved during regeneration.
-`--write apply` refuses dirty worktrees unless config or `--allow-dirty` opts in.
+`--write apply` refuses dirty paths outside context-source/generated outputs unless config or `--allow-dirty` opts in.
 
 ## Dev commands
 
@@ -120,12 +123,14 @@ uv run mypy src
 
 - scanner never prints secret values
 - no auto-commit / auto-push
-- no silent overwrite beyond explicit `--write apply`; dirty apply requires `--allow-dirty`
+- no silent overwrite beyond explicit `--write apply`; dirty apply blocks non-context paths unless `--allow-dirty`
 - runtime-only: `.aictx/runs/`, `.aictx/cache/`, `.aictx/tmp/`
 - committed generated baseline: `docs/AIprojectcontext/context.lock.json`
 - generated `docs/AIprojectcontext/**` and generated `AGENTS.md` are not fed back into context selection
+- model-transfer preflight excludes ignored, binary, generated, `.git`, `.aictx/runs`, cache/build, oversize, and secret-bearing files
+- configured token/file budgets fail before provider creation or calls
 - contradiction/coverage outputs are deterministic placeholders only
-- default provider: `dry_run`; `oci_genai` factory path requires `--allow-ai` but runtime remains stubbed
+- default provider: `dry_run`; `oci_genai` requires `--allow-ai` and `llm.compartment_id`, but runtime remains stubbed and makes no network calls
 
 ## License
 

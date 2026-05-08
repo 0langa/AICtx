@@ -12,7 +12,8 @@ Codebase is source of truth.
 - committed baseline = `docs/AIprojectcontext/context.lock.json`
 - runtime artifacts = `.aictx/**` (local-only, ignored)
 - non-dry model providers require explicit `--allow-ai`
-- dirty apply requires config opt-in or `--allow-dirty`
+- dirty apply allows context-source/generated output paths; unrelated dirty paths require config opt-in or `--allow-dirty`
+- provider prompt transfer is guarded by local file safety and budget preflight
 
 ## Implemented layers
 
@@ -62,16 +63,19 @@ Run order:
 
 1. rescan repo
 2. fail on secrets
-3. block dirty apply unless explicitly allowed
+3. block dirty apply when dirty paths are outside context-source/generated outputs
 4. load config if present
 5. compute changed files against existing lock
 6. build deterministic plan, excluding generated context artifacts from source input
-7. estimate token cost
-8. create provider through guarded factory (`dry_run` default)
-9. extract deterministic fact packs
-10. write staged scaffold under `.aictx/runs/<run-id>/out/`
-11. write `aictx.patch`
-12. if apply mode, copy staged files into repo
+7. enforce model-transfer safety boundary
+8. estimate input/output tokens and file budgets
+9. create provider through guarded factory (`dry_run` default)
+10. write safe provider metadata without prompt content
+11. extract deterministic fact packs
+12. write staged scaffold under `.aictx/runs/<run-id>/out/`
+13. write `aictx.patch`
+14. write `run-report.json`
+15. if apply mode, copy staged files into repo
 
 Generated targets:
 
@@ -96,6 +100,8 @@ Run artifacts:
 - `contradictions.json`
 - `out/**`
 - `aictx.patch`
+- `provider-metadata.json`
+- `run-report.json`
 
 ### Verification
 
@@ -132,8 +138,8 @@ Verifier remains deterministic/hash-based; no semantic freshness.
 
 - maps public docs (`README.md`, `docs/**`, `documentation/**`) to source/manifest files
 - stores map in `context.lock.json`
-- preserves previous source verification hashes until the mapped public doc itself changes
-- `public-docs update` writes review artifacts and patches; it does not invent public-doc prose
+- context regeneration refreshes mapped source hashes
+- `public-docs update` writes deterministic review artifacts and patches; it does not invent public-doc prose
 
 ### OCI readiness
 
@@ -150,7 +156,9 @@ Verifier remains deterministic/hash-based; no semantic freshness.
 - symlinks skipped
 - hard excludes block `.aictx/`, `.git/`, build outputs, credential files from inventory
 - pipeline blocks when secrets found
-- dirty-worktree apply gate enforced
+- dirty-worktree apply gate blocks unplanned dirty paths
+- model-transfer preflight blocks ignored, binary, generated, `.git`, `.aictx/runs`, cache/build, oversize, and secret-bearing files
+- token/file-count/output budgets fail before provider creation
 - non-dry providers require `--allow-ai`
 - contradiction/coverage gating not enforced yet
 
@@ -174,9 +182,10 @@ Generated context artifacts are tracked in `generated_files`, not `source_files`
 
 ## Current limits
 
-- `run`: local `setup-context` only; changed scope records changed files but still uses full-safe regeneration
+- `run`: local `setup-context` only; changed scope is targeted but still coarse at shard level
 - `verify`: no semantic freshness
 - `init`: no context shard generation
 - `public-docs update`: deterministic review flow only; manual doc edits required
 - `oci doctor`: local readiness only
 - no CI workflow generation
+- no Object Storage, remote jobs, Terraform, hosted service, or real OCI/AI provider calls

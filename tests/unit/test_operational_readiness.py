@@ -12,7 +12,9 @@ from aictx.cli import app
 from aictx.config import LLMConfig
 from aictx.errors import ConfigError, PatchApplyError
 from aictx.io.patches import apply_patch, make_unified_diff
+from aictx.llm.base import ChatRequest
 from aictx.llm.dry_run import DryRunProvider
+from aictx.llm.oci_genai import OCIGenAIProvider
 from aictx.llm.providers import create_model_provider
 from aictx.oci.doctor import run_oci_doctor
 from aictx.verify.verifier import verify_detailed
@@ -27,6 +29,53 @@ def test_model_provider_defaults_to_dry_run_and_blocks_oci_without_opt_in() -> N
 
     with pytest.raises(ConfigError, match="--allow-ai"):
         create_model_provider(LLMConfig(provider="oci_genai", compartment_id="ocid1.compartment"))
+
+
+def test_provider_dry_run_behavior_is_deterministic() -> None:
+    provider = create_model_provider(LLMConfig())
+
+    first = provider.chat(
+        ChatRequest(
+            system_prompt="system",
+            messages=[{"role": "user", "content": "hello"}],
+            run_id="run-1",
+            purpose="unit",
+        )
+    )
+    second = provider.chat(
+        ChatRequest(
+            system_prompt="system",
+            messages=[{"role": "user", "content": "hello"}],
+            run_id="run-1",
+            purpose="unit",
+        )
+    )
+
+    assert first == second
+    assert first.finish_reason == "stop"
+    assert first.input_tokens > 0
+    assert provider.metadata()["provider"] == "dry_run"
+
+
+def test_provider_creation_allows_guarded_oci_stub_with_config() -> None:
+    provider = create_model_provider(
+        LLMConfig(provider="oci_genai", model="cohere.command", compartment_id="ocid1.compartment"),
+        allow_ai=True,
+    )
+
+    assert isinstance(provider, OCIGenAIProvider)
+    with pytest.raises(NotImplementedError, match="not implemented"):
+        provider.chat(ChatRequest(run_id="run-1", purpose="unit"))
+
+
+def test_provider_missing_oci_compartment_fails_before_runtime() -> None:
+    with pytest.raises(ConfigError, match="compartment_id"):
+        create_model_provider(LLMConfig(provider="oci_genai"), allow_ai=True)
+
+
+def test_provider_unsupported_name_fails_clearly() -> None:
+    with pytest.raises(ConfigError, match="Unsupported provider"):
+        create_model_provider(LLMConfig(provider="unknown"), allow_ai=True)
 
 
 def test_oci_doctor_reports_missing_local_prerequisites(tmp_path: Path) -> None:
@@ -109,6 +158,105 @@ def test_public_docs_update_generates_review_patch_for_changed_sources() -> None
     assert (latest / "public-docs.patch").exists()
 
 
+def test_public_docs_update_full_scope_generates_review_for_mapped_docs() -> None:
+    repo = create_git_repo(
+        {
+            "README.md": "# Test repo\n",
+            "documentation/README.md": "# Docs\n",
+            "src/main.py": "print('ok')\n",
+        }
+    )
+    run_result = runner.invoke(
+        app,
+        [
+            "run",
+            "--project",
+            str(repo),
+            "--mode",
+            "setup-context",
+            "--execution",
+            "local",
+            "--scope",
+            "full",
+            "--write",
+            "apply",
+        ],
+    )
+    assert run_result.exit_code == 0, run_result.output
+
+    update_result = runner.invoke(
+        app,
+        [
+            "public-docs",
+            "update",
+            "--project",
+            str(repo),
+            "--scope",
+            "full",
+            "--write",
+            "patch",
+        ],
+    )
+
+    assert update_result.exit_code == 0, update_result.output
+    latest = sorted(
+        [
+            path
+            for path in (repo / ".aictx" / "runs").iterdir()
+            if path.is_dir() and path.name.endswith("-public-docs")
+        ]
+    )[-1]
+    impact = json.loads((latest / "public-docs-impact.json").read_text(encoding="utf-8"))
+    assert sorted(impact["impacted_docs"]) == ["README.md", "documentation/README.md"]
+    assert (latest / "public-docs.patch").exists()
+
+
+def test_public_docs_update_apply_writes_only_review_artifact() -> None:
+    repo = create_git_repo(
+        {
+            "README.md": "# Test repo\n",
+            "src/main.py": "print('ok')\n",
+        }
+    )
+    original_readme = (repo / "README.md").read_text(encoding="utf-8")
+    run_result = runner.invoke(
+        app,
+        [
+            "run",
+            "--project",
+            str(repo),
+            "--mode",
+            "setup-context",
+            "--execution",
+            "local",
+            "--scope",
+            "full",
+            "--write",
+            "apply",
+        ],
+    )
+    assert run_result.exit_code == 0, run_result.output
+    (repo / "src" / "main.py").write_text("print('changed')\n", encoding="utf-8")
+
+    update_result = runner.invoke(
+        app,
+        [
+            "public-docs",
+            "update",
+            "--project",
+            str(repo),
+            "--scope",
+            "changed",
+            "--write",
+            "apply",
+        ],
+    )
+
+    assert update_result.exit_code == 0, update_result.output
+    assert (repo / "docs" / "AIprojectcontext" / "public-docs-review.md").exists()
+    assert (repo / "README.md").read_text(encoding="utf-8") == original_readme
+
+
 def test_public_docs_map_is_targeted_not_all_source_files() -> None:
     repo = create_git_repo(
         {
@@ -150,7 +298,7 @@ def test_public_docs_map_is_targeted_not_all_source_files() -> None:
     assert "tests/test_main.py" not in docs_map["documentation/ARCHITECTURE.md"]["source_paths"]
 
 
-def test_context_regen_preserves_public_doc_impact_until_doc_changes() -> None:
+def test_context_regen_refreshes_public_doc_source_hashes() -> None:
     repo = create_git_repo(
         {
             "README.md": "# Test repo\n",
@@ -196,8 +344,8 @@ def test_context_regen_preserves_public_doc_impact_until_doc_changes() -> None:
     assert regen_result.exit_code == 0, regen_result.output
 
     report = verify_detailed(repo, strict=True)
-    assert report.result == "FAIL_PUBLIC_DOCS_IMPACT"
-    assert report.public_docs_impacts == {"README.md": ["src/main.py"]}
+    assert report.result == "PASS"
+    assert report.public_docs_impacts == {}
 
 
 def test_clean_keep_runs_is_dry_run_until_confirmed() -> None:

@@ -104,7 +104,9 @@ def _determine_impacted_paths(
 ) -> set[str]:
     if scope != "changed":
         return {
-            entry.path for entry in inventory.files if not entry.is_ignored and not entry.is_generated
+            entry.path
+            for entry in inventory.files
+            if not entry.is_ignored and not entry.is_generated
         }
 
     changed_set = set(changed_files)

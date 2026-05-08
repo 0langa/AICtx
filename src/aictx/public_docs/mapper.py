@@ -73,11 +73,22 @@ def _sources_for_public_doc(doc_path: str, source_entries: list[FileEntry]) -> l
         ("architecture", ("context/", "scan/", "verify/", "public_docs/", "io/", "git/")),
         ("codemap", ("src/aictx/", "tests/")),
         ("documentation", ("src/aictx/cli.py", "src/aictx/config.py", "pyproject.toml")),
-        ("changelog", ("src/aictx/cli.py", "src/aictx/context/pipeline.py", "src/aictx/verify/verifier.py", "src/aictx/public_docs/", "src/aictx/oci/doctor.py")),
+        (
+            "changelog",
+            (
+                "src/aictx/cli.py",
+                "src/aictx/context/pipeline.py",
+                "src/aictx/verify/verifier.py",
+                "src/aictx/public_docs/",
+                "src/aictx/oci/doctor.py",
+            ),
+        ),
     ]
     for key, prefixes in groups:
         if key in doc_name:
-            matched = [entry for entry in source_entries if _matches_any_prefix(entry.path, prefixes)]
+            matched = [
+                entry for entry in source_entries if _matches_any_prefix(entry.path, prefixes)
+            ]
             if matched:
                 return matched
 

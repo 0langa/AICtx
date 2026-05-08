@@ -19,14 +19,19 @@
 - run artifact output + staged patch output
 - apply-by-copy mode
 - changed-scope detection recorded in run plans
+- changed-scope targeted context refresh with unaffected shard preservation
 - dirty-worktree gate for `--write apply`
 - `status --json`
 - `verify --json` detailed reports + next-command hints
 - deterministic public-doc source map + review patch generation
-- public-doc impact preservation until mapped doc changes
+- public-doc source hashes refresh during context regeneration
+- deterministic public-doc review/apply artifact behavior; no prose rewrite
 - safe local `clean`
 - guarded `apply_patch` helper using `git apply --check`
 - guarded provider factory; non-dry providers require `--allow-ai`
+- model-transfer safety boundary before provider creation
+- input/output/file-count/file-size budget preflight
+- provider metadata and run report artifacts without prompt content
 - `oci doctor` local readiness check
 - test coverage for CLI/scanner/verify/Phase1 run
 - lockfile metadata preservation in `init`
@@ -39,7 +44,7 @@
 
 ### Current limitations
 
-- `run --scope changed` uses full-safe regeneration path; partial shard regeneration not implemented
+- `run --scope changed` is targeted at generated-shard level, not fine-grained within large shards
 - `verify` remains deterministic and does not perform semantic freshness checks
 - `init` does not generate context shards
 - contradiction/coverage reports are placeholder JSON
@@ -48,3 +53,4 @@
 - public-doc updates are review artifacts only; manual content edits required
 - OCI object storage / remote job / cleanup stubs
 - `llm/oci_genai.py` runtime stub; only `dry_run` calls succeed
+- no real OCI/AI calls, Object Storage, remote workers, Terraform, or hosted services

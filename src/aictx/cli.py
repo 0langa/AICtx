@@ -151,7 +151,7 @@ def run(
     provider: str | None = typer.Option(None, "--provider", help="Model provider override."),
     allow_ai: bool = typer.Option(False, "--allow-ai", help="Permit non-dry-run AI providers."),
     allow_dirty: bool = typer.Option(
-        False, "--allow-dirty", help="Permit apply on dirty worktree."
+        False, "--allow-dirty", help="Permit apply with dirty paths outside planned context files."
     ),
 ) -> None:
     """Run the aictx pipeline."""

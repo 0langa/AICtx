@@ -10,11 +10,18 @@ from aictx.config import AictxConfig
 from aictx.context.fact_extractor import extract_facts
 from aictx.context.lockfile import load_lockfile, write_lockfile
 from aictx.context.planner import plan_context
-from aictx.context.writer import build_context_lock, write_context_scaffold
-from aictx.errors import SafetyError, SecretScanError, TokenBudgetExceededError
+from aictx.context.writer import (
+    GENERATED_CONTEXT_FILES,
+    build_context_lock,
+    target_file_for_pack,
+    write_context_scaffold,
+)
+from aictx.errors import SafetyError
 from aictx.io.files import safe_write
 from aictx.io.patches import make_unified_diff
 from aictx.llm.providers import create_model_provider
+from aictx.llm.transfer import prepare_model_transfer
+from aictx.models.inventory import RepositoryInventory
 from aictx.models.run_report import RunReport
 from aictx.scan.scanner import scan_repository
 from aictx.verify.verifier import determine_changed_source_paths
@@ -30,16 +37,8 @@ def run_local_context_pipeline(
     allow_dirty: bool = False,
 ) -> RunReport:
     """Run the local Phase 1 context generation pipeline."""
+    started_at = datetime.now(UTC)
     inventory = scan_repository(repo_root)
-    if inventory.secrets:
-        raise SecretScanError("High-confidence secrets detected; refusing context generation.")
-    if (
-        write_mode == "apply"
-        and inventory.dirty_state
-        and not (config.execution.allow_dirty or allow_dirty)
-    ):
-        raise SafetyError("Refusing --write apply on dirty worktree without --allow-dirty.")
-
     existing_context_dir = repo_root / config.project.context_dir
     existing_agents_md = repo_root / config.project.agents_file
     existing_lock = load_lockfile(existing_context_dir)
@@ -56,20 +55,42 @@ def run_local_context_pipeline(
     )
     typed_plan = cast(dict[str, Any], plan)
     typed_plan["changed_files"] = changed_files if scope == "changed" else []
-    estimated_token_cost = cast(int, plan["estimated_token_cost"])
-    if estimated_token_cost > config.limits.max_input_tokens_per_run:
-        raise TokenBudgetExceededError(
-            "Planned context exceeds configured max_input_tokens_per_run."
-        )
+    transfer_plan = prepare_model_transfer(
+        repo_root=repo_root,
+        inventory=inventory,
+        selected_files=cast(list[str], typed_plan["selected_files"]),
+        reason_per_selected_file=cast(dict[str, str], typed_plan["reason_per_selected_file"]),
+        config=config,
+        allow_ai=allow_ai,
+    )
+    typed_plan["estimated_token_cost"] = transfer_plan.estimated_input_tokens
+    typed_plan["model_transfer"] = transfer_plan.to_dict()
+    _ensure_apply_dirty_state_allowed(
+        inventory=inventory,
+        write_mode=write_mode,
+        config=config,
+        allow_dirty=allow_dirty,
+        selected_files=cast(list[str], typed_plan["selected_files"]),
+    )
 
     provider = create_model_provider(config.llm, allow_ai=allow_ai)
+    runs_dir = repo_root / ".aictx" / "runs" / run_id
+    out_dir = runs_dir / "out"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    safe_write(
+        runs_dir / "provider-metadata.json",
+        _json_dump(
+            {
+                "run_id": run_id,
+                "provider": provider.metadata(),
+                "model_transfer": transfer_plan.to_dict(),
+            }
+        ),
+    )
     fact_packs = extract_facts(
         repo_root=repo_root, plan=typed_plan, provider=provider, run_id=run_id
     )
 
-    runs_dir = repo_root / ".aictx" / "runs" / run_id
-    out_dir = runs_dir / "out"
-    out_dir.mkdir(parents=True, exist_ok=True)
     _write_run_artifacts(
         runs_dir=runs_dir,
         inventory=inventory.model_dump(mode="json"),
@@ -84,6 +105,14 @@ def run_local_context_pipeline(
         inventory=inventory,
         plan=typed_plan,
         fact_packs=fact_packs,
+        refresh_paths=_changed_scope_refresh_paths(
+            scope=scope,
+            existing_lock_present=existing_lock is not None,
+            changed_files=changed_files,
+            fact_packs=fact_packs,
+            selected_files=cast(list[str], typed_plan["selected_files"]),
+            inventory=inventory,
+        ),
     )
     lock = build_context_lock(
         repo_root=repo_root,
@@ -96,6 +125,7 @@ def run_local_context_pipeline(
         model_name=config.llm.model,
         existing_lock=existing_lock,
         changed_files=changed_files,
+        preserve_existing_sections=scope == "changed",
     )
     write_lockfile(staged_context_dir, lock)
     generated_paths = [*generated_paths, staged_context_dir / "context.lock.json"]
@@ -107,21 +137,20 @@ def run_local_context_pipeline(
     if write_mode == "apply":
         _apply_out_dir(repo_root=repo_root, out_dir=out_dir)
 
-    return RunReport(
+    report = RunReport(
         run_id=run_id,
         project_path=str(repo_root),
         mode="setup-context",
         scope=scope,
         execution="local",
         write_mode=write_mode,
+        started_at=started_at,
         completed_at=datetime.now(UTC),
         status="success",
         files_scanned=len([f for f in inventory.files if not f.is_ignored]),
         files_selected=len(cast(list[str], typed_plan["selected_files"])),
-        tokens_estimated_input=estimated_token_cost,
-        tokens_estimated_output=sum(
-            cast(int, pack.get("estimated_output_tokens", 0)) for pack in fact_packs
-        ),
+        tokens_estimated_input=transfer_plan.estimated_input_tokens,
+        tokens_estimated_output=transfer_plan.estimated_output_tokens,
         model_calls=len(fact_packs),
         generated_files=[path.relative_to(out_dir).as_posix() for path in generated_paths],
         selected_files=cast(list[str], typed_plan["selected_files"]),
@@ -136,6 +165,8 @@ def run_local_context_pipeline(
         output_dir=str(out_dir),
         patch_path=str(patch_path),
     )
+    safe_write(runs_dir / "run-report.json", report.model_dump_json(indent=2) + "\n")
+    return report
 
 
 def _build_patch(repo_root: Path, out_dir: Path) -> str:
@@ -162,6 +193,88 @@ def _apply_out_dir(repo_root: Path, out_dir: Path) -> None:
         relative = generated_file.relative_to(out_dir)
         target = repo_root / relative
         safe_write(target, generated_file.read_text(encoding="utf-8"))
+
+
+def _ensure_apply_dirty_state_allowed(
+    inventory: RepositoryInventory,
+    write_mode: Literal["patch", "apply"],
+    config: AictxConfig,
+    allow_dirty: bool,
+    selected_files: list[str],
+) -> None:
+    if write_mode != "apply" or not inventory.dirty_state:
+        return
+    if config.execution.allow_dirty or allow_dirty:
+        return
+    dirty_paths = _dirty_paths(inventory)
+    allowed_paths = set(selected_files)
+    allowed_paths.update(_lock_refreshable_paths(inventory))
+    allowed_paths.update(GENERATED_CONTEXT_FILES)
+    allowed_paths.add("docs/AIprojectcontext/context.lock.json")
+    disallowed = sorted(
+        path for path in dirty_paths if path not in allowed_paths and not path.startswith(".aictx/")
+    )
+    if disallowed:
+        preview = ", ".join(disallowed[:5])
+        raise SafetyError(
+            "Refusing --write apply with dirty paths outside planned context refresh: "
+            f"{preview}. Use --allow-dirty to override."
+        )
+
+
+def _dirty_paths(inventory: RepositoryInventory) -> set[str]:
+    status = inventory.git_status
+    paths = set(status.modified_files)
+    paths.update(status.deleted_files)
+    paths.update(status.untracked_files)
+    for item in status.renamed_files:
+        paths.add(str(item["from"]))
+        paths.add(str(item["to"]))
+    return paths
+
+
+def _lock_refreshable_paths(inventory: RepositoryInventory) -> set[str]:
+    return {
+        file.path
+        for file in inventory.files
+        if file.kind in {"source", "doc", "manifest", "test"}
+        and not file.is_ignored
+        and not file.is_binary
+        and not file.is_generated
+        and file.sha256 != "skipped"
+    }
+
+
+def _changed_scope_refresh_paths(
+    scope: Literal["full", "changed"],
+    existing_lock_present: bool,
+    changed_files: list[str],
+    fact_packs: list[dict[str, Any]],
+    selected_files: list[str],
+    inventory: RepositoryInventory,
+) -> set[str] | None:
+    if scope != "changed" or not existing_lock_present:
+        return None
+
+    refresh = {
+        "docs/AIprojectcontext/project-state.md",
+        "docs/AIprojectcontext/code-map.md",
+        "docs/AIprojectcontext/change-impact-map.md",
+        "docs/AIprojectcontext/validation-report.md",
+    }
+    selected_entries = {
+        entry.path: entry for entry in inventory.files if entry.path in set(selected_files)
+    }
+    changed_set = set(changed_files)
+    for pack in fact_packs:
+        pack_name = str(pack["name"])
+        target = target_file_for_pack(pack_name)
+        if target == "docs/AIprojectcontext/public-docs-map.md" and not any(
+            selected_entries[path].is_doc for path in selected_entries if path in changed_set
+        ):
+            continue
+        refresh.add(target)
+    return refresh
 
 
 def _write_run_artifacts(

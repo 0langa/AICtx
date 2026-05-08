@@ -19,7 +19,7 @@ def create_model_provider(config: LLMConfig, allow_ai: bool = False) -> ModelPro
         return DryRunProvider()
 
     if not allow_ai:
-        raise ConfigError("Provider 'oci_genai' requires explicit --allow-ai.")
+        raise ConfigError(f"Provider '{config.provider}' requires explicit --allow-ai.")
 
     if config.provider == "oci_genai":
         if not config.compartment_id:
