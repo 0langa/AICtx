@@ -22,13 +22,17 @@
 - lockfile metadata preservation in `init`
 - false-positive hardening for secret detector source/examples + test/fixture paths
 - `.pytest-tmp` hardening
+- generated context artifact detection and source-selection exclusion
+- repo-relative fact source paths with known lock section source hashes
+- strict generated-context structure checks in `verify --strict`
+- preservation of unmanaged second-level sections in generated `AGENTS.md`
 
 ### Current limitations
 
 - `clean` stub
 - `public-docs update` stub
 - `run --scope changed` not implemented
-- `verify` hash-only
+- `verify` remains deterministic and does not perform semantic freshness checks
 - `init` does not generate context shards
 - contradiction/coverage reports are placeholder JSON
 - `apply_patch` helper is no-op stub

@@ -29,6 +29,7 @@ def build_lockfile_from_inventory(inventory: RepositoryInventory) -> ContextLock
         for file in inventory.files
         if not file.is_ignored
         and not file.is_binary
+        and not file.is_generated
         and file.sha256 != "skipped"
         and file.path != f"docs/AIprojectcontext/{LOCK_FILENAME}"
     ]

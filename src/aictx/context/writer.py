@@ -30,6 +30,7 @@ def write_context_scaffold(
     selected_files = plan["selected_files"]
     reasons = plan["reason_per_selected_file"]
     fact_map = {pack["name"]: pack for pack in fact_packs}
+    existing_agents_md = _read_existing_agents_md(repo_root)
 
     files_to_content = {
         "docs/AIprojectcontext/ai-index.md": _render_ai_index(),
@@ -43,7 +44,7 @@ def write_context_scaffold(
         ),
         "docs/AIprojectcontext/schema.md": _render_schema(),
         "docs/AIprojectcontext/validation-report.md": _render_validation_report(fact_packs),
-        "AGENTS.md": generate_agents_md(repo_root.name),
+        "AGENTS.md": generate_agents_md(repo_root.name, existing_agents_md),
     }
 
     for relative_name, content in files_to_content.items():
@@ -51,6 +52,16 @@ def write_context_scaffold(
         safe_write(target, content)
         generated.append(target)
     return generated
+
+
+def _read_existing_agents_md(repo_root: Path) -> str | None:
+    path = repo_root / "AGENTS.md"
+    if not path.exists():
+        return None
+    try:
+        return path.read_text(encoding="utf-8")
+    except OSError:
+        return None
 
 
 def build_context_lock(
@@ -75,20 +86,19 @@ def build_context_lock(
         for file in inventory.files
         if not file.is_ignored
         and not file.is_binary
+        and not file.is_generated
         and file.sha256 != "skipped"
         and file.path != "docs/AIprojectcontext/context.lock.json"
     ]
     source_files.sort(key=lambda entry: entry.path)
+    source_hashes_by_path = {entry.path: entry.sha256 for entry in source_files}
 
     sections: list[SectionEntry] = []
     for pack in fact_packs:
         for fact in pack["facts"]:
             source_hashes = []
             for source_path in fact["source_paths"]:
-                match = next(
-                    (entry.sha256 for entry in source_files if entry.path == source_path), "unknown"
-                )
-                source_hashes.append(match)
+                source_hashes.append(source_hashes_by_path.get(str(source_path), "unknown"))
             sections.append(
                 SectionEntry(
                     section_id=fact["id"],
@@ -111,7 +121,7 @@ def build_context_lock(
                 if section.generated_file == path.relative_to(out_dir).as_posix()
             ],
         )
-        for path in sorted(generated_paths, key=lambda item: item.name)
+        for path in sorted(generated_paths, key=lambda item: path_relative_to_out(item, out_dir))
     ]
 
     return ContextLock(
@@ -217,6 +227,11 @@ def _render_validation_report(fact_packs: list[dict[str, Any]]) -> str:
     for pack in fact_packs:
         lines.append(f"- `{pack['name']}` — facts: {len(pack['facts'])}")
     return "\n".join(lines) + "\n"
+
+
+def path_relative_to_out(path: Path, out_dir: Path) -> str:
+    """Return a deterministic output-relative path for generated files."""
+    return path.relative_to(out_dir).as_posix()
 
 
 def _target_file_for_pack(pack_name: str) -> str:

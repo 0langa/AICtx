@@ -15,7 +15,7 @@
         diff.py        unified diff against base ref
 
       scan/
-        scanner.py     repo walk + inventory + secret scan
+        scanner.py     repo walk + inventory + generated-artifact detection + secret scan
         classify.py    deterministic project classification
         ignore.py      hard excludes + `.gitignore` + `.aictxignore`
         secrets.py     regex secret detection + inline suppression + self-protection
@@ -41,7 +41,7 @@
         lockfile.py    baseline lock build/load/write
 
       verify/
-        verifier.py    hash-only strict verifier MVP
+        verifier.py    strict verifier for hashes + generated context structure
         hashes.py      SHA-256 helpers
         impact.py      stub; empty change-impact mapping
         reports.py     stub; placeholder validation report

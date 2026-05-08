@@ -15,9 +15,11 @@ Implemented:
 - deterministic scanner
 - baseline lockfile bootstrap
 - hash-only verifier MVP
+- strict generated-context structure checks
 - local Phase 1 context pipeline
 - dry-run provider
 - generated context scaffold + `AGENTS.md`
+- generated artifact isolation during scan/planning
 - patch output + apply-by-copy
 - tests + Ruff + mypy + pytest setup
 
@@ -63,7 +65,7 @@ uv run aictx run --project . --mode setup-context --execution local --scope full
 | `scan` | implemented | deterministic inventory + secret scan |
 | `init` | implemented | writes/refreshes `docs/AIprojectcontext/context.lock.json`; preserves generated metadata when present |
 | `run` | implemented | local Phase 1 only; `setup-context`; `scope=full` only |
-| `verify` | implemented | hash-only source/generated file verification |
+| `verify` | implemented | hash verification plus strict generated-file/source-link checks |
 | `clean` | stub | no cleanup |
 | `public-docs update` | stub | exits 1 |
 
@@ -80,6 +82,8 @@ uv run aictx run --project . --mode setup-context --execution local --scope full
 - `docs/AIprojectcontext/validation-report.md`
 - `docs/AIprojectcontext/context.lock.json`
 - `AGENTS.md`
+
+Existing unmanaged second-level sections in `AGENTS.md` are preserved during regeneration.
 
 ## Dev commands
 
@@ -105,6 +109,7 @@ uv run mypy src
 - no silent overwrite beyond explicit `--write apply`
 - runtime-only: `.aictx/runs/`, `.aictx/cache/`, `.aictx/tmp/`
 - committed generated baseline: `docs/AIprojectcontext/context.lock.json`
+- generated `docs/AIprojectcontext/**` and generated `AGENTS.md` are not fed back into context selection
 - contradiction/coverage outputs are deterministic placeholders only
 - only working provider: `dry_run`
 

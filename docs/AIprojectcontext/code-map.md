@@ -1,17 +1,7 @@
 # Code Map
 
 ## Selected Files
-- `AGENTS.md` — existing_agents
 - `README.md` — doc
-- `docs/AIprojectcontext/ai-index.md` — existing_context
-- `docs/AIprojectcontext/architecture.md` — existing_context
-- `docs/AIprojectcontext/change-impact-map.md` — existing_context
-- `docs/AIprojectcontext/code-map.md` — existing_context
-- `docs/AIprojectcontext/context.lock.json` — doc
-- `docs/AIprojectcontext/project-state.md` — existing_context
-- `docs/AIprojectcontext/public-docs-map.md` — existing_context
-- `docs/AIprojectcontext/schema.md` — existing_context
-- `docs/AIprojectcontext/workflows.md` — existing_context
 - `pyproject.toml` — manifest
 - `src/aictx/__init__.py` — source
 - `src/aictx/cli.py` — source

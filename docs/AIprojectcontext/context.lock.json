@@ -1,15 +1,15 @@
 {
   "schema_version": "1.0",
   "tool_version": "0.1.0",
-  "repo_head_commit": "8c9a2ba7715afd1f55af064e633d5d3ea794f824",
-  "generated_at": "2026-05-08T06:52:19.088192Z",
+  "repo_head_commit": "b14f7a6b3655915fea98137217297fe4e6d361a2",
+  "generated_at": "2026-05-08T07:59:54.442995Z",
   "model_provider": "dry_run",
   "model_name": "dry_run",
-  "scanner_config_hash": "6c075d0a326c4040c4997099f0fa8bd63bd6a452a6291d65f94e824f2cb5108f",
+  "scanner_config_hash": "6c850f861fcb238ba88efcfb9a11a9ad4b261bf4f93093a01db14a803d3dc65d",
   "generated_files": [
     {
       "path": "AGENTS.md",
-      "sha256": "b621c8f40a0ba0391da899cf021c446db61bf57d15e3f135d53729dfcc2ebb6a",
+      "sha256": "18ee978bd548adeb82cfcef62fd49441bdb2be8e89436625ecac2a768631d695",
       "generated_from_sections": []
     },
     {
@@ -19,151 +19,140 @@
     },
     {
       "path": "docs/AIprojectcontext/architecture.md",
-      "sha256": "6ef48b6ec92d066d5b1b2868a1bc991fded13a5b57de9b01a565c3d87b65394f",
+      "sha256": "07109100852ae88f614be90fdfc2cdc66c684c929881c35de1f6d71e036bd385",
       "generated_from_sections": [
-        "architecture-38b7d604a130",
-        "architecture-993d5dd300c7",
-        "architecture-ccb04df049e2",
-        "architecture-e8444038c8ee",
-        "architecture-c0f42d072b19",
-        "architecture-ab00218529e0",
-        "architecture-7532d9ca5b0a",
-        "architecture-4e7818e91771",
-        "architecture-1527a8d85d4e",
-        "architecture-f9957db9a9d2",
-        "architecture-eb5a939bd941",
-        "architecture-11a8a32a10b6",
-        "architecture-d8bce737818c",
-        "architecture-a2c53af91175",
-        "architecture-f36ec06c990e",
-        "architecture-9b4d96c15ed4",
-        "architecture-bd81c115a8c5",
-        "architecture-f47c312bc5e4",
-        "architecture-265c63114fa1",
-        "architecture-66e9218ea1d9",
-        "architecture-30fa99bcc647",
-        "architecture-d01f913facfb",
-        "architecture-63b61c5526ef",
-        "architecture-db1bacc2122e",
-        "architecture-89a2a999cbe4",
-        "architecture-e18bc849e1b1",
-        "architecture-0fcee8b20672",
-        "architecture-ad34dfa525cb",
-        "architecture-14d316a71b5a",
-        "architecture-563768c8ed21",
-        "architecture-a1864772065c",
-        "architecture-5b9a4ed5495b",
-        "architecture-d952c5913a4e",
-        "architecture-508195dda4fc",
-        "architecture-921ff00daafa",
-        "architecture-c4fdf401d774",
-        "architecture-970000fdd112",
-        "architecture-48d3e4d5c5ea",
-        "architecture-28c45c5cb601",
-        "architecture-aa70da25c537",
-        "architecture-6c14d34aa680",
-        "architecture-c35284d9bbf1",
-        "architecture-c4e9942d7b56",
-        "architecture-6c0422db6fc1",
-        "architecture-3dd4c5b0033f",
-        "architecture-96a1cb542b88",
-        "architecture-fbe9e7498031",
-        "architecture-29ea2ec75960",
-        "architecture-ed57a25cbd4b",
-        "architecture-bce98aa2d952",
-        "architecture-6f9880baf9f8",
-        "architecture-64cd7421a08e",
-        "architecture-17ec9364cba6",
-        "architecture-5708ec67d176"
+        "architecture-c49d105346f0",
+        "architecture-6c86d176dcf5",
+        "architecture-5b09921affe4",
+        "architecture-a4edb5af2590",
+        "architecture-ff15ab96990a",
+        "architecture-8d8e53f8f38b",
+        "architecture-3ef6041aa82b",
+        "architecture-204d516ee13d",
+        "architecture-50d0840d8117",
+        "architecture-c3bccc035632",
+        "architecture-13fa5b94620b",
+        "architecture-439416cabd48",
+        "architecture-3f16c8136be2",
+        "architecture-e9194b19f674",
+        "architecture-1fc6617bd844",
+        "architecture-2665c6ab77c4",
+        "architecture-bbf850199103",
+        "architecture-c38c5cca89c9",
+        "architecture-e12cce509db1",
+        "architecture-80b1c68642f2",
+        "architecture-523dc92e7900",
+        "architecture-1813492cdba1",
+        "architecture-284e40438b91",
+        "architecture-765a3f8a840d",
+        "architecture-3afad6567591",
+        "architecture-3fa493fa51ef",
+        "architecture-8c1a536d4561",
+        "architecture-6bf29168994b",
+        "architecture-ce915b5776b3",
+        "architecture-76b3bc74bf3e",
+        "architecture-e684407f3eb2",
+        "architecture-d18f808a5ef2",
+        "architecture-f96343160a8d",
+        "architecture-2eead7bd187c",
+        "architecture-3d7624e1ad28",
+        "architecture-b05b1536b217",
+        "architecture-32493ba7fdc6",
+        "architecture-21d0af3cd69f",
+        "architecture-808028907c72",
+        "architecture-53e0282ee6c0",
+        "architecture-095b14932920",
+        "architecture-1ec6ed7b670a",
+        "architecture-935eef5c5987",
+        "architecture-c2b10cc284da",
+        "architecture-de3e2cb306a7",
+        "architecture-40a6fa8f714d",
+        "architecture-01d88d432262",
+        "architecture-37061be7e299",
+        "architecture-aa6a75cdd4f3",
+        "architecture-cad87ef34345",
+        "architecture-f3a3df150f94",
+        "architecture-f817bf84a3cd",
+        "architecture-88cead944d60",
+        "architecture-b03dd2648e9c"
       ]
     },
     {
       "path": "docs/AIprojectcontext/change-impact-map.md",
-      "sha256": "b0d8a3411ba5ed781c54c3a11ef4792e9eb46bc3b58287e2662c707df2a1f432",
+      "sha256": "c7169df29963f9406f93918379ad08f36afe5696ac9dcda649f8324d5ba0bcc6",
       "generated_from_sections": []
     },
     {
       "path": "docs/AIprojectcontext/code-map.md",
-      "sha256": "968c70b82060e4513521978f40a59ec53b3d569c7728b9b66073a3e769c220c5",
+      "sha256": "4746b62580ab43c38a57710212447988868bc7721d786263b8b0e01968e3ac57",
       "generated_from_sections": [
-        "feature-013588c9c57d",
-        "feature-d204609b5133",
-        "feature-735d794773d7",
-        "feature-7c0c55f79de2",
-        "feature-5470c5e54b64",
-        "feature-e67207b2ae8c",
-        "feature-c479f2b215fd",
-        "feature-fed432361e6d",
-        "feature-b531623cbdb1",
-        "feature-f5924c77cb61",
-        "feature-c28f6b28139c",
-        "feature-d27f3cf7a2f3",
-        "feature-226debda70d5",
-        "feature-2bc9ecdc8236",
-        "feature-74e6ef7de5ba",
-        "feature-ad63e514eea5",
-        "feature-571d2be89f87",
-        "feature-483255ba2c13",
-        "feature-b8115f172b1a",
-        "feature-acac3dfc7d07",
-        "feature-79e2a3948370",
-        "feature-277efe637abf",
-        "feature-9d228d39bc9b",
-        "feature-ed385d9823a6",
-        "feature-28dcfc86b039",
-        "feature-9e3ded43f31f",
-        "feature-6c3dfe88cb26",
-        "feature-d2404ad6025d",
-        "feature-18b3aa6c7624",
-        "feature-824224f93cc0",
-        "feature-fa5b70044646",
-        "feature-51cfc842ef01",
-        "feature-36a67e748d6e",
-        "feature-af75fa285d64",
-        "feature-d044c75d27f3",
-        "feature-b5f441bd31a6",
-        "feature-1d190c639aac",
-        "feature-2bb4265035b1",
-        "feature-8d4f7577be2d",
-        "feature-dc13103ff0b6",
-        "feature-17b6997d1153",
-        "feature-575c5db9d63f",
-        "feature-35ebda470e5f",
-        "feature-9535fbde023f",
-        "feature-5090c2addaa9",
-        "feature-566d58075bf9",
-        "feature-669b89f71161",
-        "feature-693d36e958ce",
-        "feature-2e01d5bf13ac",
-        "feature-4458de0c1761",
-        "feature-8e78d6a9601d",
-        "feature-19f0d101afca",
-        "feature-9a5baf1e0530",
-        "feature-e72f35706df3"
+        "feature-0bee25f8136d",
+        "feature-b802401f2a5c",
+        "feature-8b87f7868c56",
+        "feature-bcd8c4dbaa6e",
+        "feature-43ba089f56c1",
+        "feature-ae5204cd96c4",
+        "feature-e39d9c0baf88",
+        "feature-b84e29cff27d",
+        "feature-ce67bd4b9db4",
+        "feature-90b9757fe44d",
+        "feature-da51035eaa95",
+        "feature-6510fa1cdc1e",
+        "feature-b286253274a4",
+        "feature-81fb8547eff8",
+        "feature-bc5f1b32e6df",
+        "feature-e290aa5a05c0",
+        "feature-169031e06e2c",
+        "feature-902f71238ab0",
+        "feature-af3e585fe731",
+        "feature-e07b5b98e0ee",
+        "feature-75018de70cec",
+        "feature-dd830c3f981c",
+        "feature-ef5fe2e10848",
+        "feature-904908050f24",
+        "feature-b0185e158bd3",
+        "feature-49814f990a5d",
+        "feature-5ca7aecf703a",
+        "feature-d88207b33ddf",
+        "feature-d93292188468",
+        "feature-7b9041734534",
+        "feature-33d65137a30b",
+        "feature-33e306b0aa86",
+        "feature-0a949df3e037",
+        "feature-9bc831bc73b2",
+        "feature-6b7fb631dbb1",
+        "feature-aed48960651a",
+        "feature-8215588a8e0f",
+        "feature-8ce87057e4ad",
+        "feature-cf1e52762588",
+        "feature-0aa93905bdaf",
+        "feature-614bf179ee41",
+        "feature-4c73f7861418",
+        "feature-f1b82ee8dce3",
+        "feature-e7fc277f1d30",
+        "feature-3d4affb3f651",
+        "feature-79c263b9dc82",
+        "feature-c0f4b714ae94",
+        "feature-8e54915f4c55",
+        "feature-39b3548260f4",
+        "feature-db55ebc12b3a",
+        "feature-fa42e6acbb69",
+        "feature-c628463adbc3",
+        "feature-58e10b4983cb",
+        "feature-cc09f48861d1"
       ]
     },
     {
       "path": "docs/AIprojectcontext/project-state.md",
-      "sha256": "70d64896aeb23302c58bb523421b8d2a6202e09c708f65c35ffddae7d24194a3",
+      "sha256": "f7415e503cb0b6083f881fd490305203962083eaf8f17532700b8d1a90940baa",
       "generated_from_sections": [
-        "project_identity-43722ddbe5b8"
+        "project_identity-5efe173a4c90"
       ]
     },
     {
       "path": "docs/AIprojectcontext/public-docs-map.md",
-      "sha256": "5c3da9802f4232c6a951a17fe720cc97ac668cfa4b4a13f5c8be8f819137c1f7",
-      "generated_from_sections": [
-        "docs-0b62790771c6",
-        "docs-b5bdb2175ee4",
-        "docs-6d09732d66d3",
-        "docs-15e18f5ba56f",
-        "docs-0909fcb7bd11",
-        "docs-2cef3db0518b",
-        "docs-7bbeae49013d",
-        "docs-84afa3e025de",
-        "docs-5878afe2e03c",
-        "docs-ede8b44930ac"
-      ]
+      "sha256": "4bc43fe7b6d3d52d5184a53fffd794710cb1bc2e7a0b756572acd5f0b6d1332c",
+      "generated_from_sections": []
     },
     {
       "path": "docs/AIprojectcontext/schema.md",
@@ -172,44 +161,37 @@
     },
     {
       "path": "docs/AIprojectcontext/validation-report.md",
-      "sha256": "1cfe57560933a7e071aea2494b16f9348d6d541fd98f0f22a33cc6c0666ef1ed",
+      "sha256": "1e30eca7919f7aec453ffc1b38779d91e2fc535f6e6cccb28b704b46686ea922",
       "generated_from_sections": []
     },
     {
       "path": "docs/AIprojectcontext/workflows.md",
-      "sha256": "6575c525996259971e63984264382de75aefd44b0b7e72744a0b85261d90b648",
+      "sha256": "7fa6c3f7f07a07255cd8469815054078826b69eab60fc48b74dfc2281d1bc0aa",
       "generated_from_sections": [
-        "workflow-6a754e85e2e7",
-        "workflow-5f05609fe27f",
-        "workflow-b45fe61b5ccb",
-        "workflow-169214e31af5",
-        "workflow-8b5e98b3952b",
-        "workflow-b27dfc962565",
-        "workflow-d11364a1da0a",
-        "workflow-0707b35e5b11",
-        "workflow-cd0bef41ed62",
-        "workflow-cf891a2743dc",
-        "workflow-c288e4c63eaa"
+        "workflow-9d0f59d0452b",
+        "workflow-a92a92d855ae",
+        "workflow-98ab6f911ff7",
+        "workflow-22b0a05e0c76",
+        "workflow-67437acf4569",
+        "workflow-d3793b08d2c1",
+        "workflow-435ae6346696",
+        "workflow-724649cae436",
+        "workflow-f8535b943739",
+        "workflow-e89d05078cee"
       ]
     }
   ],
   "source_files": [
     {
       "path": ".aictxignore",
-      "sha256": "8d3c30639b27e147f8015ae1b920f12b8c0e8dbf03537146a5f37362e403ab72",
+      "sha256": "d367c927090469efe7630f628d24c60193bfaffc2d671f44b916ff05945834a4",
       "kind": "other",
       "included_in_generation": false
     },
     {
       "path": ".gitignore",
-      "sha256": "aad5da4a5809ad463dc6fac16aef09234869d53e4ca0e2c841fcb7f190b1c596",
+      "sha256": "6f4a1cfb33d69adc7cd0d00db5af4f2dee3a722a99de4fcf713f44adea9c3a5b",
       "kind": "other",
-      "included_in_generation": false
-    },
-    {
-      "path": "AGENTS.md",
-      "sha256": "b621c8f40a0ba0391da899cf021c446db61bf57d15e3f135d53729dfcc2ebb6a",
-      "kind": "doc",
       "included_in_generation": false
     },
     {
@@ -220,91 +202,43 @@
     },
     {
       "path": "README.md",
-      "sha256": "47557e7593f008077eea22733abef244cd4fbce95e82b367e132c4b75820e6d0",
+      "sha256": "ec64fda8cb28efe29ba767d1078d41af178e09b83784387f54803bdeafaa8b99",
       "kind": "doc",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "aictx_development_plan.md",
-      "sha256": "9cc78765835e19c58331394fdfecaff9ad0f83fc85e0ea6ba6761001cb613493",
-      "kind": "doc",
-      "included_in_generation": false
-    },
-    {
-      "path": "docs/AIprojectcontext/ai-index.md",
-      "sha256": "130fbdaa9353e925d40e3364f46202746a8fa28184bf2048336fb04fc8600095",
-      "kind": "doc",
-      "included_in_generation": false
-    },
-    {
-      "path": "docs/AIprojectcontext/architecture.md",
-      "sha256": "6ef48b6ec92d066d5b1b2868a1bc991fded13a5b57de9b01a565c3d87b65394f",
-      "kind": "doc",
-      "included_in_generation": false
-    },
-    {
-      "path": "docs/AIprojectcontext/change-impact-map.md",
-      "sha256": "b0d8a3411ba5ed781c54c3a11ef4792e9eb46bc3b58287e2662c707df2a1f432",
-      "kind": "doc",
-      "included_in_generation": false
-    },
-    {
-      "path": "docs/AIprojectcontext/code-map.md",
-      "sha256": "968c70b82060e4513521978f40a59ec53b3d569c7728b9b66073a3e769c220c5",
-      "kind": "doc",
-      "included_in_generation": false
-    },
-    {
-      "path": "docs/AIprojectcontext/project-state.md",
-      "sha256": "70d64896aeb23302c58bb523421b8d2a6202e09c708f65c35ffddae7d24194a3",
-      "kind": "doc",
-      "included_in_generation": false
-    },
-    {
-      "path": "docs/AIprojectcontext/public-docs-map.md",
-      "sha256": "5c3da9802f4232c6a951a17fe720cc97ac668cfa4b4a13f5c8be8f819137c1f7",
-      "kind": "doc",
-      "included_in_generation": false
-    },
-    {
-      "path": "docs/AIprojectcontext/schema.md",
-      "sha256": "1183542b7b618f4136e6a6be70881fc3d53f3fb79230360529ab7bd43ef03f8e",
-      "kind": "doc",
-      "included_in_generation": false
-    },
-    {
-      "path": "docs/AIprojectcontext/workflows.md",
-      "sha256": "6575c525996259971e63984264382de75aefd44b0b7e72744a0b85261d90b648",
+      "sha256": "c9c48ecdcde7b310affe42ddf5b118e46e91ea011a79f9f385d615aa0e95edd4",
       "kind": "doc",
       "included_in_generation": false
     },
     {
       "path": "documentation/ARCHITECTURE.md",
-      "sha256": "e1c327462b076899ea4e7e65a73d1bcffed411630366405f69352552fc0774d1",
+      "sha256": "5efd86740f569986c744ce805155d0bbe20c7078002cf2f5f91741161429d0de",
       "kind": "doc",
       "included_in_generation": false
     },
     {
       "path": "documentation/CHANGELOG.md",
-      "sha256": "218e5a1ed178da74e7ebe6b43088e267674a680866c325ca3abc39cd1800c471",
+      "sha256": "d350bd54972e9ea575bee147ecf600053d81162ec361f837fc83904246e71612",
       "kind": "doc",
       "included_in_generation": false
     },
     {
       "path": "documentation/CODEMAP.md",
-      "sha256": "68d9b4dbb6ddffb799713b12638f1956fdfcfad826f49f3edfa616b1ec0d7243",
+      "sha256": "eebbd0c216053044d6972801bda55db3789c2c771002198377cd6f0c1e241a94",
       "kind": "doc",
       "included_in_generation": false
     },
     {
       "path": "documentation/DOCUMENTATION.md",
-      "sha256": "a0dc14e8fd38a6d74cfa74a09d15ffed8e996e1102fccf699dc934d49f39ffc8",
+      "sha256": "2660c23dbcee59c40997438290abcded20e50bf4c2330d626caea23ad6271ff1",
       "kind": "doc",
       "included_in_generation": false
     },
     {
       "path": "documentation/README.md",
-      "sha256": "ad8d1c6ce1a8e673b6aca5cb17d01e821cc5198e3ca7dfc9d8e316fb525d60c8",
+      "sha256": "a7dea0d539bddb570f350929e50f0352f71a771940358d1553fbea898bc8daa7",
       "kind": "doc",
       "included_in_generation": false
     },
@@ -312,217 +246,217 @@
       "path": "pyproject.toml",
       "sha256": "8f0af1b72f70761023adbb8072331755bcc11a14148be296208ac7b866ded544",
       "kind": "manifest",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/__init__.py",
       "sha256": "f866e4a9672daafa6f8b00c0681d189d7eda093a7faccc832eab6fb398c4249d",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/cli.py",
       "sha256": "d24145c5b495cdd88c6f868df762c327cff1ee16f13b9e3eb1b4440c6d4d5f0f",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/config.py",
       "sha256": "1c08d632fb8de4836d3eb3194d63b308466e1608bc34bde6b0660fb9e9008e25",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/context/__init__.py",
       "sha256": "b509ca2c8e11f9ead36d2ba7db1132373bb8697bb68b1c2a1995658ea82c53bb",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/context/agents_md.py",
-      "sha256": "aee2c666c64bd0cecd61c0018c7397a30c6e2196a3582df3f6b21074b7548a9b",
+      "sha256": "0a0188eb28b3d6bcad7919a05a47c17a5b0c5a6aa2a3546b18e0186878f54670",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/context/compressor.py",
       "sha256": "bad0dd685544134b2be70ee6d967b3ca37752a53d9b25658ce44409f68ecc1c5",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/context/fact_extractor.py",
-      "sha256": "968646239f05e2dcf61aa832553833daab2c9ea5c0ab6f1ed599257b6f5cf36f",
+      "sha256": "7db3a08ce6c71b172f1c171fe5a0d0e17dd9ac76566af5b9436e7dc07be96143",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/context/lockfile.py",
-      "sha256": "47072501e55b2c4377df74cc9919b34cadccfddad5b66554fa4531affd323ef7",
+      "sha256": "5047110547d669cc9cec9ba5d9c82c3ccdb427b3e0e3c6c6415096727c652c97",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/context/pipeline.py",
       "sha256": "497a758a429c835f5b9dc93980d894847385de4fadc3ae4b96e015cdd268c32f",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/context/planner.py",
-      "sha256": "521110658410d9e94d7faa45da7f921e1ca19fe28336c5975022d03d0db82c6f",
+      "sha256": "ffe7974110246ca732445dea17c2c3e22734cbd21f8dba4d9b95d145777a8a2f",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/context/writer.py",
-      "sha256": "9922a9aed47bd4ff00e7d8ce5df180034932ca46074aed11d58a1972b304ec91",
+      "sha256": "2edf751a3a2703b06b8e67cdcaffcc810e3ed1005543d5d61369ce5aced95cd1",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/errors.py",
       "sha256": "584327e7075255b31087c19910c1a53ef255eb81d80052c7fdb931f958b0f29c",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/git/__init__.py",
       "sha256": "09b73624e0759437169f3a064048ea33a2b5ec17b3cfa1209a0a03146ec7181a",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/git/diff.py",
       "sha256": "900d3256060b5175f8ee78494d9750f00dec8b67f3fc2e204a203e1471fedfcd",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/git/repo.py",
       "sha256": "87b28d8ddf8609b22b070e47b85411abe2620b52168cd77cfd92dd54ee3ab18a",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/git/status.py",
       "sha256": "6cbeb7c9866076bc80ed7b1d0b1d160381a5c937d5da4f4e469e6aff7af5e079",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/io/__init__.py",
       "sha256": "b725d8a4268864009d561357529a1dfe07d021bcebe1673fd2a9f71118f5e6f2",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/io/files.py",
       "sha256": "4b7399990a7e31619c5d3830bbda047c4193adfccab9fe4ce29cb20aa64a147d",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/io/jsonl.py",
       "sha256": "102670400876cb20a9bb34a5ea68241902b1f96d079cb1529a6548fb1cf0bed2",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/io/patches.py",
       "sha256": "531a46341b8ea57d8ec70a4a8cdd90b49f9e38849c3aa28087303fff4e9891ba",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/llm/__init__.py",
       "sha256": "d6e85ca0c70a38a550449896b91eb275a01904f109b145409bd76b8c10feda09",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/llm/base.py",
       "sha256": "77be24c22b216e7a942b5afa15d11dc7fe89d24ee88280431c81820a957c4566",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/llm/dry_run.py",
       "sha256": "270a498f75bc83e2b2d52d43265079a0c7e8c4c3f06108b317ebbc751cf80df5",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/llm/oci_genai.py",
       "sha256": "f2e0c2e48044206056ee1844a953dfcef02dae10561f53d45e373b69f22dc22d",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/logging.py",
       "sha256": "0b2cc6a4cb6854c49ae016dfd2c2ff7267b1a6d66056b5efdc7704d3a380e341",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/models/__init__.py",
       "sha256": "36a766a549010a8c263437c7e83193ad51ca410a5aa479c43ef7828a5fa5794c",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/models/context_lock.py",
       "sha256": "6184b379d9b37d73115432b32fa4646ef05fce6473f3e163d93de59c1568c0f1",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/models/docs_map.py",
       "sha256": "db27c6a84f5b85a24bd94c119e2483de49f7ebfc84e1bef0d17e72f476d35eca",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/models/inventory.py",
       "sha256": "2cae62663868380a17bdb06deb50f6561bd9cbe11f37e62af8320f65a06d0b10",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/models/run_report.py",
       "sha256": "cf0fa602f57d7aa87c0380aa6fa3768a3d9a685287f90213278717c09cc45652",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/oci/__init__.py",
       "sha256": "496636073d7e84ac90e33ff7e7dbf5100af6e788a812a7f35679ab0cdda51827",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/oci/cleanup.py",
       "sha256": "daefd4e92ce2932af44533d2f07379af5a8f9b67297f09766b3309c3ba19d5e5",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/oci/config.py",
       "sha256": "4dc2ebbcb9382a8c28a955351467e9fc4af3280e608585072e69377ea07c4a0e",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/oci/object_storage.py",
       "sha256": "1a1b9f7ccf03a85529e5fb8145f5e44925c25f1ccdbbd9cd4741d21c804eb6ec",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/oci/remote_job.py",
       "sha256": "4aed2d6a4c0a07b54cbb794fc6be6b8e0b035ba94478738c6a087e17ccf283f5",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/public_docs/__init__.py",
@@ -552,2065 +486,1900 @@
       "path": "src/aictx/scan/__init__.py",
       "sha256": "55e9bbb4145c9be46041f8e6f2016c39d78d926c5744e135c27870d3b5572c07",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/scan/classify.py",
       "sha256": "7344165ac67e955be02536dd57c7895f08c9b7979c405858f5b0bfa05f6d22d7",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/scan/ignore.py",
       "sha256": "6d83a527be49a44cffb53a91936550964fa536c7b48c47fa8abf0fac09145fae",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/scan/scanner.py",
-      "sha256": "6c2d673f46335377e0826ade19d802538907ee989c4f9ef6d6c42a4d65c27ee3",
+      "sha256": "af344a6874f837897cdf61caf28d4b3012ced00e422d8785ea974f696240bdea",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/scan/secrets.py",
       "sha256": "417e65fafc583b12efa117a1b008e074ebaf93a5e63a64c72d8774c56feae617",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/verify/__init__.py",
       "sha256": "21353e3df7271755da5c30bb440d07abaf70ddce867b6a8d8f0ca7d07199697d",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/verify/hashes.py",
       "sha256": "d303be8b38909fc95928127d0e12d50487eaab129c213bbb9dcd8ddd3338e7d9",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/verify/impact.py",
       "sha256": "27f58851c726725c8df46c83d2d7c4dae01671a3ee6966bb85200dd23e077a77",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/verify/reports.py",
       "sha256": "713d76bd771963405801cbb3e84bba2f0e692a970c2a4861dcac8e600d99452c",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/verify/verifier.py",
-      "sha256": "5edaace22a628599f984b044d78689008457ed91188299db76e3f42c6127f52c",
+      "sha256": "fcb20006e7757db1dae55c0130071f69710872b25d778a2f815fafe62ae95664",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "tests/conftest.py",
       "sha256": "4876b6fc29646213ae90dcf8c8bd4a1cce3d637dcbab936a1404bd04a568a97a",
       "kind": "test",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "tests/fixtures/git_repos.py",
       "sha256": "d882719284eab852b94d77606c2301ceab88f7a3cbf2531b0f7510595a26f17d",
       "kind": "test",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "tests/integration/__init__.py",
       "sha256": "0097760e446648b0657cb6d59dade6f1a98d4c7c04dcbbf47f43c1ba70119416",
       "kind": "test",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "tests/unit/__init__.py",
       "sha256": "c7104abce3571e100b20059afd0d796ceded30e219fde8e5da69aed7d9aa2095",
       "kind": "test",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "tests/unit/test_cli.py",
       "sha256": "5418d06084f8e70b42e6efc6afe4f9e0ff3c79cbd2a160b0697942d1c964f997",
       "kind": "test",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "tests/unit/test_run_phase1.py",
-      "sha256": "d1e8764fca4cd6c7242d13666d1ead213f668fe114fa969bfd5a204a52003d76",
+      "sha256": "e01bc5cc4d992d80e8190bc76e2055aa3615615e93835845829d7388f6282581",
       "kind": "test",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "tests/unit/test_scan_integration.py",
-      "sha256": "c23ff6e7fcb34167e4ccdfec0c8d63f10a0072f9e668b522aa6f3519bab08ca9",
+      "sha256": "7cde96dd9264af6297af1e65b0ccbe86bdd07352219d1e0eb2700783c4e411b3",
       "kind": "test",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "tests/unit/test_scanner.py",
       "sha256": "421f890c9ecfc8cf6ab973079d9f3822c6cc49e20daf3fbeace61f77247f153a",
       "kind": "test",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "tests/unit/test_verify.py",
-      "sha256": "c9b9806c744dc37d18edd6bdd494d83524d8ce5e46d57fed5bcd5f433e218a5e",
+      "sha256": "2fa5be2c5c7f1de7517a49b77ad0c6fb5ac581b62ce72d4e48385b6b7f704874",
       "kind": "test",
-      "included_in_generation": false
+      "included_in_generation": true
     }
   ],
   "sections": [
     {
-      "section_id": "project_identity-43722ddbe5b8",
+      "section_id": "project_identity-5efe173a4c90",
       "generated_file": "docs/AIprojectcontext/project-state.md",
       "heading": "project_identity",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/README.md"
+        "README.md"
       ],
       "source_hashes": [
-        "unknown"
+        "ec64fda8cb28efe29ba767d1078d41af178e09b83784387f54803bdeafaa8b99"
       ],
       "fact_ids": [
-        "project_identity-43722ddbe5b8"
+        "project_identity-5efe173a4c90"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-38b7d604a130",
+      "section_id": "architecture-c49d105346f0",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/__init__.py"
+        "src/aictx/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "f866e4a9672daafa6f8b00c0681d189d7eda093a7faccc832eab6fb398c4249d"
       ],
       "fact_ids": [
-        "architecture-38b7d604a130"
+        "architecture-c49d105346f0"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-993d5dd300c7",
+      "section_id": "architecture-6c86d176dcf5",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/cli.py"
+        "src/aictx/cli.py"
       ],
       "source_hashes": [
-        "unknown"
+        "d24145c5b495cdd88c6f868df762c327cff1ee16f13b9e3eb1b4440c6d4d5f0f"
       ],
       "fact_ids": [
-        "architecture-993d5dd300c7"
+        "architecture-6c86d176dcf5"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-ccb04df049e2",
+      "section_id": "architecture-5b09921affe4",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/config.py"
+        "src/aictx/config.py"
       ],
       "source_hashes": [
-        "unknown"
+        "1c08d632fb8de4836d3eb3194d63b308466e1608bc34bde6b0660fb9e9008e25"
       ],
       "fact_ids": [
-        "architecture-ccb04df049e2"
+        "architecture-5b09921affe4"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-e8444038c8ee",
+      "section_id": "architecture-a4edb5af2590",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/context/__init__.py"
+        "src/aictx/context/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "b509ca2c8e11f9ead36d2ba7db1132373bb8697bb68b1c2a1995658ea82c53bb"
       ],
       "fact_ids": [
-        "architecture-e8444038c8ee"
+        "architecture-a4edb5af2590"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-c0f42d072b19",
+      "section_id": "architecture-ff15ab96990a",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/context/agents_md.py"
+        "src/aictx/context/agents_md.py"
       ],
       "source_hashes": [
-        "unknown"
+        "0a0188eb28b3d6bcad7919a05a47c17a5b0c5a6aa2a3546b18e0186878f54670"
       ],
       "fact_ids": [
-        "architecture-c0f42d072b19"
+        "architecture-ff15ab96990a"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-ab00218529e0",
+      "section_id": "architecture-8d8e53f8f38b",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/context/compressor.py"
+        "src/aictx/context/compressor.py"
       ],
       "source_hashes": [
-        "unknown"
+        "bad0dd685544134b2be70ee6d967b3ca37752a53d9b25658ce44409f68ecc1c5"
       ],
       "fact_ids": [
-        "architecture-ab00218529e0"
+        "architecture-8d8e53f8f38b"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-7532d9ca5b0a",
+      "section_id": "architecture-3ef6041aa82b",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/context/fact_extractor.py"
+        "src/aictx/context/fact_extractor.py"
       ],
       "source_hashes": [
-        "unknown"
+        "7db3a08ce6c71b172f1c171fe5a0d0e17dd9ac76566af5b9436e7dc07be96143"
       ],
       "fact_ids": [
-        "architecture-7532d9ca5b0a"
+        "architecture-3ef6041aa82b"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-4e7818e91771",
+      "section_id": "architecture-204d516ee13d",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/context/lockfile.py"
+        "src/aictx/context/lockfile.py"
       ],
       "source_hashes": [
-        "unknown"
+        "5047110547d669cc9cec9ba5d9c82c3ccdb427b3e0e3c6c6415096727c652c97"
       ],
       "fact_ids": [
-        "architecture-4e7818e91771"
+        "architecture-204d516ee13d"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-1527a8d85d4e",
+      "section_id": "architecture-50d0840d8117",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/context/pipeline.py"
+        "src/aictx/context/pipeline.py"
       ],
       "source_hashes": [
-        "unknown"
+        "497a758a429c835f5b9dc93980d894847385de4fadc3ae4b96e015cdd268c32f"
       ],
       "fact_ids": [
-        "architecture-1527a8d85d4e"
+        "architecture-50d0840d8117"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-f9957db9a9d2",
+      "section_id": "architecture-c3bccc035632",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/context/planner.py"
+        "src/aictx/context/planner.py"
       ],
       "source_hashes": [
-        "unknown"
+        "ffe7974110246ca732445dea17c2c3e22734cbd21f8dba4d9b95d145777a8a2f"
       ],
       "fact_ids": [
-        "architecture-f9957db9a9d2"
+        "architecture-c3bccc035632"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-eb5a939bd941",
+      "section_id": "architecture-13fa5b94620b",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/context/writer.py"
+        "src/aictx/context/writer.py"
       ],
       "source_hashes": [
-        "unknown"
+        "2edf751a3a2703b06b8e67cdcaffcc810e3ed1005543d5d61369ce5aced95cd1"
       ],
       "fact_ids": [
-        "architecture-eb5a939bd941"
+        "architecture-13fa5b94620b"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-11a8a32a10b6",
+      "section_id": "architecture-439416cabd48",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/errors.py"
+        "src/aictx/errors.py"
       ],
       "source_hashes": [
-        "unknown"
+        "584327e7075255b31087c19910c1a53ef255eb81d80052c7fdb931f958b0f29c"
       ],
       "fact_ids": [
-        "architecture-11a8a32a10b6"
+        "architecture-439416cabd48"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-d8bce737818c",
+      "section_id": "architecture-3f16c8136be2",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/git/__init__.py"
+        "src/aictx/git/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "09b73624e0759437169f3a064048ea33a2b5ec17b3cfa1209a0a03146ec7181a"
       ],
       "fact_ids": [
-        "architecture-d8bce737818c"
+        "architecture-3f16c8136be2"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-a2c53af91175",
+      "section_id": "architecture-e9194b19f674",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/git/diff.py"
+        "src/aictx/git/diff.py"
       ],
       "source_hashes": [
-        "unknown"
+        "900d3256060b5175f8ee78494d9750f00dec8b67f3fc2e204a203e1471fedfcd"
       ],
       "fact_ids": [
-        "architecture-a2c53af91175"
+        "architecture-e9194b19f674"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-f36ec06c990e",
+      "section_id": "architecture-1fc6617bd844",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/git/repo.py"
+        "src/aictx/git/repo.py"
       ],
       "source_hashes": [
-        "unknown"
+        "87b28d8ddf8609b22b070e47b85411abe2620b52168cd77cfd92dd54ee3ab18a"
       ],
       "fact_ids": [
-        "architecture-f36ec06c990e"
+        "architecture-1fc6617bd844"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-9b4d96c15ed4",
+      "section_id": "architecture-2665c6ab77c4",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/git/status.py"
+        "src/aictx/git/status.py"
       ],
       "source_hashes": [
-        "unknown"
+        "6cbeb7c9866076bc80ed7b1d0b1d160381a5c937d5da4f4e469e6aff7af5e079"
       ],
       "fact_ids": [
-        "architecture-9b4d96c15ed4"
+        "architecture-2665c6ab77c4"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-bd81c115a8c5",
+      "section_id": "architecture-bbf850199103",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/io/__init__.py"
+        "src/aictx/io/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "b725d8a4268864009d561357529a1dfe07d021bcebe1673fd2a9f71118f5e6f2"
       ],
       "fact_ids": [
-        "architecture-bd81c115a8c5"
+        "architecture-bbf850199103"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-f47c312bc5e4",
+      "section_id": "architecture-c38c5cca89c9",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/io/files.py"
+        "src/aictx/io/files.py"
       ],
       "source_hashes": [
-        "unknown"
+        "4b7399990a7e31619c5d3830bbda047c4193adfccab9fe4ce29cb20aa64a147d"
       ],
       "fact_ids": [
-        "architecture-f47c312bc5e4"
+        "architecture-c38c5cca89c9"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-265c63114fa1",
+      "section_id": "architecture-e12cce509db1",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/io/jsonl.py"
+        "src/aictx/io/jsonl.py"
       ],
       "source_hashes": [
-        "unknown"
+        "102670400876cb20a9bb34a5ea68241902b1f96d079cb1529a6548fb1cf0bed2"
       ],
       "fact_ids": [
-        "architecture-265c63114fa1"
+        "architecture-e12cce509db1"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-66e9218ea1d9",
+      "section_id": "architecture-80b1c68642f2",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/io/patches.py"
+        "src/aictx/io/patches.py"
       ],
       "source_hashes": [
-        "unknown"
+        "531a46341b8ea57d8ec70a4a8cdd90b49f9e38849c3aa28087303fff4e9891ba"
       ],
       "fact_ids": [
-        "architecture-66e9218ea1d9"
+        "architecture-80b1c68642f2"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-30fa99bcc647",
+      "section_id": "architecture-523dc92e7900",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/llm/__init__.py"
+        "src/aictx/llm/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "d6e85ca0c70a38a550449896b91eb275a01904f109b145409bd76b8c10feda09"
       ],
       "fact_ids": [
-        "architecture-30fa99bcc647"
+        "architecture-523dc92e7900"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-d01f913facfb",
+      "section_id": "architecture-1813492cdba1",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/llm/base.py"
+        "src/aictx/llm/base.py"
       ],
       "source_hashes": [
-        "unknown"
+        "77be24c22b216e7a942b5afa15d11dc7fe89d24ee88280431c81820a957c4566"
       ],
       "fact_ids": [
-        "architecture-d01f913facfb"
+        "architecture-1813492cdba1"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-63b61c5526ef",
+      "section_id": "architecture-284e40438b91",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/llm/dry_run.py"
+        "src/aictx/llm/dry_run.py"
       ],
       "source_hashes": [
-        "unknown"
+        "270a498f75bc83e2b2d52d43265079a0c7e8c4c3f06108b317ebbc751cf80df5"
       ],
       "fact_ids": [
-        "architecture-63b61c5526ef"
+        "architecture-284e40438b91"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-db1bacc2122e",
+      "section_id": "architecture-765a3f8a840d",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/llm/oci_genai.py"
+        "src/aictx/llm/oci_genai.py"
       ],
       "source_hashes": [
-        "unknown"
+        "f2e0c2e48044206056ee1844a953dfcef02dae10561f53d45e373b69f22dc22d"
       ],
       "fact_ids": [
-        "architecture-db1bacc2122e"
+        "architecture-765a3f8a840d"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-89a2a999cbe4",
+      "section_id": "architecture-3afad6567591",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/logging.py"
+        "src/aictx/logging.py"
       ],
       "source_hashes": [
-        "unknown"
+        "0b2cc6a4cb6854c49ae016dfd2c2ff7267b1a6d66056b5efdc7704d3a380e341"
       ],
       "fact_ids": [
-        "architecture-89a2a999cbe4"
+        "architecture-3afad6567591"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-e18bc849e1b1",
+      "section_id": "architecture-3fa493fa51ef",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/models/__init__.py"
+        "src/aictx/models/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "36a766a549010a8c263437c7e83193ad51ca410a5aa479c43ef7828a5fa5794c"
       ],
       "fact_ids": [
-        "architecture-e18bc849e1b1"
+        "architecture-3fa493fa51ef"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-0fcee8b20672",
+      "section_id": "architecture-8c1a536d4561",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/models/context_lock.py"
+        "src/aictx/models/context_lock.py"
       ],
       "source_hashes": [
-        "unknown"
+        "6184b379d9b37d73115432b32fa4646ef05fce6473f3e163d93de59c1568c0f1"
       ],
       "fact_ids": [
-        "architecture-0fcee8b20672"
+        "architecture-8c1a536d4561"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-ad34dfa525cb",
+      "section_id": "architecture-6bf29168994b",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/models/docs_map.py"
+        "src/aictx/models/docs_map.py"
       ],
       "source_hashes": [
-        "unknown"
+        "db27c6a84f5b85a24bd94c119e2483de49f7ebfc84e1bef0d17e72f476d35eca"
       ],
       "fact_ids": [
-        "architecture-ad34dfa525cb"
+        "architecture-6bf29168994b"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-14d316a71b5a",
+      "section_id": "architecture-ce915b5776b3",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/models/inventory.py"
+        "src/aictx/models/inventory.py"
       ],
       "source_hashes": [
-        "unknown"
+        "2cae62663868380a17bdb06deb50f6561bd9cbe11f37e62af8320f65a06d0b10"
       ],
       "fact_ids": [
-        "architecture-14d316a71b5a"
+        "architecture-ce915b5776b3"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-563768c8ed21",
+      "section_id": "architecture-76b3bc74bf3e",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/models/run_report.py"
+        "src/aictx/models/run_report.py"
       ],
       "source_hashes": [
-        "unknown"
+        "cf0fa602f57d7aa87c0380aa6fa3768a3d9a685287f90213278717c09cc45652"
       ],
       "fact_ids": [
-        "architecture-563768c8ed21"
+        "architecture-76b3bc74bf3e"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-a1864772065c",
+      "section_id": "architecture-e684407f3eb2",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/oci/__init__.py"
+        "src/aictx/oci/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "496636073d7e84ac90e33ff7e7dbf5100af6e788a812a7f35679ab0cdda51827"
       ],
       "fact_ids": [
-        "architecture-a1864772065c"
+        "architecture-e684407f3eb2"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-5b9a4ed5495b",
+      "section_id": "architecture-d18f808a5ef2",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/oci/cleanup.py"
+        "src/aictx/oci/cleanup.py"
       ],
       "source_hashes": [
-        "unknown"
+        "daefd4e92ce2932af44533d2f07379af5a8f9b67297f09766b3309c3ba19d5e5"
       ],
       "fact_ids": [
-        "architecture-5b9a4ed5495b"
+        "architecture-d18f808a5ef2"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-d952c5913a4e",
+      "section_id": "architecture-f96343160a8d",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/oci/config.py"
+        "src/aictx/oci/config.py"
       ],
       "source_hashes": [
-        "unknown"
+        "4dc2ebbcb9382a8c28a955351467e9fc4af3280e608585072e69377ea07c4a0e"
       ],
       "fact_ids": [
-        "architecture-d952c5913a4e"
+        "architecture-f96343160a8d"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-508195dda4fc",
+      "section_id": "architecture-2eead7bd187c",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/oci/object_storage.py"
+        "src/aictx/oci/object_storage.py"
       ],
       "source_hashes": [
-        "unknown"
+        "1a1b9f7ccf03a85529e5fb8145f5e44925c25f1ccdbbd9cd4741d21c804eb6ec"
       ],
       "fact_ids": [
-        "architecture-508195dda4fc"
+        "architecture-2eead7bd187c"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-921ff00daafa",
+      "section_id": "architecture-3d7624e1ad28",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/oci/remote_job.py"
+        "src/aictx/oci/remote_job.py"
       ],
       "source_hashes": [
-        "unknown"
+        "4aed2d6a4c0a07b54cbb794fc6be6b8e0b035ba94478738c6a087e17ccf283f5"
       ],
       "fact_ids": [
-        "architecture-921ff00daafa"
+        "architecture-3d7624e1ad28"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-c4fdf401d774",
+      "section_id": "architecture-b05b1536b217",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/scan/__init__.py"
+        "src/aictx/scan/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "55e9bbb4145c9be46041f8e6f2016c39d78d926c5744e135c27870d3b5572c07"
       ],
       "fact_ids": [
-        "architecture-c4fdf401d774"
+        "architecture-b05b1536b217"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-970000fdd112",
+      "section_id": "architecture-32493ba7fdc6",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/scan/classify.py"
+        "src/aictx/scan/classify.py"
       ],
       "source_hashes": [
-        "unknown"
+        "7344165ac67e955be02536dd57c7895f08c9b7979c405858f5b0bfa05f6d22d7"
       ],
       "fact_ids": [
-        "architecture-970000fdd112"
+        "architecture-32493ba7fdc6"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-48d3e4d5c5ea",
+      "section_id": "architecture-21d0af3cd69f",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/scan/ignore.py"
+        "src/aictx/scan/ignore.py"
       ],
       "source_hashes": [
-        "unknown"
+        "6d83a527be49a44cffb53a91936550964fa536c7b48c47fa8abf0fac09145fae"
       ],
       "fact_ids": [
-        "architecture-48d3e4d5c5ea"
+        "architecture-21d0af3cd69f"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-28c45c5cb601",
+      "section_id": "architecture-808028907c72",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/scan/scanner.py"
+        "src/aictx/scan/scanner.py"
       ],
       "source_hashes": [
-        "unknown"
+        "af344a6874f837897cdf61caf28d4b3012ced00e422d8785ea974f696240bdea"
       ],
       "fact_ids": [
-        "architecture-28c45c5cb601"
+        "architecture-808028907c72"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-aa70da25c537",
+      "section_id": "architecture-53e0282ee6c0",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/scan/secrets.py"
+        "src/aictx/scan/secrets.py"
       ],
       "source_hashes": [
-        "unknown"
+        "417e65fafc583b12efa117a1b008e074ebaf93a5e63a64c72d8774c56feae617"
       ],
       "fact_ids": [
-        "architecture-aa70da25c537"
+        "architecture-53e0282ee6c0"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-6c14d34aa680",
+      "section_id": "architecture-095b14932920",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/verify/__init__.py"
+        "src/aictx/verify/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "21353e3df7271755da5c30bb440d07abaf70ddce867b6a8d8f0ca7d07199697d"
       ],
       "fact_ids": [
-        "architecture-6c14d34aa680"
+        "architecture-095b14932920"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-c35284d9bbf1",
+      "section_id": "architecture-1ec6ed7b670a",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/verify/hashes.py"
+        "src/aictx/verify/hashes.py"
       ],
       "source_hashes": [
-        "unknown"
+        "d303be8b38909fc95928127d0e12d50487eaab129c213bbb9dcd8ddd3338e7d9"
       ],
       "fact_ids": [
-        "architecture-c35284d9bbf1"
+        "architecture-1ec6ed7b670a"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-c4e9942d7b56",
+      "section_id": "architecture-935eef5c5987",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/verify/impact.py"
+        "src/aictx/verify/impact.py"
       ],
       "source_hashes": [
-        "unknown"
+        "27f58851c726725c8df46c83d2d7c4dae01671a3ee6966bb85200dd23e077a77"
       ],
       "fact_ids": [
-        "architecture-c4e9942d7b56"
+        "architecture-935eef5c5987"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-6c0422db6fc1",
+      "section_id": "architecture-c2b10cc284da",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/verify/reports.py"
+        "src/aictx/verify/reports.py"
       ],
       "source_hashes": [
-        "unknown"
+        "713d76bd771963405801cbb3e84bba2f0e692a970c2a4861dcac8e600d99452c"
       ],
       "fact_ids": [
-        "architecture-6c0422db6fc1"
+        "architecture-c2b10cc284da"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-3dd4c5b0033f",
+      "section_id": "architecture-de3e2cb306a7",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/verify/verifier.py"
+        "src/aictx/verify/verifier.py"
       ],
       "source_hashes": [
-        "unknown"
+        "fcb20006e7757db1dae55c0130071f69710872b25d778a2f815fafe62ae95664"
       ],
       "fact_ids": [
-        "architecture-3dd4c5b0033f"
+        "architecture-de3e2cb306a7"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-96a1cb542b88",
+      "section_id": "architecture-40a6fa8f714d",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/conftest.py"
+        "tests/conftest.py"
       ],
       "source_hashes": [
-        "unknown"
+        "4876b6fc29646213ae90dcf8c8bd4a1cce3d637dcbab936a1404bd04a568a97a"
       ],
       "fact_ids": [
-        "architecture-96a1cb542b88"
+        "architecture-40a6fa8f714d"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-fbe9e7498031",
+      "section_id": "architecture-01d88d432262",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/fixtures/git_repos.py"
+        "tests/fixtures/git_repos.py"
       ],
       "source_hashes": [
-        "unknown"
+        "d882719284eab852b94d77606c2301ceab88f7a3cbf2531b0f7510595a26f17d"
       ],
       "fact_ids": [
-        "architecture-fbe9e7498031"
+        "architecture-01d88d432262"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-29ea2ec75960",
+      "section_id": "architecture-37061be7e299",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/integration/__init__.py"
+        "tests/integration/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "0097760e446648b0657cb6d59dade6f1a98d4c7c04dcbbf47f43c1ba70119416"
       ],
       "fact_ids": [
-        "architecture-29ea2ec75960"
+        "architecture-37061be7e299"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-ed57a25cbd4b",
+      "section_id": "architecture-aa6a75cdd4f3",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/unit/__init__.py"
+        "tests/unit/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "c7104abce3571e100b20059afd0d796ceded30e219fde8e5da69aed7d9aa2095"
       ],
       "fact_ids": [
-        "architecture-ed57a25cbd4b"
+        "architecture-aa6a75cdd4f3"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-bce98aa2d952",
+      "section_id": "architecture-cad87ef34345",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/unit/test_cli.py"
+        "tests/unit/test_cli.py"
       ],
       "source_hashes": [
-        "unknown"
+        "5418d06084f8e70b42e6efc6afe4f9e0ff3c79cbd2a160b0697942d1c964f997"
       ],
       "fact_ids": [
-        "architecture-bce98aa2d952"
+        "architecture-cad87ef34345"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-6f9880baf9f8",
+      "section_id": "architecture-f3a3df150f94",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/unit/test_run_phase1.py"
+        "tests/unit/test_run_phase1.py"
       ],
       "source_hashes": [
-        "unknown"
+        "e01bc5cc4d992d80e8190bc76e2055aa3615615e93835845829d7388f6282581"
       ],
       "fact_ids": [
-        "architecture-6f9880baf9f8"
+        "architecture-f3a3df150f94"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-64cd7421a08e",
+      "section_id": "architecture-f817bf84a3cd",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/unit/test_scan_integration.py"
+        "tests/unit/test_scan_integration.py"
       ],
       "source_hashes": [
-        "unknown"
+        "7cde96dd9264af6297af1e65b0ccbe86bdd07352219d1e0eb2700783c4e411b3"
       ],
       "fact_ids": [
-        "architecture-64cd7421a08e"
+        "architecture-f817bf84a3cd"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-17ec9364cba6",
+      "section_id": "architecture-88cead944d60",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/unit/test_scanner.py"
+        "tests/unit/test_scanner.py"
       ],
       "source_hashes": [
-        "unknown"
+        "421f890c9ecfc8cf6ab973079d9f3822c6cc49e20daf3fbeace61f77247f153a"
       ],
       "fact_ids": [
-        "architecture-17ec9364cba6"
+        "architecture-88cead944d60"
       ],
       "status": "current"
     },
     {
-      "section_id": "architecture-5708ec67d176",
+      "section_id": "architecture-b03dd2648e9c",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/unit/test_verify.py"
+        "tests/unit/test_verify.py"
       ],
       "source_hashes": [
-        "unknown"
+        "2fa5be2c5c7f1de7517a49b77ad0c6fb5ac581b62ce72d4e48385b6b7f704874"
       ],
       "fact_ids": [
-        "architecture-5708ec67d176"
+        "architecture-b03dd2648e9c"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-013588c9c57d",
+      "section_id": "feature-0bee25f8136d",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/__init__.py"
+        "src/aictx/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "f866e4a9672daafa6f8b00c0681d189d7eda093a7faccc832eab6fb398c4249d"
       ],
       "fact_ids": [
-        "feature-013588c9c57d"
+        "feature-0bee25f8136d"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-d204609b5133",
+      "section_id": "feature-b802401f2a5c",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/cli.py"
+        "src/aictx/cli.py"
       ],
       "source_hashes": [
-        "unknown"
+        "d24145c5b495cdd88c6f868df762c327cff1ee16f13b9e3eb1b4440c6d4d5f0f"
       ],
       "fact_ids": [
-        "feature-d204609b5133"
+        "feature-b802401f2a5c"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-735d794773d7",
+      "section_id": "feature-8b87f7868c56",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/config.py"
+        "src/aictx/config.py"
       ],
       "source_hashes": [
-        "unknown"
+        "1c08d632fb8de4836d3eb3194d63b308466e1608bc34bde6b0660fb9e9008e25"
       ],
       "fact_ids": [
-        "feature-735d794773d7"
+        "feature-8b87f7868c56"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-7c0c55f79de2",
+      "section_id": "feature-bcd8c4dbaa6e",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/context/__init__.py"
+        "src/aictx/context/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "b509ca2c8e11f9ead36d2ba7db1132373bb8697bb68b1c2a1995658ea82c53bb"
       ],
       "fact_ids": [
-        "feature-7c0c55f79de2"
+        "feature-bcd8c4dbaa6e"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-5470c5e54b64",
+      "section_id": "feature-43ba089f56c1",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/context/agents_md.py"
+        "src/aictx/context/agents_md.py"
       ],
       "source_hashes": [
-        "unknown"
+        "0a0188eb28b3d6bcad7919a05a47c17a5b0c5a6aa2a3546b18e0186878f54670"
       ],
       "fact_ids": [
-        "feature-5470c5e54b64"
+        "feature-43ba089f56c1"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-e67207b2ae8c",
+      "section_id": "feature-ae5204cd96c4",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/context/compressor.py"
+        "src/aictx/context/compressor.py"
       ],
       "source_hashes": [
-        "unknown"
+        "bad0dd685544134b2be70ee6d967b3ca37752a53d9b25658ce44409f68ecc1c5"
       ],
       "fact_ids": [
-        "feature-e67207b2ae8c"
+        "feature-ae5204cd96c4"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-c479f2b215fd",
+      "section_id": "feature-e39d9c0baf88",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/context/fact_extractor.py"
+        "src/aictx/context/fact_extractor.py"
       ],
       "source_hashes": [
-        "unknown"
+        "7db3a08ce6c71b172f1c171fe5a0d0e17dd9ac76566af5b9436e7dc07be96143"
       ],
       "fact_ids": [
-        "feature-c479f2b215fd"
+        "feature-e39d9c0baf88"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-fed432361e6d",
+      "section_id": "feature-b84e29cff27d",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/context/lockfile.py"
+        "src/aictx/context/lockfile.py"
       ],
       "source_hashes": [
-        "unknown"
+        "5047110547d669cc9cec9ba5d9c82c3ccdb427b3e0e3c6c6415096727c652c97"
       ],
       "fact_ids": [
-        "feature-fed432361e6d"
+        "feature-b84e29cff27d"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-b531623cbdb1",
+      "section_id": "feature-ce67bd4b9db4",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/context/pipeline.py"
+        "src/aictx/context/pipeline.py"
       ],
       "source_hashes": [
-        "unknown"
+        "497a758a429c835f5b9dc93980d894847385de4fadc3ae4b96e015cdd268c32f"
       ],
       "fact_ids": [
-        "feature-b531623cbdb1"
+        "feature-ce67bd4b9db4"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-f5924c77cb61",
+      "section_id": "feature-90b9757fe44d",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/context/planner.py"
+        "src/aictx/context/planner.py"
       ],
       "source_hashes": [
-        "unknown"
+        "ffe7974110246ca732445dea17c2c3e22734cbd21f8dba4d9b95d145777a8a2f"
       ],
       "fact_ids": [
-        "feature-f5924c77cb61"
+        "feature-90b9757fe44d"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-c28f6b28139c",
+      "section_id": "feature-da51035eaa95",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/context/writer.py"
+        "src/aictx/context/writer.py"
       ],
       "source_hashes": [
-        "unknown"
+        "2edf751a3a2703b06b8e67cdcaffcc810e3ed1005543d5d61369ce5aced95cd1"
       ],
       "fact_ids": [
-        "feature-c28f6b28139c"
+        "feature-da51035eaa95"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-d27f3cf7a2f3",
+      "section_id": "feature-6510fa1cdc1e",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/errors.py"
+        "src/aictx/errors.py"
       ],
       "source_hashes": [
-        "unknown"
+        "584327e7075255b31087c19910c1a53ef255eb81d80052c7fdb931f958b0f29c"
       ],
       "fact_ids": [
-        "feature-d27f3cf7a2f3"
+        "feature-6510fa1cdc1e"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-226debda70d5",
+      "section_id": "feature-b286253274a4",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/git/__init__.py"
+        "src/aictx/git/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "09b73624e0759437169f3a064048ea33a2b5ec17b3cfa1209a0a03146ec7181a"
       ],
       "fact_ids": [
-        "feature-226debda70d5"
+        "feature-b286253274a4"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-2bc9ecdc8236",
+      "section_id": "feature-81fb8547eff8",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/git/diff.py"
+        "src/aictx/git/diff.py"
       ],
       "source_hashes": [
-        "unknown"
+        "900d3256060b5175f8ee78494d9750f00dec8b67f3fc2e204a203e1471fedfcd"
       ],
       "fact_ids": [
-        "feature-2bc9ecdc8236"
+        "feature-81fb8547eff8"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-74e6ef7de5ba",
+      "section_id": "feature-bc5f1b32e6df",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/git/repo.py"
+        "src/aictx/git/repo.py"
       ],
       "source_hashes": [
-        "unknown"
+        "87b28d8ddf8609b22b070e47b85411abe2620b52168cd77cfd92dd54ee3ab18a"
       ],
       "fact_ids": [
-        "feature-74e6ef7de5ba"
+        "feature-bc5f1b32e6df"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-ad63e514eea5",
+      "section_id": "feature-e290aa5a05c0",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/git/status.py"
+        "src/aictx/git/status.py"
       ],
       "source_hashes": [
-        "unknown"
+        "6cbeb7c9866076bc80ed7b1d0b1d160381a5c937d5da4f4e469e6aff7af5e079"
       ],
       "fact_ids": [
-        "feature-ad63e514eea5"
+        "feature-e290aa5a05c0"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-571d2be89f87",
+      "section_id": "feature-169031e06e2c",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/io/__init__.py"
+        "src/aictx/io/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "b725d8a4268864009d561357529a1dfe07d021bcebe1673fd2a9f71118f5e6f2"
       ],
       "fact_ids": [
-        "feature-571d2be89f87"
+        "feature-169031e06e2c"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-483255ba2c13",
+      "section_id": "feature-902f71238ab0",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/io/files.py"
+        "src/aictx/io/files.py"
       ],
       "source_hashes": [
-        "unknown"
+        "4b7399990a7e31619c5d3830bbda047c4193adfccab9fe4ce29cb20aa64a147d"
       ],
       "fact_ids": [
-        "feature-483255ba2c13"
+        "feature-902f71238ab0"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-b8115f172b1a",
+      "section_id": "feature-af3e585fe731",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/io/jsonl.py"
+        "src/aictx/io/jsonl.py"
       ],
       "source_hashes": [
-        "unknown"
+        "102670400876cb20a9bb34a5ea68241902b1f96d079cb1529a6548fb1cf0bed2"
       ],
       "fact_ids": [
-        "feature-b8115f172b1a"
+        "feature-af3e585fe731"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-acac3dfc7d07",
+      "section_id": "feature-e07b5b98e0ee",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/io/patches.py"
+        "src/aictx/io/patches.py"
       ],
       "source_hashes": [
-        "unknown"
+        "531a46341b8ea57d8ec70a4a8cdd90b49f9e38849c3aa28087303fff4e9891ba"
       ],
       "fact_ids": [
-        "feature-acac3dfc7d07"
+        "feature-e07b5b98e0ee"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-79e2a3948370",
+      "section_id": "feature-75018de70cec",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/llm/__init__.py"
+        "src/aictx/llm/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "d6e85ca0c70a38a550449896b91eb275a01904f109b145409bd76b8c10feda09"
       ],
       "fact_ids": [
-        "feature-79e2a3948370"
+        "feature-75018de70cec"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-277efe637abf",
+      "section_id": "feature-dd830c3f981c",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/llm/base.py"
+        "src/aictx/llm/base.py"
       ],
       "source_hashes": [
-        "unknown"
+        "77be24c22b216e7a942b5afa15d11dc7fe89d24ee88280431c81820a957c4566"
       ],
       "fact_ids": [
-        "feature-277efe637abf"
+        "feature-dd830c3f981c"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-9d228d39bc9b",
+      "section_id": "feature-ef5fe2e10848",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/llm/dry_run.py"
+        "src/aictx/llm/dry_run.py"
       ],
       "source_hashes": [
-        "unknown"
+        "270a498f75bc83e2b2d52d43265079a0c7e8c4c3f06108b317ebbc751cf80df5"
       ],
       "fact_ids": [
-        "feature-9d228d39bc9b"
+        "feature-ef5fe2e10848"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-ed385d9823a6",
+      "section_id": "feature-904908050f24",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/llm/oci_genai.py"
+        "src/aictx/llm/oci_genai.py"
       ],
       "source_hashes": [
-        "unknown"
+        "f2e0c2e48044206056ee1844a953dfcef02dae10561f53d45e373b69f22dc22d"
       ],
       "fact_ids": [
-        "feature-ed385d9823a6"
+        "feature-904908050f24"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-28dcfc86b039",
+      "section_id": "feature-b0185e158bd3",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/logging.py"
+        "src/aictx/logging.py"
       ],
       "source_hashes": [
-        "unknown"
+        "0b2cc6a4cb6854c49ae016dfd2c2ff7267b1a6d66056b5efdc7704d3a380e341"
       ],
       "fact_ids": [
-        "feature-28dcfc86b039"
+        "feature-b0185e158bd3"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-9e3ded43f31f",
+      "section_id": "feature-49814f990a5d",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/models/__init__.py"
+        "src/aictx/models/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "36a766a549010a8c263437c7e83193ad51ca410a5aa479c43ef7828a5fa5794c"
       ],
       "fact_ids": [
-        "feature-9e3ded43f31f"
+        "feature-49814f990a5d"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-6c3dfe88cb26",
+      "section_id": "feature-5ca7aecf703a",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/models/context_lock.py"
+        "src/aictx/models/context_lock.py"
       ],
       "source_hashes": [
-        "unknown"
+        "6184b379d9b37d73115432b32fa4646ef05fce6473f3e163d93de59c1568c0f1"
       ],
       "fact_ids": [
-        "feature-6c3dfe88cb26"
+        "feature-5ca7aecf703a"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-d2404ad6025d",
+      "section_id": "feature-d88207b33ddf",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/models/docs_map.py"
+        "src/aictx/models/docs_map.py"
       ],
       "source_hashes": [
-        "unknown"
+        "db27c6a84f5b85a24bd94c119e2483de49f7ebfc84e1bef0d17e72f476d35eca"
       ],
       "fact_ids": [
-        "feature-d2404ad6025d"
+        "feature-d88207b33ddf"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-18b3aa6c7624",
+      "section_id": "feature-d93292188468",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/models/inventory.py"
+        "src/aictx/models/inventory.py"
       ],
       "source_hashes": [
-        "unknown"
+        "2cae62663868380a17bdb06deb50f6561bd9cbe11f37e62af8320f65a06d0b10"
       ],
       "fact_ids": [
-        "feature-18b3aa6c7624"
+        "feature-d93292188468"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-824224f93cc0",
+      "section_id": "feature-7b9041734534",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/models/run_report.py"
+        "src/aictx/models/run_report.py"
       ],
       "source_hashes": [
-        "unknown"
+        "cf0fa602f57d7aa87c0380aa6fa3768a3d9a685287f90213278717c09cc45652"
       ],
       "fact_ids": [
-        "feature-824224f93cc0"
+        "feature-7b9041734534"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-fa5b70044646",
+      "section_id": "feature-33d65137a30b",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/oci/__init__.py"
+        "src/aictx/oci/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "496636073d7e84ac90e33ff7e7dbf5100af6e788a812a7f35679ab0cdda51827"
       ],
       "fact_ids": [
-        "feature-fa5b70044646"
+        "feature-33d65137a30b"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-51cfc842ef01",
+      "section_id": "feature-33e306b0aa86",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/oci/cleanup.py"
+        "src/aictx/oci/cleanup.py"
       ],
       "source_hashes": [
-        "unknown"
+        "daefd4e92ce2932af44533d2f07379af5a8f9b67297f09766b3309c3ba19d5e5"
       ],
       "fact_ids": [
-        "feature-51cfc842ef01"
+        "feature-33e306b0aa86"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-36a67e748d6e",
+      "section_id": "feature-0a949df3e037",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/oci/config.py"
+        "src/aictx/oci/config.py"
       ],
       "source_hashes": [
-        "unknown"
+        "4dc2ebbcb9382a8c28a955351467e9fc4af3280e608585072e69377ea07c4a0e"
       ],
       "fact_ids": [
-        "feature-36a67e748d6e"
+        "feature-0a949df3e037"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-af75fa285d64",
+      "section_id": "feature-9bc831bc73b2",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/oci/object_storage.py"
+        "src/aictx/oci/object_storage.py"
       ],
       "source_hashes": [
-        "unknown"
+        "1a1b9f7ccf03a85529e5fb8145f5e44925c25f1ccdbbd9cd4741d21c804eb6ec"
       ],
       "fact_ids": [
-        "feature-af75fa285d64"
+        "feature-9bc831bc73b2"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-d044c75d27f3",
+      "section_id": "feature-6b7fb631dbb1",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/oci/remote_job.py"
+        "src/aictx/oci/remote_job.py"
       ],
       "source_hashes": [
-        "unknown"
+        "4aed2d6a4c0a07b54cbb794fc6be6b8e0b035ba94478738c6a087e17ccf283f5"
       ],
       "fact_ids": [
-        "feature-d044c75d27f3"
+        "feature-6b7fb631dbb1"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-b5f441bd31a6",
+      "section_id": "feature-aed48960651a",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/scan/__init__.py"
+        "src/aictx/scan/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "55e9bbb4145c9be46041f8e6f2016c39d78d926c5744e135c27870d3b5572c07"
       ],
       "fact_ids": [
-        "feature-b5f441bd31a6"
+        "feature-aed48960651a"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-1d190c639aac",
+      "section_id": "feature-8215588a8e0f",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/scan/classify.py"
+        "src/aictx/scan/classify.py"
       ],
       "source_hashes": [
-        "unknown"
+        "7344165ac67e955be02536dd57c7895f08c9b7979c405858f5b0bfa05f6d22d7"
       ],
       "fact_ids": [
-        "feature-1d190c639aac"
+        "feature-8215588a8e0f"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-2bb4265035b1",
+      "section_id": "feature-8ce87057e4ad",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/scan/ignore.py"
+        "src/aictx/scan/ignore.py"
       ],
       "source_hashes": [
-        "unknown"
+        "6d83a527be49a44cffb53a91936550964fa536c7b48c47fa8abf0fac09145fae"
       ],
       "fact_ids": [
-        "feature-2bb4265035b1"
+        "feature-8ce87057e4ad"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-8d4f7577be2d",
+      "section_id": "feature-cf1e52762588",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/scan/scanner.py"
+        "src/aictx/scan/scanner.py"
       ],
       "source_hashes": [
-        "unknown"
+        "af344a6874f837897cdf61caf28d4b3012ced00e422d8785ea974f696240bdea"
       ],
       "fact_ids": [
-        "feature-8d4f7577be2d"
+        "feature-cf1e52762588"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-dc13103ff0b6",
+      "section_id": "feature-0aa93905bdaf",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/scan/secrets.py"
+        "src/aictx/scan/secrets.py"
       ],
       "source_hashes": [
-        "unknown"
+        "417e65fafc583b12efa117a1b008e074ebaf93a5e63a64c72d8774c56feae617"
       ],
       "fact_ids": [
-        "feature-dc13103ff0b6"
+        "feature-0aa93905bdaf"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-17b6997d1153",
+      "section_id": "feature-614bf179ee41",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/verify/__init__.py"
+        "src/aictx/verify/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "21353e3df7271755da5c30bb440d07abaf70ddce867b6a8d8f0ca7d07199697d"
       ],
       "fact_ids": [
-        "feature-17b6997d1153"
+        "feature-614bf179ee41"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-575c5db9d63f",
+      "section_id": "feature-4c73f7861418",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/verify/hashes.py"
+        "src/aictx/verify/hashes.py"
       ],
       "source_hashes": [
-        "unknown"
+        "d303be8b38909fc95928127d0e12d50487eaab129c213bbb9dcd8ddd3338e7d9"
       ],
       "fact_ids": [
-        "feature-575c5db9d63f"
+        "feature-4c73f7861418"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-35ebda470e5f",
+      "section_id": "feature-f1b82ee8dce3",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/verify/impact.py"
+        "src/aictx/verify/impact.py"
       ],
       "source_hashes": [
-        "unknown"
+        "27f58851c726725c8df46c83d2d7c4dae01671a3ee6966bb85200dd23e077a77"
       ],
       "fact_ids": [
-        "feature-35ebda470e5f"
+        "feature-f1b82ee8dce3"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-9535fbde023f",
+      "section_id": "feature-e7fc277f1d30",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/verify/reports.py"
+        "src/aictx/verify/reports.py"
       ],
       "source_hashes": [
-        "unknown"
+        "713d76bd771963405801cbb3e84bba2f0e692a970c2a4861dcac8e600d99452c"
       ],
       "fact_ids": [
-        "feature-9535fbde023f"
+        "feature-e7fc277f1d30"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-5090c2addaa9",
+      "section_id": "feature-3d4affb3f651",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/src/aictx/verify/verifier.py"
+        "src/aictx/verify/verifier.py"
       ],
       "source_hashes": [
-        "unknown"
+        "fcb20006e7757db1dae55c0130071f69710872b25d778a2f815fafe62ae95664"
       ],
       "fact_ids": [
-        "feature-5090c2addaa9"
+        "feature-3d4affb3f651"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-566d58075bf9",
+      "section_id": "feature-79c263b9dc82",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/conftest.py"
+        "tests/conftest.py"
       ],
       "source_hashes": [
-        "unknown"
+        "4876b6fc29646213ae90dcf8c8bd4a1cce3d637dcbab936a1404bd04a568a97a"
       ],
       "fact_ids": [
-        "feature-566d58075bf9"
+        "feature-79c263b9dc82"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-669b89f71161",
+      "section_id": "feature-c0f4b714ae94",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/fixtures/git_repos.py"
+        "tests/fixtures/git_repos.py"
       ],
       "source_hashes": [
-        "unknown"
+        "d882719284eab852b94d77606c2301ceab88f7a3cbf2531b0f7510595a26f17d"
       ],
       "fact_ids": [
-        "feature-669b89f71161"
+        "feature-c0f4b714ae94"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-693d36e958ce",
+      "section_id": "feature-8e54915f4c55",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/integration/__init__.py"
+        "tests/integration/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "0097760e446648b0657cb6d59dade6f1a98d4c7c04dcbbf47f43c1ba70119416"
       ],
       "fact_ids": [
-        "feature-693d36e958ce"
+        "feature-8e54915f4c55"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-2e01d5bf13ac",
+      "section_id": "feature-39b3548260f4",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/unit/__init__.py"
+        "tests/unit/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "c7104abce3571e100b20059afd0d796ceded30e219fde8e5da69aed7d9aa2095"
       ],
       "fact_ids": [
-        "feature-2e01d5bf13ac"
+        "feature-39b3548260f4"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-4458de0c1761",
+      "section_id": "feature-db55ebc12b3a",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/unit/test_cli.py"
+        "tests/unit/test_cli.py"
       ],
       "source_hashes": [
-        "unknown"
+        "5418d06084f8e70b42e6efc6afe4f9e0ff3c79cbd2a160b0697942d1c964f997"
       ],
       "fact_ids": [
-        "feature-4458de0c1761"
+        "feature-db55ebc12b3a"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-8e78d6a9601d",
+      "section_id": "feature-fa42e6acbb69",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/unit/test_run_phase1.py"
+        "tests/unit/test_run_phase1.py"
       ],
       "source_hashes": [
-        "unknown"
+        "e01bc5cc4d992d80e8190bc76e2055aa3615615e93835845829d7388f6282581"
       ],
       "fact_ids": [
-        "feature-8e78d6a9601d"
+        "feature-fa42e6acbb69"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-19f0d101afca",
+      "section_id": "feature-c628463adbc3",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/unit/test_scan_integration.py"
+        "tests/unit/test_scan_integration.py"
       ],
       "source_hashes": [
-        "unknown"
+        "7cde96dd9264af6297af1e65b0ccbe86bdd07352219d1e0eb2700783c4e411b3"
       ],
       "fact_ids": [
-        "feature-19f0d101afca"
+        "feature-c628463adbc3"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-9a5baf1e0530",
+      "section_id": "feature-58e10b4983cb",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/unit/test_scanner.py"
+        "tests/unit/test_scanner.py"
       ],
       "source_hashes": [
-        "unknown"
+        "421f890c9ecfc8cf6ab973079d9f3822c6cc49e20daf3fbeace61f77247f153a"
       ],
       "fact_ids": [
-        "feature-9a5baf1e0530"
+        "feature-58e10b4983cb"
       ],
       "status": "current"
     },
     {
-      "section_id": "feature-e72f35706df3",
+      "section_id": "feature-cc09f48861d1",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/unit/test_verify.py"
+        "tests/unit/test_verify.py"
       ],
       "source_hashes": [
-        "unknown"
+        "2fa5be2c5c7f1de7517a49b77ad0c6fb5ac581b62ce72d4e48385b6b7f704874"
       ],
       "fact_ids": [
-        "feature-e72f35706df3"
+        "feature-cc09f48861d1"
       ],
       "status": "current"
     },
     {
-      "section_id": "workflow-6a754e85e2e7",
+      "section_id": "workflow-9d0f59d0452b",
       "generated_file": "docs/AIprojectcontext/workflows.md",
       "heading": "workflow",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/docs/AIprojectcontext/context.lock.json"
+        "pyproject.toml"
       ],
       "source_hashes": [
-        "unknown"
+        "8f0af1b72f70761023adbb8072331755bcc11a14148be296208ac7b866ded544"
       ],
       "fact_ids": [
-        "workflow-6a754e85e2e7"
+        "workflow-9d0f59d0452b"
       ],
       "status": "current"
     },
     {
-      "section_id": "workflow-5f05609fe27f",
+      "section_id": "workflow-a92a92d855ae",
       "generated_file": "docs/AIprojectcontext/workflows.md",
       "heading": "workflow",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/pyproject.toml"
+        "tests/conftest.py"
       ],
       "source_hashes": [
-        "unknown"
+        "4876b6fc29646213ae90dcf8c8bd4a1cce3d637dcbab936a1404bd04a568a97a"
       ],
       "fact_ids": [
-        "workflow-5f05609fe27f"
+        "workflow-a92a92d855ae"
       ],
       "status": "current"
     },
     {
-      "section_id": "workflow-b45fe61b5ccb",
+      "section_id": "workflow-98ab6f911ff7",
       "generated_file": "docs/AIprojectcontext/workflows.md",
       "heading": "workflow",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/conftest.py"
+        "tests/fixtures/git_repos.py"
       ],
       "source_hashes": [
-        "unknown"
+        "d882719284eab852b94d77606c2301ceab88f7a3cbf2531b0f7510595a26f17d"
       ],
       "fact_ids": [
-        "workflow-b45fe61b5ccb"
+        "workflow-98ab6f911ff7"
       ],
       "status": "current"
     },
     {
-      "section_id": "workflow-169214e31af5",
+      "section_id": "workflow-22b0a05e0c76",
       "generated_file": "docs/AIprojectcontext/workflows.md",
       "heading": "workflow",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/fixtures/git_repos.py"
+        "tests/integration/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "0097760e446648b0657cb6d59dade6f1a98d4c7c04dcbbf47f43c1ba70119416"
       ],
       "fact_ids": [
-        "workflow-169214e31af5"
+        "workflow-22b0a05e0c76"
       ],
       "status": "current"
     },
     {
-      "section_id": "workflow-8b5e98b3952b",
+      "section_id": "workflow-67437acf4569",
       "generated_file": "docs/AIprojectcontext/workflows.md",
       "heading": "workflow",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/integration/__init__.py"
+        "tests/unit/__init__.py"
       ],
       "source_hashes": [
-        "unknown"
+        "c7104abce3571e100b20059afd0d796ceded30e219fde8e5da69aed7d9aa2095"
       ],
       "fact_ids": [
-        "workflow-8b5e98b3952b"
+        "workflow-67437acf4569"
       ],
       "status": "current"
     },
     {
-      "section_id": "workflow-b27dfc962565",
+      "section_id": "workflow-d3793b08d2c1",
       "generated_file": "docs/AIprojectcontext/workflows.md",
       "heading": "workflow",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/unit/__init__.py"
+        "tests/unit/test_cli.py"
       ],
       "source_hashes": [
-        "unknown"
+        "5418d06084f8e70b42e6efc6afe4f9e0ff3c79cbd2a160b0697942d1c964f997"
       ],
       "fact_ids": [
-        "workflow-b27dfc962565"
+        "workflow-d3793b08d2c1"
       ],
       "status": "current"
     },
     {
-      "section_id": "workflow-d11364a1da0a",
+      "section_id": "workflow-435ae6346696",
       "generated_file": "docs/AIprojectcontext/workflows.md",
       "heading": "workflow",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/unit/test_cli.py"
+        "tests/unit/test_run_phase1.py"
       ],
       "source_hashes": [
-        "unknown"
+        "e01bc5cc4d992d80e8190bc76e2055aa3615615e93835845829d7388f6282581"
       ],
       "fact_ids": [
-        "workflow-d11364a1da0a"
+        "workflow-435ae6346696"
       ],
       "status": "current"
     },
     {
-      "section_id": "workflow-0707b35e5b11",
+      "section_id": "workflow-724649cae436",
       "generated_file": "docs/AIprojectcontext/workflows.md",
       "heading": "workflow",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/unit/test_run_phase1.py"
+        "tests/unit/test_scan_integration.py"
       ],
       "source_hashes": [
-        "unknown"
+        "7cde96dd9264af6297af1e65b0ccbe86bdd07352219d1e0eb2700783c4e411b3"
       ],
       "fact_ids": [
-        "workflow-0707b35e5b11"
+        "workflow-724649cae436"
       ],
       "status": "current"
     },
     {
-      "section_id": "workflow-cd0bef41ed62",
+      "section_id": "workflow-f8535b943739",
       "generated_file": "docs/AIprojectcontext/workflows.md",
       "heading": "workflow",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/unit/test_scan_integration.py"
+        "tests/unit/test_scanner.py"
       ],
       "source_hashes": [
-        "unknown"
+        "421f890c9ecfc8cf6ab973079d9f3822c6cc49e20daf3fbeace61f77247f153a"
       ],
       "fact_ids": [
-        "workflow-cd0bef41ed62"
+        "workflow-f8535b943739"
       ],
       "status": "current"
     },
     {
-      "section_id": "workflow-cf891a2743dc",
+      "section_id": "workflow-e89d05078cee",
       "generated_file": "docs/AIprojectcontext/workflows.md",
       "heading": "workflow",
       "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/unit/test_scanner.py"
+        "tests/unit/test_verify.py"
       ],
       "source_hashes": [
-        "unknown"
+        "2fa5be2c5c7f1de7517a49b77ad0c6fb5ac581b62ce72d4e48385b6b7f704874"
       ],
       "fact_ids": [
-        "workflow-cf891a2743dc"
-      ],
-      "status": "current"
-    },
-    {
-      "section_id": "workflow-c288e4c63eaa",
-      "generated_file": "docs/AIprojectcontext/workflows.md",
-      "heading": "workflow",
-      "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/tests/unit/test_verify.py"
-      ],
-      "source_hashes": [
-        "unknown"
-      ],
-      "fact_ids": [
-        "workflow-c288e4c63eaa"
-      ],
-      "status": "current"
-    },
-    {
-      "section_id": "docs-0b62790771c6",
-      "generated_file": "docs/AIprojectcontext/public-docs-map.md",
-      "heading": "docs",
-      "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/AGENTS.md"
-      ],
-      "source_hashes": [
-        "unknown"
-      ],
-      "fact_ids": [
-        "docs-0b62790771c6"
-      ],
-      "status": "current"
-    },
-    {
-      "section_id": "docs-b5bdb2175ee4",
-      "generated_file": "docs/AIprojectcontext/public-docs-map.md",
-      "heading": "docs",
-      "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/docs/AIprojectcontext/ai-index.md"
-      ],
-      "source_hashes": [
-        "unknown"
-      ],
-      "fact_ids": [
-        "docs-b5bdb2175ee4"
-      ],
-      "status": "current"
-    },
-    {
-      "section_id": "docs-6d09732d66d3",
-      "generated_file": "docs/AIprojectcontext/public-docs-map.md",
-      "heading": "docs",
-      "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/docs/AIprojectcontext/architecture.md"
-      ],
-      "source_hashes": [
-        "unknown"
-      ],
-      "fact_ids": [
-        "docs-6d09732d66d3"
-      ],
-      "status": "current"
-    },
-    {
-      "section_id": "docs-15e18f5ba56f",
-      "generated_file": "docs/AIprojectcontext/public-docs-map.md",
-      "heading": "docs",
-      "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/docs/AIprojectcontext/change-impact-map.md"
-      ],
-      "source_hashes": [
-        "unknown"
-      ],
-      "fact_ids": [
-        "docs-15e18f5ba56f"
-      ],
-      "status": "current"
-    },
-    {
-      "section_id": "docs-0909fcb7bd11",
-      "generated_file": "docs/AIprojectcontext/public-docs-map.md",
-      "heading": "docs",
-      "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/docs/AIprojectcontext/code-map.md"
-      ],
-      "source_hashes": [
-        "unknown"
-      ],
-      "fact_ids": [
-        "docs-0909fcb7bd11"
-      ],
-      "status": "current"
-    },
-    {
-      "section_id": "docs-2cef3db0518b",
-      "generated_file": "docs/AIprojectcontext/public-docs-map.md",
-      "heading": "docs",
-      "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/docs/AIprojectcontext/project-state.md"
-      ],
-      "source_hashes": [
-        "unknown"
-      ],
-      "fact_ids": [
-        "docs-2cef3db0518b"
-      ],
-      "status": "current"
-    },
-    {
-      "section_id": "docs-7bbeae49013d",
-      "generated_file": "docs/AIprojectcontext/public-docs-map.md",
-      "heading": "docs",
-      "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/docs/AIprojectcontext/public-docs-map.md"
-      ],
-      "source_hashes": [
-        "unknown"
-      ],
-      "fact_ids": [
-        "docs-7bbeae49013d"
-      ],
-      "status": "current"
-    },
-    {
-      "section_id": "docs-84afa3e025de",
-      "generated_file": "docs/AIprojectcontext/public-docs-map.md",
-      "heading": "docs",
-      "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/docs/AIprojectcontext/schema.md"
-      ],
-      "source_hashes": [
-        "unknown"
-      ],
-      "fact_ids": [
-        "docs-84afa3e025de"
-      ],
-      "status": "current"
-    },
-    {
-      "section_id": "docs-5878afe2e03c",
-      "generated_file": "docs/AIprojectcontext/public-docs-map.md",
-      "heading": "docs",
-      "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/docs/AIprojectcontext/workflows.md"
-      ],
-      "source_hashes": [
-        "unknown"
-      ],
-      "fact_ids": [
-        "docs-5878afe2e03c"
-      ],
-      "status": "current"
-    },
-    {
-      "section_id": "docs-ede8b44930ac",
-      "generated_file": "docs/AIprojectcontext/public-docs-map.md",
-      "heading": "docs",
-      "source_paths": [
-        "C:/Users/juliu/source/repos/AICtx/README.md"
-      ],
-      "source_hashes": [
-        "unknown"
-      ],
-      "fact_ids": [
-        "docs-ede8b44930ac"
+        "workflow-e89d05078cee"
       ],
       "status": "current"
     }

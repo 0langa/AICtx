@@ -21,11 +21,15 @@ def plan_context(
     warnings: list[str] = []
 
     for entry in sorted(inventory.manifests, key=lambda item: item.path):
+        if entry.is_generated:
+            continue
         selected_entries.append(entry)
         reasons[entry.path] = "manifest"
 
     important_docs = {"README.md", "CHANGELOG.md", "ROADMAP.md", "AGENTS.md"}
     for entry in sorted(inventory.docs, key=lambda item: item.path):
+        if entry.is_generated:
+            continue
         if (
             entry.path in important_docs or entry.path.startswith("docs/")
         ) and entry.path not in reasons:
@@ -33,7 +37,7 @@ def plan_context(
             reasons[entry.path] = "doc"
 
     for entry in sorted(inventory.files, key=lambda item: item.path):
-        if entry.is_ignored or entry.is_binary:
+        if entry.is_ignored or entry.is_binary or entry.is_generated:
             continue
         if entry.is_source and entry.path not in reasons:
             selected_entries.append(entry)
@@ -65,7 +69,9 @@ def plan_context(
         "build_files": [entry.path for entry in selected_entries if entry.is_manifest],
         "test_files": [entry.path for entry in selected_entries if entry.is_test],
         "files_excluded_from_llm": [
-            entry.path for entry in inventory.files if entry.is_ignored or entry.is_binary
+            entry.path
+            for entry in inventory.files
+            if entry.is_ignored or entry.is_binary or entry.is_generated
         ],
         "reason_per_selected_file": reasons,
         "estimated_token_cost": estimated_token_cost,

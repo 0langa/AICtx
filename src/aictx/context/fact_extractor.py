@@ -39,7 +39,14 @@ class FactPack:
         )
 
 
-def _extract_fact_packs(file_paths: list[Path]) -> list[FactPack]:
+def _relative_source_path(repo_root: Path, path: Path) -> str:
+    try:
+        return path.relative_to(repo_root).as_posix()
+    except ValueError:
+        return path.as_posix()
+
+
+def _extract_fact_packs(repo_root: Path, file_paths: list[Path]) -> list[FactPack]:
     """Extract structured facts from *file_paths*."""
     packs: dict[str, FactPack] = {
         "project_identity": FactPack("project_identity"),
@@ -50,7 +57,7 @@ def _extract_fact_packs(file_paths: list[Path]) -> list[FactPack]:
         "risk": FactPack("risk"),
     }
     for path in sorted(file_paths):
-        rel = path.as_posix()
+        rel = _relative_source_path(repo_root, path)
         suffix = path.suffix.lower()
         source_span = [f"{rel}:1"]
         if path.name == "README.md":
@@ -117,7 +124,7 @@ def extract_facts(
 ) -> list[dict[str, object]]:
     """Extract deterministic structured facts for the selected plan."""
     selected = [repo_root / path for path in plan["selected_files"]]
-    packs = _extract_fact_packs(selected)
+    packs = _extract_fact_packs(repo_root, selected)
     output: list[dict[str, object]] = []
     for pack in packs:
         response = provider.chat(

@@ -96,6 +96,36 @@ def test_init_refreshes_existing_generated_lockfile_sources() -> None:
     assert lock.generated_files
     assert lock.model_provider == "dry_run"
     assert any(entry.path == "docs/AIprojectcontext/ai-index.md" for entry in lock.generated_files)
+    assert not any(entry.path == "AGENTS.md" for entry in lock.source_files)
+    assert not any(entry.path.startswith("docs/AIprojectcontext/") for entry in lock.source_files)
+
+
+def test_strict_verify_rejects_broken_section_source_linkage() -> None:
+    repo = create_git_repo({"README.md": "# Test", "src/main.py": "print('ok')"})
+    run_result = runner.invoke(
+        app,
+        [
+            "run",
+            "--project",
+            str(repo),
+            "--mode",
+            "setup-context",
+            "--execution",
+            "local",
+            "--scope",
+            "full",
+            "--write",
+            "apply",
+        ],
+    )
+    assert run_result.exit_code == 0, run_result.output
+
+    lockfile_path = repo / "docs" / "AIprojectcontext" / "context.lock.json"
+    data = json.loads(lockfile_path.read_text(encoding="utf-8"))
+    data["sections"][0]["source_hashes"] = ["unknown"]
+    lockfile_path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+
+    assert verify(repo, strict=True) == "FAIL_LOCK_MISMATCH"
 
 
 def test_verify_cli_fails_when_lockfile_missing() -> None:

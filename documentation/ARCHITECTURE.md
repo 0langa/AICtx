@@ -35,6 +35,7 @@ Codebase is source of truth.
 - hard excludes + `.gitignore` + `.aictxignore`
 - directory pruning before descent
 - file classification
+- generated context artifact detection (`docs/AIprojectcontext/**`, generated `AGENTS.md`)
 - SHA-256 for eligible files
 - high-confidence secret scan
 - detector/test-fixture self-protection
@@ -58,7 +59,7 @@ Run order:
 1. rescan repo
 2. fail on secrets
 3. load config if present
-4. build deterministic plan
+4. build deterministic plan, excluding generated context artifacts from source input
 5. estimate token cost
 6. use `DryRunProvider`
 7. extract deterministic fact packs
@@ -102,6 +103,9 @@ Current verifier checks:
 - source hashes match
 - generated paths exist
 - generated hashes match
+- strict mode requires expected generated context files
+- strict mode verifies section source paths/hash links
+- strict mode verifies generated `AGENTS.md` points to `docs/AIprojectcontext/ai-index.md`
 
 Result codes in current architecture:
 
@@ -128,6 +132,8 @@ Only hash-based outcomes are actually implemented now.
 `init` rebuilds source-side hashes from fresh scan.
 
 If existing lockfile already contains generated metadata from prior `run --write apply`, preserve generated metadata while refreshing source verification state.
+
+Generated context artifacts are tracked in `generated_files`, not `source_files`; `context.lock.json` is loaded as the verifier input and is not self-hashed as a generated file.
 
 ## Stubs / placeholders
 

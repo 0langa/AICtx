@@ -31,10 +31,11 @@ Behavior:
 1. detect git root
 2. walk repo with ignore pruning
 3. classify source/test/doc/manifest/binary/ignored
-4. detect languages + project type
-5. run high-confidence secret scan on non-binary files
-6. print summary
-7. write `.aictx/runs/<timestamp>-scan/inventory.json`
+4. mark generated context artifacts separately
+5. detect languages + project type
+6. run high-confidence secret scan on non-binary files
+7. print summary
+8. write `.aictx/runs/<timestamp>-scan/inventory.json`
 
 Inventory includes deterministic `dirty_state` + `git_status` lists.
 
@@ -90,6 +91,8 @@ Notes:
 
 - `--write patch` = staged files + patch only
 - `--write apply` = copy staged outputs into repo
+- generated context artifacts are excluded from future source selection
+- unmanaged second-level sections in existing generated `AGENTS.md` are preserved
 - `src/aictx/io/patches.py:apply_patch` not used; still stubbed
 - `--scope changed` accepted by CLI, rejected by pipeline
 
@@ -103,6 +106,9 @@ Current checks:
 - locked source hashes match
 - generated files exist if listed in lockfile
 - generated file hashes match
+- strict mode requires the expected generated context files
+- strict mode verifies section source paths and source hashes
+- strict mode verifies generated `AGENTS.md` links to `docs/AIprojectcontext/ai-index.md`
 
 Current scope = hash-only. No semantic freshness. No public-docs impact validation.
 

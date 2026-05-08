@@ -23,3 +23,12 @@
 - No unsupported assumptions.
 - Mark uncertainty explicitly.
 - Fail closed: report `unknown` rather than guess.
+
+## Repo style policy
+
+- Default to ultra-condensed writing in repo docs.
+- Prefer dense, lossless, AI-oriented phrasing over human-friendly filler.
+- Remove repetition, narration, motivational text, and generic best-practice prose unless needed for repo-specific meaning.
+- Keep facts, constraints, commands, file paths, invariants, and source-linked claims.
+- When updating docs, compress wording without dropping project-relevant information.
+- AI agents working in this repo should also think, plan, and respond tersely by default unless a longer explanation is explicitly needed.

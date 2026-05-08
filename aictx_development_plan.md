@@ -18,7 +18,7 @@ Trust code over docs. Read `docs/AIprojectcontext/ai-index.md` first. Do not exp
 
 ## Current pipeline facts
 
-- scan: deterministic inventory + git status + ignore handling + secret scan.
+- scan: deterministic inventory + git status + ignore handling + generated-artifact detection + secret scan.
 - init: writes `docs/AIprojectcontext/context.lock.json`; preserves existing generated metadata if lock already has it.
 - run local/full:
   - blocks on detected secrets
@@ -28,9 +28,11 @@ Trust code over docs. Read `docs/AIprojectcontext/ai-index.md` first. Do not exp
   - writes scaffold to `.aictx/runs/<run-id>/out/`
   - writes patch file `aictx.patch`
   - `--write apply` copies staged files into repo
+  - generated context artifacts are excluded from future source selection
+  - unmanaged second-level sections in generated `AGENTS.md` are preserved
   - applied lockfile path = `docs/AIprojectcontext/context.lock.json`
   - root `context.lock.json` must not exist
-- verify: hash-only; checks lock exists, schema supported, source files exist/hash-match, generated files exist/hash-match.
+- verify: checks lock exists, schema supported, source files exist/hash-match, generated files exist/hash-match, expected generated files, section source/hash links, and generated `AGENTS.md` index link.
 
 ## Generated outputs expected from run/apply
 
@@ -96,6 +98,8 @@ Required result:
 
 - no root `context.lock.json`
 - context files generated under `docs/AIprojectcontext/`
+- generated context files are not selected as source on repeated runs
+- section source links use repo-relative paths with known source hashes
 - verify returns PASS after apply
 
 ### P1 fact quality

@@ -1,17 +1,7 @@
 # Change Impact Map
 
 ## Selected File Impact
-- `AGENTS.md` -> ai:existing_agents
 - `README.md` -> ai:doc
-- `docs/AIprojectcontext/ai-index.md` -> ai:existing_context
-- `docs/AIprojectcontext/architecture.md` -> ai:existing_context
-- `docs/AIprojectcontext/change-impact-map.md` -> ai:existing_context
-- `docs/AIprojectcontext/code-map.md` -> ai:existing_context
-- `docs/AIprojectcontext/context.lock.json` -> ai:doc
-- `docs/AIprojectcontext/project-state.md` -> ai:existing_context
-- `docs/AIprojectcontext/public-docs-map.md` -> ai:existing_context
-- `docs/AIprojectcontext/schema.md` -> ai:existing_context
-- `docs/AIprojectcontext/workflows.md` -> ai:existing_context
 - `pyproject.toml` -> ai:manifest
 - `src/aictx/__init__.py` -> ai:source
 - `src/aictx/cli.py` -> ai:source

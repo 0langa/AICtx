@@ -31,14 +31,46 @@ AGENTS_MD_TEMPLATE = """# AGENTS.md — AI Agent Instructions for {project_name}
 - Fail closed: report `unknown` rather than guess.
 """
 
+MANAGED_SECTION_HEADINGS = {"Rules for all agents", "Accuracy rules"}
 
-def generate_agents_md(project_name: str) -> str:
+
+def generate_agents_md(project_name: str, existing_content: str | None = None) -> str:
     """Return the generated AGENTS.md content."""
-    return AGENTS_MD_TEMPLATE.format(project_name=project_name)
+    generated = AGENTS_MD_TEMPLATE.format(project_name=project_name).rstrip()
+    custom_sections = _extract_custom_sections(existing_content)
+    if custom_sections:
+        return f"{generated}\n\n{custom_sections}\n"
+    return f"{generated}\n"
 
 
 def write_agents_md(repo_root: Path, project_name: str) -> Path:
     """Write AGENTS.md to *repo_root*."""
     path = repo_root / "AGENTS.md"
-    path.write_text(generate_agents_md(project_name), encoding="utf-8")
+    existing_content = path.read_text(encoding="utf-8") if path.exists() else None
+    path.write_text(generate_agents_md(project_name, existing_content), encoding="utf-8")
     return path
+
+
+def _extract_custom_sections(existing_content: str | None) -> str:
+    """Preserve user-maintained second-level sections from an existing AGENTS.md."""
+    if not existing_content:
+        return ""
+
+    sections: list[str] = []
+    current_heading: str | None = None
+    current_lines: list[str] = []
+
+    for line in existing_content.splitlines():
+        if line.startswith("## "):
+            if current_lines and current_heading not in MANAGED_SECTION_HEADINGS:
+                sections.append("\n".join(current_lines).rstrip())
+            current_heading = line.removeprefix("## ").strip()
+            current_lines = [line]
+            continue
+        if current_lines:
+            current_lines.append(line)
+
+    if current_lines and current_heading not in MANAGED_SECTION_HEADINGS:
+        sections.append("\n".join(current_lines).rstrip())
+
+    return "\n\n".join(section for section in sections if section)
