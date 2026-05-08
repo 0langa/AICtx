@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from datetime import UTC
+
 import typer
 from rich.console import Console
 
@@ -38,7 +40,57 @@ def scan(
     project: str = typer.Option(".", "--project", "-p", help="Path to the target repository."),
 ) -> None:
     """Scan a repository and print/write an inventory."""
-    console.print(f"[bold green]scan[/bold green] not yet implemented (project={project})")
+    from datetime import datetime
+    from pathlib import Path
+
+    from aictx.errors import AictxError
+    from aictx.git.repo import find_git_root
+    from aictx.scan.scanner import scan_repository
+
+    project_path = Path(project).resolve()
+    if not project_path.exists():
+        raise typer.BadParameter(f"Project path does not exist: {project}")
+
+    try:
+        repo_root = find_git_root(project_path)
+    except AictxError as exc:
+        console.print(f"[bold red]Error:[/bold red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    inventory = scan_repository(repo_root)
+
+    # Build summary
+    included = [f for f in inventory.files if not f.is_ignored]
+    ignored = [f for f in inventory.files if f.is_ignored]
+    docs = inventory.docs
+    manifests = inventory.manifests
+    secrets = inventory.secrets
+
+    console.print("[bold green]AICtx scan complete[/bold green]")
+    console.print(f"repo: {inventory.repo_root}")
+    console.print(f"branch: {inventory.branch}")
+    console.print(f"head: {inventory.head_commit}")
+    console.print(f"dirty: {inventory.dirty_state}")
+    console.print(f"files included: {len(included)}")
+    console.print(f"files ignored: {len(ignored)}")
+    console.print(f"docs: {len(docs)}")
+    console.print(f"source: {len([f for f in included if f.is_source])}")
+    console.print(f"tests: {len([f for f in included if f.is_test])}")
+    console.print(f"manifests: {len(manifests)}")
+    console.print(f"secrets: {len(secrets)}")
+    if secrets:
+        for s in secrets:
+            console.print(
+                f"  [yellow]{s.path}[/yellow] ({s.detector_name}, severity={s.severity})"
+            )
+
+    # Write inventory JSON
+    run_id = datetime.now(UTC).strftime("%Y-%m-%dT%H%M%SZ-scan")
+    runs_dir = repo_root / ".aictx" / "runs" / run_id
+    runs_dir.mkdir(parents=True, exist_ok=True)
+    inv_path = runs_dir / "inventory.json"
+    inv_path.write_text(inventory.model_dump_json(indent=2), encoding="utf-8")
+    console.print(f"inventory: {inv_path}")
 
 
 @app.command()

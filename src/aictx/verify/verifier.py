@@ -5,8 +5,6 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Literal
 
-from aictx.models.context_lock import ContextLock
-
 VerificationResult = Literal[
     "PASS",
     "FAIL_STALE_AI_CONTEXT",

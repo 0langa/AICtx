@@ -1,4 +1,4 @@
-""``context.lock.json` I/O helpers."""
+"""`context.lock.json` I/O helpers."""
 
 from __future__ import annotations
 
@@ -6,7 +6,6 @@ import json
 from pathlib import Path
 
 from aictx.models.context_lock import ContextLock
-
 
 LOCK_FILENAME = "context.lock.json"
 

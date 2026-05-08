@@ -33,7 +33,7 @@ class SecretScanError(SafetyError):
     pass
 
 
-class TokenBudgetExceeded(SafetyError):
+class TokenBudgetExceededError(SafetyError):
     """Raised when a run would exceed configured token limits."""
 
     pass

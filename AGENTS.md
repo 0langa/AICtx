@@ -55,7 +55,7 @@ See `docs/AIprojectcontext/architecture.md` for detailed design.
    ```
 7. Do not fabricate facts. If information is unavailable, mark it `unknown` or `needs-source`.
 8. Preserve source references for all important claims.
-
+9. Before calling the work finished you have to verify 0 errors in IDE problems output.
 ## Accuracy rules
 
 - Source-trace all critical claims.

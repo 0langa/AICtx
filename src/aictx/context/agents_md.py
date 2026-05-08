@@ -1,4 +1,4 @@
-""``AGENTS.md` generation and update."""
+"""`AGENTS.md` generation and update."""
 
 from __future__ import annotations
 

@@ -18,18 +18,42 @@ class WorktreeStatus:
         self.dirty = bool(self._run(["git", "-C", str(repo_root), "status", "--short"]).strip())
         self.untracked_files: list[str] = []
         self.modified_files: list[str] = []
+        self.deleted_files: list[str] = []
+        self.renamed_files: list[dict[str, str]] = []
+        self.tracked_files = self._get_tracked_files()
         self._parse_status()
 
     def _run(self, cmd: list[str]) -> str:
         result = subprocess.run(cmd, capture_output=True, text=True, check=False)
+        if result.returncode != 0:
+            raise RuntimeError(f"Git command failed: {' '.join(cmd)}: {result.stderr}")
         return result.stdout
+
+    def _get_tracked_files(self) -> list[str]:
+        output = self._run(
+            ["git", "-C", str(self.repo_root), "ls-files", "--exclude-standard"]
+        )
+        return [line for line in output.splitlines() if line]
 
     def _parse_status(self) -> None:
         output = self._run(
             ["git", "-C", str(self.repo_root), "status", "--short"]
         )
         for line in output.splitlines():
-            if line.startswith("??"):
-                self.untracked_files.append(line[3:])
-            elif line.startswith(" M") or line.startswith("M "):
-                self.modified_files.append(line[3:])
+            if len(line) < 3:
+                continue
+            status = line[:2]
+            path = line[3:]
+            if status == "??":
+                self.untracked_files.append(path)
+            elif "M" in status:
+                self.modified_files.append(path)
+            elif status == " D" or status == "D ":
+                self.deleted_files.append(path)
+            elif status.startswith("R"):
+                # Renamed lines look like: "R  old -> new"
+                if " -> " in path:
+                    old, new = path.split(" -> ", 1)
+                    self.renamed_files.append({"from": old, "to": new})
+                else:
+                    self.renamed_files.append({"from": path, "to": path})
