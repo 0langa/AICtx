@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 from typing import Any
 
@@ -24,9 +25,10 @@ class FactPack:
         derived_from: list[str] | None = None,
         needs_source: bool = False,
     ) -> None:
+        fact_id_seed = "|".join([self.name, claim, *sorted(source_paths)])
         self.facts.append(
             {
-                "id": f"{self.name}-{len(self.facts)}",
+                "id": f"{self.name}-{hashlib.sha1(fact_id_seed.encode('utf-8')).hexdigest()[:12]}",
                 "claim": claim,
                 "confidence": confidence,
                 "source_paths": source_paths,
@@ -50,43 +52,61 @@ def _extract_fact_packs(file_paths: list[Path]) -> list[FactPack]:
     for path in sorted(file_paths):
         rel = path.as_posix()
         suffix = path.suffix.lower()
+        source_span = [f"{rel}:1"]
         if path.name == "README.md":
             packs["project_identity"].add_fact(
                 claim=f"Repository includes root README at {rel}",
                 confidence=1.0,
                 source_paths=[rel],
+                source_spans=source_span,
             )
         if suffix in {".py", ".cs", ".rs", ".go", ".ts", ".js"}:
+            status = "stubbed" if _looks_stubbed(path) else "implemented"
             packs["architecture"].add_fact(
-                claim=f"Source file present: {rel}",
+                claim=f"{status.title()} source file present: {rel}",
                 confidence=0.9,
                 source_paths=[rel],
+                source_spans=source_span,
             )
             packs["feature"].add_fact(
-                claim=f"Implementation file selected for context: {rel}",
+                claim=f"{status.title()} implementation file selected for context: {rel}",
                 confidence=0.8,
                 source_paths=[rel],
+                source_spans=source_span,
+                needs_source=status != "implemented",
             )
         if "test" in path.name.lower() or "tests/" in rel:
             packs["workflow"].add_fact(
                 claim=f"Test coverage artifact present: {rel}",
                 confidence=0.9,
                 source_paths=[rel],
+                source_spans=source_span,
             )
         if suffix == ".md" and rel != "README.md":
             packs["docs"].add_fact(
                 claim=f"Documentation file selected: {rel}",
                 confidence=0.9,
                 source_paths=[rel],
+                source_spans=source_span,
             )
         if suffix in {".yml", ".yaml", ".toml", ".json"}:
             packs["workflow"].add_fact(
                 claim=f"Configuration or workflow manifest selected: {rel}",
                 confidence=0.85,
                 source_paths=[rel],
+                source_spans=source_span,
             )
 
     return [pack for pack in packs.values() if pack.facts]
+
+
+def _looks_stubbed(path: Path) -> bool:
+    try:
+        text = path.read_text(encoding="utf-8")
+    except OSError:
+        return False
+    lowered = text.casefold()
+    return "notimplementederror" in lowered or "stubbed" in lowered or "todo" in lowered
 
 
 def extract_facts(

@@ -10,7 +10,7 @@ AICtx is at an early alpha stage. The repository scanner, baseline lockfile boot
 
 - `aictx scan` — scans a Git repository, classifies files, detects secrets, and writes a deterministic inventory to `.aictx/runs/<run-id>/inventory.json`.
 - `aictx init` — creates or refreshes `docs/AIprojectcontext/context.lock.json`, preserves generated lock metadata when present, and creates `.aictxignore` if missing.
-- `aictx run --mode setup-context --execution local` — plans a local run, extracts deterministic fact packs, generates AI context markdown under `docs/AIprojectcontext/`, stages a patch by default, and can apply generated files.
+- `aictx run --mode setup-context --execution local` — plans a local run, extracts deterministic fact packs, generates AI context markdown under `docs/AIprojectcontext/`, stages repo-relative outputs and a reviewable patch by default, and can copy those staged outputs into the repository.
 - `aictx verify --strict` — performs deterministic hash-only validation against the committed baseline lockfile.
 - Git integration — branch, HEAD commit, dirty-state, and file-change detection.
 - Structured Git status inventory — tracked, untracked, modified, deleted, and renamed file lists are serialized into inventory output.
@@ -107,6 +107,7 @@ uv run mypy src
 - `verify --strict` is currently deterministic file-state validation only; semantic freshness and public-docs impact checks are planned later.
 - `aictx run` currently supports only `--mode setup-context --execution local` and generates deterministic scaffold files. Contradiction reports, coverage reports, semantic freshness, and provider-backed OCI generation are not implemented yet.
 - `aictx public-docs update` remains stubbed.
+- `io.patches.apply_patch` remains stubbed; current `--write apply` behavior copies staged generated files instead of replaying the patch file.
 
 ## License
 

@@ -68,9 +68,9 @@ Current behavior:
 3. Scan the repository and stop if secrets are detected.
 4. Build a deterministic selection plan.
 5. Extract deterministic fact packs using the dry-run provider.
-6. Generate AI context files and `AGENTS.md` into `.aictx/runs/<timestamp>-run/out/`.
-7. Write `.aictx/runs/<timestamp>-run/aictx.patch`.
-8. If `--write apply` is used, copy generated files into the repository and write `docs/AIprojectcontext/context.lock.json`.
+6. Generate AI context files and `AGENTS.md` into `.aictx/runs/<timestamp>-run/out/` using repo-relative paths.
+7. Write `.aictx/runs/<timestamp>-run/aictx.patch` from those staged outputs.
+8. If `--write apply` is used, copy the staged generated files into the repository. The current implementation does not replay the patch file.
 
 Current generated repository files on `--write apply`:
 
@@ -85,6 +85,12 @@ Current generated repository files on `--write apply`:
 - `docs/AIprojectcontext/validation-report.md`
 - `docs/AIprojectcontext/context.lock.json`
 - `AGENTS.md`
+
+Important current behavior:
+
+- `--write patch` writes staged outputs plus `.aictx/runs/<timestamp>-run/aictx.patch`
+- `--write apply` copies the staged generated outputs into the repository
+- `src/aictx/io/patches.py:apply_patch` is still stubbed and is not used yet for repo updates
 
 ### Initializing Baseline Lockfile
 
@@ -199,7 +205,7 @@ Ensure the target path is inside a Git repository with at least one commit.
 
 ### Secrets are detected in real files but not in test fixtures
 
-The scanner uses regex-based detection, but it skips detector source/examples in `src/aictx/scan/secrets.py` and test/fixture-style paths to avoid false positives. If findings appear, they should now be treated as more likely to be actionable project files rather than intentional test examples.
+The scanner uses regex-based detection, but it skips detector source/examples in `src/aictx/scan/secrets.py`, test/fixture-style paths, and lines intentionally annotated with `aictx-secret-ignore` to avoid false positives. If findings appear, they should now be treated as more likely to be actionable project files rather than intentional examples. Real secrets should be removed, not suppressed.
 
 ### Why is `.pytest-tmp` ignored?
 

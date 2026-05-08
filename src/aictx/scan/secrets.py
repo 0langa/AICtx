@@ -6,6 +6,7 @@ import re
 from pathlib import Path
 
 SELF_MATCH_EXCLUDED_PARTS = {"tests", "unit", "fixtures"}
+IGNORE_MARKER = "aictx-secret-ignore"
 
 PATTERNS: list[tuple[str, re.Pattern[str], str]] = [
     (
@@ -59,7 +60,7 @@ def scan_for_secrets(content: str, file_path: Path) -> list[dict[str, str | int 
         if detector_name == "env_file_secret":
             if file_path.name.startswith(".env") or file_path.suffix == ".env":
                 for line_no, line in enumerate(lines, start=1):
-                    if pattern.search(line):
+                    if pattern.search(line) and not _is_suppressed(lines, line_no):
                         findings.append(
                             {
                                 "path": file_path.as_posix(),
@@ -71,7 +72,7 @@ def scan_for_secrets(content: str, file_path: Path) -> list[dict[str, str | int 
             continue
 
         for line_no, line in enumerate(lines, start=1):
-            if pattern.search(line):
+            if pattern.search(line) and not _is_suppressed(lines, line_no):
                 findings.append(
                     {
                         "path": file_path.as_posix(),
@@ -90,3 +91,11 @@ def _should_skip_secret_scan(file_path: Path) -> bool:
         file_path.name == "secrets.py"
         and {"src", "aictx", "scan"}.issubset(normalized_parts)
     ) or bool(normalized_parts & SELF_MATCH_EXCLUDED_PARTS)
+
+
+def _is_suppressed(lines: list[str], line_no: int) -> bool:
+    indexes = [line_no - 2, line_no - 1, line_no]
+    for index in indexes:
+        if 0 <= index < len(lines) and IGNORE_MARKER in lines[index]:
+            return True
+    return False

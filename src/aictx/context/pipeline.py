@@ -27,6 +27,9 @@ def run_local_context_pipeline(
     write_mode: Literal["patch", "apply"],
 ) -> RunReport:
     """Run the local Phase 1 context generation pipeline."""
+    if scope != "full":
+        raise NotImplementedError("Changed-scope refresh is not implemented yet for local Phase 1 runs.")
+
     inventory = scan_repository(repo_root)
     if inventory.secrets:
         raise SecretScanError("High-confidence secrets detected; refusing context generation.")
@@ -54,7 +57,9 @@ def run_local_context_pipeline(
     runs_dir = repo_root / ".aictx" / "runs" / run_id
     out_dir = runs_dir / "out"
     out_dir.mkdir(parents=True, exist_ok=True)
+    _write_run_artifacts(runs_dir=runs_dir, inventory=inventory.model_dump(mode="json"), plan=typed_plan, fact_packs=fact_packs)
 
+    staged_context_dir = out_dir / config.project.context_dir
     generated_paths = write_context_scaffold(
         repo_root=repo_root,
         out_dir=out_dir,
@@ -72,8 +77,8 @@ def run_local_context_pipeline(
         model_provider="dry_run",
         model_name="dry_run",
     )
-    write_lockfile(out_dir, lock)
-    generated_paths = [*generated_paths, out_dir / "context.lock.json"]
+    write_lockfile(staged_context_dir, lock)
+    generated_paths = [*generated_paths, staged_context_dir / "context.lock.json"]
 
     patch_text = _build_patch(repo_root=repo_root, out_dir=out_dir)
     patch_path = runs_dir / "aictx.patch"
@@ -81,7 +86,6 @@ def run_local_context_pipeline(
 
     if write_mode == "apply":
         _apply_out_dir(repo_root=repo_root, out_dir=out_dir)
-        write_lockfile(repo_root / config.project.context_dir, lock)
 
     return RunReport(
         run_id=run_id,
@@ -131,3 +135,49 @@ def _apply_out_dir(repo_root: Path, out_dir: Path) -> None:
         relative = generated_file.relative_to(out_dir)
         target = repo_root / relative
         safe_write(target, generated_file.read_text(encoding="utf-8"))
+
+
+def _write_run_artifacts(
+    runs_dir: Path,
+    inventory: dict[str, Any],
+    plan: dict[str, Any],
+    fact_packs: list[dict[str, Any]],
+) -> None:
+    safe_write(runs_dir / "inventory.json", _json_dump(inventory))
+    safe_write(runs_dir / "context-plan.json", _json_dump(plan))
+    facts_dir = runs_dir / "facts"
+    pack_name_map = {
+        "project_identity": "project_identity",
+        "architecture": "architecture",
+        "feature": "feature",
+        "workflow": "workflow",
+        "docs": "docs",
+        "risk": "risk",
+    }
+    seen_pack_names: set[str] = set()
+    for pack in fact_packs:
+        pack_name = pack_name_map.get(str(pack["name"]), str(pack["name"]))
+        seen_pack_names.add(pack_name)
+        safe_write(facts_dir / f"{pack_name}_facts.json", _json_dump(pack))
+    for expected_pack_name in pack_name_map.values():
+        if expected_pack_name in seen_pack_names:
+            continue
+        safe_write(
+            facts_dir / f"{expected_pack_name}_facts.json",
+            _json_dump(
+                {
+                    "name": expected_pack_name,
+                    "facts": [],
+                    "summary": "No deterministic facts extracted.",
+                    "estimated_output_tokens": 0,
+                }
+            ),
+        )
+    safe_write(runs_dir / "coverage-report.json", _json_dump({"status": "deterministic", "missing": []}))
+    safe_write(runs_dir / "contradictions.json", _json_dump({"status": "none", "contradictions": []}))
+
+
+def _json_dump(payload: Any) -> str:
+    import json
+
+    return json.dumps(payload, indent=2, sort_keys=True) + "\n"

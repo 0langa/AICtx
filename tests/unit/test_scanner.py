@@ -158,3 +158,21 @@ def test_scan_for_secrets_skips_test_fixture_examples(tmp_path: Path) -> None:
     findings = scan_for_secrets(f.read_text(), f)
 
     assert findings == []
+
+
+def test_secret_scan_supports_inline_suppression(tmp_path: Path) -> None:
+    f = tmp_path / "settings.py"
+    f.write_text("# aictx-secret-ignore\nOCI_API_KEY=abc123", encoding="utf-8")
+
+    findings = scan_for_secrets(f.read_text(), f)
+
+    assert findings == []
+
+
+def test_unsuppressed_secret_is_still_reported(tmp_path: Path) -> None:
+    f = tmp_path / "settings.py"
+    f.write_text("OCI_API_KEY=abc123", encoding="utf-8")
+
+    findings = scan_for_secrets(f.read_text(), f)
+
+    assert any(item["detector_name"] == "oci_api_key" for item in findings)

@@ -87,9 +87,14 @@ def test_run_phase1_patch_writes_staged_outputs_only() -> None:
     latest = run_dirs[-1]
 
     assert (latest / "aictx.patch").exists()
+    assert (latest / "inventory.json").exists()
+    assert (latest / "context-plan.json").exists()
+    assert (latest / "coverage-report.json").exists()
+    assert (latest / "contradictions.json").exists()
+    assert (latest / "facts" / "project_identity_facts.json").exists()
     assert (latest / "out" / "docs" / "AIprojectcontext" / "ai-index.md").exists()
     assert (latest / "out" / "docs" / "AIprojectcontext" / "project-state.md").exists()
-    assert (latest / "out" / "context.lock.json").exists()
+    assert (latest / "out" / "docs" / "AIprojectcontext" / "context.lock.json").exists()
     assert (latest / "out" / "AGENTS.md").exists()
 
     assert not (repo / "docs" / "AIprojectcontext" / "ai-index.md").exists()
@@ -134,6 +139,7 @@ def test_run_phase1_apply_writes_repo_outputs_and_lockfile() -> None:
     assert (context_dir / "schema.md").exists()
     assert (context_dir / "validation-report.md").exists()
     assert (context_dir / "context.lock.json").exists()
+    assert not (repo / "context.lock.json").exists()
     assert (repo / "AGENTS.md").exists()
 
     lock = load_lockfile(context_dir)
@@ -184,3 +190,102 @@ def test_run_phase1_generated_context_records_verifiable_outputs_after_apply() -
     assert "docs/AIprojectcontext/ai-index.md" in generated_paths
     assert "docs/AIprojectcontext/architecture.md" in generated_paths
     assert any(section.source_paths for section in lock.sections)
+
+
+def test_run_phase1_apply_does_not_create_root_context_lock() -> None:
+    repo = create_git_repo(
+        {
+            "README.md": "# Test repo",
+            "src/main.py": "print('ok')\n",
+        }
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "run",
+            "--project",
+            str(repo),
+            "--mode",
+            "setup-context",
+            "--execution",
+            "local",
+            "--scope",
+            "full",
+            "--write",
+            "apply",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert not (repo / "context.lock.json").exists()
+    assert (repo / "docs" / "AIprojectcontext" / "context.lock.json").exists()
+
+
+def test_run_phase1_patch_does_not_target_root_context_lock() -> None:
+    repo = create_git_repo(
+        {
+            "README.md": "# Test repo",
+            "src/main.py": "print('ok')\n",
+        }
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "run",
+            "--project",
+            str(repo),
+            "--mode",
+            "setup-context",
+            "--execution",
+            "local",
+            "--scope",
+            "full",
+            "--write",
+            "patch",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    latest = sorted([path for path in (repo / ".aictx" / "runs").iterdir() if path.is_dir()])[-1]
+    patch_text = (latest / "aictx.patch").read_text(encoding="utf-8")
+    assert "b/docs/AIprojectcontext/context.lock.json" in patch_text
+    assert "b/context.lock.json" not in patch_text
+
+
+def test_run_phase1_writes_expected_fact_artifacts() -> None:
+    repo = create_git_repo(
+        {
+            "README.md": "# Test repo",
+            "src/main.py": "print('ok')\n",
+            "tests/test_main.py": "def test_ok():\n    assert True\n",
+        }
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "run",
+            "--project",
+            str(repo),
+            "--mode",
+            "setup-context",
+            "--execution",
+            "local",
+            "--scope",
+            "full",
+            "--write",
+            "patch",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    latest = sorted([path for path in (repo / ".aictx" / "runs").iterdir() if path.is_dir()])[-1]
+    facts_dir = latest / "facts"
+    assert (facts_dir / "project_identity_facts.json").exists()
+    assert (facts_dir / "architecture_facts.json").exists()
+    assert (facts_dir / "feature_facts.json").exists()
+    assert (facts_dir / "workflow_facts.json").exists()
+    assert (facts_dir / "docs_facts.json").exists()
+    assert (facts_dir / "risk_facts.json").exists()

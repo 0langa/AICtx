@@ -59,7 +59,20 @@ packages = ["src/aictx"]
 [tool.ruff]
 target-version = "py312"
 line-length = 100
-exclude = [".pytest-tmp"]
+exclude = [
+    ".git",
+    ".venv",
+    ".pytest-tmp",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".ruff_cache",
+    ".aictx/runs",
+    ".aictx/cache",
+    ".aictx/tmp",
+    "build",
+    "dist",
+    "node_modules",
+]
 [tool.ruff.lint]
 select = [
     "E",   # pycodestyle errors
@@ -100,5 +113,5 @@ testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = "-v --tb=short --basetemp=.pytest-tmp"
+addopts = "-v --tb=short"
 norecursedirs = [".pytest-tmp"]
