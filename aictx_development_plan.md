@@ -11,34 +11,43 @@ AICtx is no longer only a scanner scaffold. The repo now has a real local founda
       aictx --help
       aictx --version
       aictx scan --project <repo>
+      aictx init --project <repo>
+      aictx run --mode setup-context --execution local --scope full --write patch|apply
+      aictx verify --project <repo> --strict
       deterministic repository scanner
-      Git state detection
-      structured Git status in inventory
+      Git root detection
+      structured Git status in inventory (tracked/untracked/modified/deleted/renamed)
       ignored-directory pruning
       .aictx runtime artifact exclusion
       file/doc/test/manifest classification
-      secret finding reports
+      secret finding with inline suppression (aictx-secret-ignore)
+      secret-scan self-protection (skips detector source and test/fixture paths)
       baseline docs/AIprojectcontext/context.lock.json
-      aictx init baseline lockfile behavior
+      init lockfile refresh with generated metadata preservation
       hash-only aictx verify --strict MVP
       dry_run model provider
       local setup-context run pipeline
-      context planner
+      deterministic file-selection planning with token-budget guardrails
       deterministic fact extraction
-      context scaffold writer
+      context scaffold writer (ai-index, project-state, code-map, architecture, workflows, public-docs-map, change-impact-map, schema, validation-report)
       generated AGENTS.md content
-      staged patch output
-      optional apply mode
+      staged patch output (aictx.patch)
+      apply mode via file copy (not replayed patch)
+      run artifact writing (inventory.json, context-plan.json, facts/*.json, coverage-report.json, contradictions.json)
       public docs under documentation/
-      unit/integration tests for scanner, init, verify, and Phase 1 run behavior
+      unit and integration tests (49 tests covering CLI, scanner, verification, Phase 1 run)
+      ruff/mypy/pytest configuration
+      .venv and .pytest-tmp exclusions
 
     still stubbed or incomplete:
-      real LLM-backed fact extraction
-      OCI GenAI provider calls
+      real LLM-backed fact extraction (uses dry_run deterministic placeholder)
+      OCI GenAI provider calls (constructor only)
       semantic verification
-      public-docs updater
-      changed-scope refresh
-      full change impact mapping
+      public-docs updater (stub, exits with code 1)
+      changed-scope refresh (NotImplementedError in pipeline)
+      full change impact mapping (returns empty lists)
+      context compression (pass-through stub)
+      validation report writer (one-line placeholder)
       OCI Object Storage exchange
       OCI remote worker
       GitHub Actions verifier generation

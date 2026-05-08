@@ -48,7 +48,7 @@ The serialized inventory now includes `dirty_state` plus `git_status` with deter
 
 ### Generating AI Context
 
-`run` is now partially implemented for the local Phase 1 pipeline.
+`run` implements the local Phase 1 pipeline. Only `--mode setup-context --execution local --scope full` is supported.
 
 ```bash
 uv run aictx run --project <path-to-repo> --mode setup-context --execution local --scope full --write patch
@@ -151,10 +151,11 @@ Generated-context workflow:
 
 ### Other Commands
 
-The following commands remain stubbed:
+The following commands are stubbed:
 
-- `aictx clean --oci --run-id <id>` — placeholder command; currently prints a stub message and does not perform cleanup
-- `aictx public-docs update --project <path> --scope <scope> --write <mode>` — placeholder command; currently exits as not implemented
+- `aictx clean --oci --run-id <id>` — prints a stub message and does not perform cleanup.
+- `aictx public-docs update --project <path> --scope <scope> --write <mode>` — prints "not yet implemented" and exits with code 1.
+- `aictx run --scope changed` — accepted by the CLI but the pipeline raises `NotImplementedError`.
 
 ## Interpreting Scanner Output
 

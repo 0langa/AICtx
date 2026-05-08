@@ -32,13 +32,17 @@
 
 ### Known Limitations
 
-- `clean` and `public-docs update` commands are stubbed and do not perform meaningful work.
-- `run` currently supports only local `setup-context`; contradiction reports, coverage reports, semantic verification, and OCI execution are not implemented.
-- `init` creates only a baseline file-state lockfile; it does not generate AI context shards.
-- `verify` is hash-only and deterministic; it does not perform semantic freshness or public-docs impact validation yet.
+- `clean` prints a stub message and does not perform cleanup.
+- `public-docs update` prints "not yet implemented" and exits with code 1.
+- `run` supports only `--mode setup-context --execution local --scope full`. `--scope changed` and any other mode or execution target raise an error.
+- Contradiction and coverage reports are deterministic empty JSON placeholders; they are not populated with real analysis yet.
+- `init` refreshes `context.lock.json` only; it does not generate AI context markdown shards.
+- `verify` is hash-only and deterministic; semantic freshness and public-docs impact validation are not implemented yet.
 - `.aictx/runs/`, `.aictx/cache/`, and `.aictx/tmp/` remain local runtime artifacts and are not part of the committed verification baseline.
-- OCI Generative AI provider is not yet implemented.
-- Context compression is stubbed.
-- Public docs mapper, updater, and patcher are stubbed.
-- OCI Object Storage, remote jobs, and cleanup are stubbed.
-- Patch application is not implemented.
+- OCI Generative AI provider (`oci_genai.py`) is stubbed; `chat()` raises `NotImplementedError`. The only working provider is `dry_run`.
+- Context compression (`compressor.py`) is a pass-through stub.
+- Change-impact mapping (`verify/impact.py`) returns empty lists.
+- Validation report writer (`verify/reports.py`) writes a one-line placeholder.
+- Public docs mapper, updater, and patcher are stubs.
+- OCI Object Storage, remote jobs, and cleanup are stubs.
+- `apply_patch` is a no-op stub; `--write apply` copies staged files into the repo instead of replaying patches.

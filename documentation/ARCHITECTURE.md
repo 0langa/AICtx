@@ -17,7 +17,7 @@ Typer-based command surface. Commands:
 - `aictx --version` — prints version.
 - `aictx scan --project <path>` — scans repository, prints summary, writes inventory JSON.
 - `aictx init --project <path>` — creates or refreshes `docs/AIprojectcontext/context.lock.json`, preserving generated lock metadata when present, and creates `.aictxignore` if missing.
-- `aictx run --project <path> --mode setup-context --execution local --scope <scope> --write <mode>` — implemented local Phase 1 pipeline.
+- `aictx run --project <path> --mode setup-context --execution local --scope full --write <mode>` — implemented local Phase 1 pipeline. `--scope changed` is not implemented yet.
 - `aictx verify --project <path> --strict` — hash-only verifier MVP for baseline lockfile validation.
 - `aictx clean --oci --run-id <id>` — **stubbed**.
 - `aictx public-docs update --project <path> --scope <scope> --write <mode>` — **stubbed**; exits with code 1.
@@ -90,8 +90,9 @@ Safety measures implemented in the scanner:
 ### Remaining Stubbed / Planned Context Work
 
 - `agents_md.py` — generates a static `AGENTS.md` template.
-- `compressor.py` — stubbed.
-- Planned additions: contradiction reports, coverage reports, richer source spans, refresh prioritization, and semantic compression.
+- `compressor.py` — pass-through stub; returns input unchanged.
+- Contradiction and coverage reports are written as deterministic empty placeholders (`{"status": "none", "contradictions": []}` and `{"status": "deterministic", "missing": []}`) during each run. They are not yet populated with semantic analysis.
+- Planned additions: richer source spans, refresh prioritization, and semantic compression.
 
 ### Verification (`src/aictx/verify/`)
 
@@ -136,11 +137,14 @@ Pydantic v2 models live in `src/aictx/models/`:
 
 ## Current Limitations
 
-- `aictx run` only supports local `setup-context`; other modes and OCI execution are not implemented.
-- `aictx verify` only verifies deterministic file hashes; it does not perform semantic freshness checks yet.
+- `aictx run` only supports local `setup-context` with `--scope full`; `--scope changed` and other modes are not implemented yet.
+- `aictx verify` only verifies deterministic file hashes; semantic freshness and public-docs impact checks are not implemented yet.
 - `aictx init` refreshes the verification lockfile only; it does not generate AI context markdown shards.
-- `aictx public-docs update` is a placeholder.
-- OCI model provider is not wired to a real endpoint.
-- Patch application (`apply_patch`) is stubbed.
+- `aictx clean` prints a message but does not perform cleanup.
+- `aictx public-docs update` is a placeholder that prints "not yet implemented" and exits with code 1.
+- OCI model provider (`oci_genai.py`) is stubbed; `dry_run` is the only working provider.
+- `apply_patch` is a no-op stub; `--write apply` copies staged files instead of replaying patches.
+- Context compression (`compressor.py`) is a pass-through stub.
+- Change-impact mapping (`verify/impact.py`) returns empty lists.
+- Validation report writer (`verify/reports.py`) writes a one-line placeholder.
 - No CI workflow generation yet.
-- No contradiction/coverage JSON reports or semantic freshness checks are implemented yet.

@@ -16,8 +16,10 @@ AGENTS_MD_TEMPLATE = """# AGENTS.md — AI Agent Instructions for {project_name}
 2. Do **not** read large human-facing public docs for general project context.
 3. Public docs may be read only when the task is documentation-related or `aictx verify --strict` reports a public-docs impact.
 4. Run `aictx verify --strict` before any public commit.
-5. If context is stale, run `aictx run --project . --mode setup-context --scope changed --write apply`.
+5. If context is stale, run `aictx run --project . --mode setup-context --scope full --write apply` to regenerate the full context scaffold.
+   - Note: `--scope changed` refresh is not yet implemented.
 6. If public docs are impacted, run `aictx public-docs update --project . --scope changed --write patch`.
+   - Note: `public-docs update` is currently a stub and not yet implemented.
 7. Do not fabricate facts. Mark missing information `unknown` or `needs-source`.
 8. Preserve source references for all important claims.
 

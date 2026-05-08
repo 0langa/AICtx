@@ -21,13 +21,18 @@ AICtx is at an early alpha stage. The repository scanner, baseline lockfile boot
 - Windows test temp hardening — `.pytest-tmp` is excluded from linting, scanning, and test discovery.
 - Repository tooling — Ruff, mypy, and pytest are configured for local validation.
 
-### What is planned
+### What is stubbed or not yet implemented
 
-- Semantic freshness verification beyond file hashes — planned for a later milestone.
-- Change-impact mapping and cheap refresh — planned for v0.4.0.
-- Public-docs updater — planned for v0.5.0.
-- CI workflow generation — planned for v0.6.0.
-- OCI remote execution — planned for v0.7.0.
+- `aictx clean` — stubbed; prints a message and does not perform cleanup.
+- `aictx public-docs update` — stubbed; exits with code 1.
+- `aictx run --scope changed` — not implemented; only `--scope full` works.
+- `io.patches.apply_patch` — stubbed; apply mode copies staged files instead of replaying patches.
+- OCI GenAI provider — stubbed; `dry_run` is the only working provider.
+- Context compression — stubbed (pass-through).
+- Change-impact mapping — stubbed.
+- Semantic freshness verification — planned for a later milestone.
+- CI workflow generation — planned for a later milestone.
+- OCI remote execution — planned for a later milestone.
 
 ## Installation
 
@@ -68,12 +73,12 @@ uv run aictx run --project . --mode setup-context --execution local --scope full
 
 | Command | Status | Description |
 | --- | --- | --- |
-| `scan` | **Implemented** | Walks the repo, builds inventory, detects secrets, writes JSON. |
-| `init` | **Implemented (MVP)** | Creates or refreshes `docs/AIprojectcontext/context.lock.json`, preserving generated lock metadata when present, and creates `.aictxignore` if missing. |
-| `run` | **Implemented (local Phase 1)** | Runs local planning, fact extraction, scaffold generation, and lockfile output for `setup-context` in local mode. |
-| `verify` | **Implemented (hash-only MVP)** | Verifies locked source and generated file hashes. No semantic validation yet. |
-| `clean` | Stubbed | Will clean generated or remote artifacts. |
-| `public-docs update` | Stubbed | Will update human-facing public docs. Note: subcommand under `aictx public-docs`. |
+| `scan` | Implemented | Walks the repo, builds inventory, detects secrets, writes JSON. |
+| `init` | Implemented | Creates or refreshes `docs/AIprojectcontext/context.lock.json`, preserving generated lock metadata when present, and creates `.aictxignore` if missing. |
+| `run` | Implemented (local Phase 1) | Runs local planning, fact extraction, scaffold generation, and lockfile output for `setup-context` in local mode. Only `--scope full` works. |
+| `verify` | Implemented (hash-only MVP) | Verifies locked source and generated file hashes. No semantic validation yet. |
+| `clean` | Stubbed | Prints a stub message and does not perform cleanup. |
+| `public-docs update` | Stubbed | Prints "not yet implemented" and exits with code 1. Subcommand under `aictx public-docs`. |
 
 ## Development
 
@@ -105,9 +110,11 @@ uv run mypy src
 - The tool does not auto-commit, auto-push, or silently overwrite files.
 - `docs/AIprojectcontext/context.lock.json` is generated but versioned; `.aictx/runs/`, `.aictx/cache/`, and `.aictx/tmp/` are runtime-only and should not be committed.
 - `verify --strict` is currently deterministic file-state validation only; semantic freshness and public-docs impact checks are planned later.
-- `aictx run` currently supports only `--mode setup-context --execution local` and generates deterministic scaffold files. Contradiction reports, coverage reports, semantic freshness, and provider-backed OCI generation are not implemented yet.
-- `aictx public-docs update` remains stubbed.
-- `io.patches.apply_patch` remains stubbed; current `--write apply` behavior copies staged generated files instead of replaying the patch file.
+- `aictx run` currently supports only `--mode setup-context --execution local --scope full`. `--scope changed` is not implemented yet.
+- Contradiction reports and coverage reports are written as deterministic placeholders (empty) during each run; they are not yet populated with real analysis.
+- `aictx public-docs update` is a stub that prints "not yet implemented" and exits with code 1.
+- `io.patches.apply_patch` is a stub; `--write apply` copies staged generated files into the repo instead of replaying a patch file.
+- The OCI GenAI provider (`oci_genai.py`) is stubbed; the only working provider is `dry_run`.
 
 ## License
 
