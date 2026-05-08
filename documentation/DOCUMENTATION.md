@@ -46,13 +46,47 @@ This will:
 6. Print a summary to the terminal.
 7. Write the full inventory to `.aictx/runs/<timestamp>-scan/inventory.json`.
 
+### Initializing Baseline Lockfile
+
+`init` is now minimally implemented.
+
+```bash
+uv run aictx init --project <path-to-repo>
+```
+
+This will:
+
+1. Validate the target is inside a Git repository.
+2. Run the scanner.
+3. Create `docs/AIprojectcontext/` if missing.
+4. Write `docs/AIprojectcontext/context.lock.json` as a baseline file-state lockfile.
+5. Create `.aictxignore` if missing.
+
+This command does not call any model provider, does not generate AI context markdown, and does not auto-commit anything.
+
+### Verifying Baseline State
+
+`verify --strict` is now a hash-only verifier MVP.
+
+```bash
+uv run aictx verify --project <path-to-repo> --strict
+```
+
+It currently checks:
+
+- lockfile exists
+- schema version is supported
+- each locked source file still exists
+- each locked source file hash still matches
+- generated file hashes if generated files are present in the lockfile
+
+It does not yet perform semantic AI validation or public-docs impact verification.
+
 ### Other Commands
 
 The following commands exist in the CLI but are currently stubbed:
 
-- `aictx init --project <path>`
 - `aictx run --project <path> --mode <mode> --execution <target> --write <mode>`
-- `aictx verify --project <path> --strict`
 - `aictx clean --oci --run-id <id>`
 - `aictx public-docs update --project <path> --scope <scope> --write <mode>`
 
@@ -116,9 +150,9 @@ Ensure the target path is inside a Git repository with at least one commit.
 
 The scanner uses regex-based detection. Test fixtures containing fake secrets will be reported. This is expected and safe because the scanner only reports findings; it does not block or modify anything.
 
-### `aictx run` or `aictx verify` do nothing useful
+### `aictx run` does nothing useful yet
 
-These commands are currently stubbed. They will print a "not yet implemented" message. Context generation and verification are planned features.
+This command is currently stubbed. It will print a "not yet implemented" message. Context generation remains a planned feature.
 
 ## Repository Layout
 

@@ -14,9 +14,9 @@ Typer-based command surface. Commands:
 
 - `aictx --version` — prints version.
 - `aictx scan --project <path>` — scans repository, prints summary, writes inventory JSON.
-- `aictx init --project <path>` — **stubbed**; prints "not yet implemented".
+- `aictx init --project <path>` — creates `docs/AIprojectcontext/context.lock.json` baseline and `.aictxignore` if missing.
 - `aictx run --project <path> --mode <mode> --execution <target> --write <mode>` — **stubbed**.
-- `aictx verify --project <path> --strict` — **stubbed**; prints "not yet implemented".
+- `aictx verify --project <path> --strict` — hash-only verifier MVP for baseline lockfile validation.
 - `aictx clean --oci --run-id <id>` — **stubbed**.
 - `aictx public-docs update --project <path> --scope <scope> --write <mode>` — **stubbed**; exits with code 1.
 
@@ -25,7 +25,7 @@ Typer-based command surface. Commands:
 Fully implemented deterministic pipeline:
 
 1. **Git root detection** — `git rev-parse --show-toplevel`.
-2. **Worktree status** — branch, HEAD commit, dirty flag, tracked/untracked/modified/deleted/renamed files.
+2. **Worktree status** — branch, HEAD commit, dirty flag, tracked/untracked/modified/deleted/renamed files serialized into inventory.
 3. **Ignore matching** — built-in hard excludes (`.git`, `.aictx`, `node_modules`, build artifacts), `.gitignore`, and `.aictxignore`.
 4. **Directory pruning** — ignored directories are skipped before descending.
 5. **File classification** — binary check, language detection by extension, manifest detection, test detection, doc detection.
@@ -59,9 +59,10 @@ Safety measures implemented in the scanner:
 
 ### Verification (`src/aictx/verify/`)
 
-- `verifier.py` — returns `"PASS"` unconditionally.
+- `verifier.py` — validates baseline `context.lock.json` deterministically using source and generated file hashes.
 - `impact.py`, `reports.py` — stubbed.
-- Planned: hash checks, source-to-context impact mapping, stale detection.
+- Current scope: hash-only file-state verification.
+- Planned: source-to-context impact mapping, semantic stale detection, and public-docs impact checks.
 
 ### Public Docs Management (`src/aictx/public_docs/`)
 
@@ -92,7 +93,8 @@ Pydantic v2 models live in `src/aictx/models/`:
 ## Current Limitations
 
 - `aictx run` does not generate context.
-- `aictx verify` does not verify freshness.
+- `aictx verify` only verifies deterministic file hashes; it does not perform semantic freshness checks yet.
+- `aictx init` does not generate AI context markdown shards or AGENTS output yet.
 - `aictx public-docs update` is a placeholder.
 - OCI model provider is not wired to a real endpoint.
 - Config TOML parsing is not implemented.

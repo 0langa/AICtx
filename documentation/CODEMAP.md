@@ -23,7 +23,7 @@ This file maps the repository layout to help future agents and contributors navi
         secrets.py             — Regex-based secret detection
 
       models/                  — Pydantic data models
-        inventory.py           — FileEntry, SecretFinding, RepositoryInventory
+        inventory.py           — FileEntry, SecretFinding, GitStatusSnapshot, RepositoryInventory
         context_lock.py        — ContextLock and sub-entry models
         docs_map.py            — DocsMap and DocsMapEntry
         run_report.py          — RunReport model
@@ -39,10 +39,10 @@ This file maps the repository layout to help future agents and contributors navi
         fact_extractor.py      — Structured fact extraction (stubbed)
         writer.py              — AI context scaffold writer (stubbed)
         compressor.py          — Text compression (stubbed)
-        lockfile.py            — context.lock.json I/O helpers
+        lockfile.py            — baseline context.lock.json builder and I/O helpers
 
       verify/                  — Freshness verification (mostly stubbed)
-        verifier.py            — Strict verifier (returns PASS stub)
+        verifier.py            — Hash-only strict verifier MVP
         hashes.py              — SHA-256 helpers for lockfile verification
         impact.py              — Change-impact mapping (stubbed)
         reports.py             — Validation report writer (stubbed)
@@ -78,7 +78,7 @@ This file maps the repository layout to help future agents and contributors navi
       runs/<run-id>/         — Per-run outputs (inventory.json)
       config.toml            — Planned config file (not yet parsed)
     .aictxignore             — Custom ignore patterns
-    docs/AIprojectcontext/   — Planned AI context scaffold output (not yet created)
+    docs/AIprojectcontext/   — Baseline lockfile output (`context.lock.json`); AI context shards planned later
 
 ## Config Files
 

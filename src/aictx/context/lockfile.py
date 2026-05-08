@@ -5,9 +5,48 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from aictx.models.context_lock import ContextLock
+from aictx import __version__
+from aictx.models.context_lock import ContextLock, SourceFileEntry
+from aictx.models.inventory import RepositoryInventory
+from aictx.verify.hashes import sha256_text
 
 LOCK_FILENAME = "context.lock.json"
+SUPPORTED_SCHEMA_VERSIONS = {"1.0"}
+
+
+def build_lockfile_from_inventory(inventory: RepositoryInventory) -> ContextLock:
+    """Build a deterministic baseline lockfile from a repository inventory.
+
+    This is a file-state baseline only. It does not represent generated AI context yet.
+    """
+    source_files = [
+        SourceFileEntry(
+            path=file.path,
+            sha256=file.sha256,
+            kind=file.kind,
+            included_in_generation=False,
+        )
+        for file in inventory.files
+        if not file.is_ignored and not file.is_binary and file.sha256 != "skipped"
+    ]
+    source_files.sort(key=lambda entry: entry.path)
+    scanner_config_hash = sha256_text(
+        "\n".join(
+            [
+                inventory.scanner_version,
+                inventory.repo_root,
+                str(len(source_files)),
+            ]
+        )
+    )
+    return ContextLock(
+        tool_version=__version__,
+        repo_head_commit=inventory.head_commit,
+        model_provider="none",
+        model_name="none",
+        scanner_config_hash=scanner_config_hash,
+        source_files=source_files,
+    )
 
 
 def load_lockfile(context_dir: Path) -> ContextLock | None:

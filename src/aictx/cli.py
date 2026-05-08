@@ -33,7 +33,40 @@ def init(
     project: str = typer.Option(".", "--project", "-p", help="Path to the target repository."),
 ) -> None:
     """Initialize a repository for aictx processing."""
-    console.print(f"[bold green]init[/bold green] not yet implemented (project={project})")
+    from pathlib import Path
+
+    from aictx.context.lockfile import build_lockfile_from_inventory, write_lockfile
+    from aictx.errors import AictxError
+    from aictx.git.repo import find_git_root
+    from aictx.scan.scanner import scan_repository
+
+    project_path = Path(project).resolve()
+    if not project_path.exists():
+        raise typer.BadParameter(f"Project path does not exist: {project}")
+
+    try:
+        repo_root = find_git_root(project_path)
+    except AictxError as exc:
+        console.print(f"[bold red]Error:[/bold red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    inventory = scan_repository(repo_root)
+    context_dir = repo_root / "docs" / "AIprojectcontext"
+    context_dir.mkdir(parents=True, exist_ok=True)
+    write_lockfile(context_dir, build_lockfile_from_inventory(inventory))
+
+    ignore_path = repo_root / ".aictxignore"
+    if not ignore_path.exists():
+        ignore_path.write_text("# AICtx custom ignore patterns\n", encoding="utf-8")
+
+    tracked_files = len(build_lockfile_from_inventory(inventory).source_files)
+    console.print("[bold green]AICtx initialized[/bold green]")
+    console.print(f"repo: {repo_root}")
+    console.print(f"context dir: {context_dir.relative_to(repo_root).as_posix()}")
+    console.print(
+        f"lockfile: {(context_dir / 'context.lock.json').relative_to(repo_root).as_posix()}"
+    )
+    console.print(f"source files tracked: {tracked_files}")
 
 
 @app.command()
@@ -112,9 +145,29 @@ def verify(
     strict: bool = typer.Option(False, "--strict", help="Enable strict verification."),
 ) -> None:
     """Verify generated AI context freshness."""
-    console.print(
-        f"[bold green]verify[/bold green] not yet implemented (project={project}, strict={strict})"
-    )
+    from pathlib import Path
+
+    from aictx.errors import AictxError
+    from aictx.git.repo import find_git_root
+    from aictx.verify.verifier import verify as run_verify
+
+    project_path = Path(project).resolve()
+    if not project_path.exists():
+        raise typer.BadParameter(f"Project path does not exist: {project}")
+
+    try:
+        repo_root = find_git_root(project_path)
+    except AictxError as exc:
+        console.print(f"[bold red]Error:[/bold red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    result = run_verify(repo_root, strict=strict)
+    if result == "PASS":
+        console.print("[bold green]PASS[/bold green]")
+        raise typer.Exit(code=0)
+
+    console.print(f"[bold red]{result}[/bold red]")
+    raise typer.Exit(code=1)
 
 
 public_docs_app = typer.Typer(help="Manage public-facing documentation.")

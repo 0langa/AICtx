@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Literal
 
 from pydantic import BaseModel, Field
@@ -22,7 +22,7 @@ class SourceFileEntry(BaseModel):
     path: str
     sha256: str
     kind: str
-    included_in_generation: bool = True
+    included_in_generation: bool = False
 
 
 class SectionEntry(BaseModel):
@@ -64,9 +64,9 @@ class ContextLock(BaseModel):
     schema_version: str = "1.0"
     tool_version: str = "0.1.0"
     repo_head_commit: str
-    generated_at: datetime = Field(default_factory=datetime.utcnow)
-    model_provider: str = "dry_run"
-    model_name: str = "default"
+    generated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    model_provider: str = "none"
+    model_name: str = "none"
     scanner_config_hash: str = ""
     generated_files: list[GeneratedFileEntry] = Field(default_factory=list)
     source_files: list[SourceFileEntry] = Field(default_factory=list)

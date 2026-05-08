@@ -30,12 +30,13 @@ dependencies = [
     "typer>=0.12.0",
     "rich>=13.0.0",
     "pydantic>=2.0.0",
-    "gitpython>=3.1.40",
     "pathspec>=0.12.0",
-    "oci>=2.120.0",
 ]
 
 [project.optional-dependencies]
+oci = [
+    "oci>=2.120.0",
+]
 dev = [
     "pytest>=8.0.0",
     "pytest-cov>=4.1.0",

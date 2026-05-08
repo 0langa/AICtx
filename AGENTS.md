@@ -1,11 +1,11 @@
 # AGENTS.md — AI Agent Instructions for AICtx
 
 > **Primary context source:** Root docs (`README.md`, `documentation/CODEMAP.md`, `documentation/ARCHITECTURE.md`, `aictx_development_plan.md`).
-> **Note:** `docs/AIprojectcontext/` does not yet exist because the context generation pipeline is not implemented.
+> **Note:** `docs/AIprojectcontext/context.lock.json` can now exist after `aictx init`, but AI context markdown generation is not implemented yet.
 
 ## Current Project State
 
-AICtx is an early-alpha local-first CLI tool (v0.1.0). Only the repository scanner is fully implemented. Context generation, verification, and public-docs update are stubbed. Do not claim features are implemented unless the code supports it.
+AICtx is an early-alpha local-first CLI tool (v0.1.0). The repository scanner, baseline lockfile bootstrap, and hash-only verification MVP are implemented. Context generation, semantic verification, and public-docs update remain incomplete. Do not claim features are implemented unless the code supports it.
 
 ## Conventions
 
@@ -40,12 +40,13 @@ pytest
 - `src/aictx/llm/base.py`, `llm/dry_run.py` — Model provider ABC and dry-run implementation.
 - `src/aictx/io/` — File I/O, patches, JSONL helpers.
 - `src/aictx/context/agents_md.py` — Static `AGENTS.md` template generator.
-- `src/aictx/context/lockfile.py` — context.lock.json I/O helpers.
+- `src/aictx/context/lockfile.py` — baseline `context.lock.json` builder and I/O helpers.
+- `src/aictx/verify/verifier.py` — hash-only strict verifier MVP.
 
 ## Stubbed / Planned Modules
 
 - `src/aictx/context/planner.py`, `fact_extractor.py`, `writer.py`, `compressor.py` — context generation pipeline (stubbed).
-- `src/aictx/verify/` — strict verifier, impact mapping, reports (stubbed).
+- `src/aictx/verify/impact.py`, `reports.py` — impact mapping and reports (stubbed).
 - `src/aictx/public_docs/` — mapper, updater, patcher (stubbed).
 - `src/aictx/oci/` — OCI config, Object Storage, remote jobs, cleanup (stubbed).
 - `src/aictx/llm/oci_genai.py` — OCI GenAI provider (stubbed).
@@ -57,7 +58,7 @@ pytest
 2. The actual codebase is the source of truth. Do not rely on this file alone.
 3. Do not fabricate facts. If information is unavailable, mark it `unknown` or `needs-source`.
 4. Preserve source references for all important claims.
-5. Commands like `aictx verify --strict` and `aictx run` are currently stubbed and will not perform real work.
+5. `aictx verify --strict` now performs deterministic hash-only file-state validation. `aictx run` remains stubbed.
 6. Before calling work finished, ensure tests pass (`uv run pytest`) and no lint errors exist (`uv run ruff check .`, `uv run mypy src`).
 
 ## Accuracy Rules

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import subprocess
+
 from aictx.scan.scanner import scan_repository
 from tests.fixtures.git_repos import create_git_repo
 
@@ -69,3 +71,43 @@ def test_repeated_scan_file_paths_are_stable() -> None:
     assert _included_paths(inv1) == _included_paths(inv2)
     assert not any(p.startswith(".aictx/runs/") for p in _included_paths(inv1))
     assert not any(p.startswith(".aictx/runs/") for p in _included_paths(inv2))
+
+
+def test_inventory_serializes_git_status() -> None:
+    repo = create_git_repo(
+        {
+            "README.md": "# Test",
+            "src/main.py": "print('hello')",
+        }
+    )
+    inv = scan_repository(repo)
+
+    assert inv.dirty_state is False
+    assert inv.git_status.is_dirty is False
+    assert "README.md" in inv.git_status.tracked_files
+    assert "src/main.py" in inv.git_status.tracked_files
+    dumped = inv.model_dump()
+    assert "git_status" in dumped
+    assert dumped["git_status"]["tracked_files"]
+
+
+def test_scan_reports_untracked_modified_deleted_files() -> None:
+    repo = create_git_repo(
+        {
+            "README.md": "# Test",
+            "src/main.py": "print('hello')",
+            "src/old.py": "print('old')",
+        }
+    )
+    (repo / "src" / "main.py").write_text("print('changed')", encoding="utf-8")
+    (repo / "notes.txt").write_text("untracked", encoding="utf-8")
+    (repo / "src" / "old.py").unlink()
+    subprocess.run(["git", "-C", str(repo), "add", "-u"], check=True, capture_output=True)
+
+    inv = scan_repository(repo)
+
+    assert inv.dirty_state is True
+    assert inv.git_status.is_dirty is True
+    assert "src/main.py" in inv.git_status.modified_files
+    assert "notes.txt" in inv.git_status.untracked_files
+    assert "src/old.py" in inv.git_status.deleted_files

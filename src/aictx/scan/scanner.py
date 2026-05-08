@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Literal, cast
 
 from aictx.git.status import WorktreeStatus
-from aictx.models.inventory import FileEntry, RepositoryInventory, SecretFinding
+from aictx.models.inventory import FileEntry, GitStatusSnapshot, RepositoryInventory, SecretFinding
 from aictx.scan.classify import classify_project
 from aictx.scan.ignore import IgnoreMatcher
 from aictx.scan.secrets import scan_for_secrets
@@ -101,6 +101,14 @@ def _is_doc(path: Path) -> bool:
 def scan_repository(repo_root: Path) -> RepositoryInventory:
     """Scan *repo_root* and return a deterministic inventory."""
     git_status = WorktreeStatus(repo_root)
+    git_snapshot = GitStatusSnapshot(
+        is_dirty=git_status.dirty,
+        tracked_files=sorted(git_status.tracked_files),
+        untracked_files=sorted(git_status.untracked_files),
+        modified_files=sorted(git_status.modified_files),
+        deleted_files=sorted(git_status.deleted_files),
+        renamed_files=sorted(git_status.renamed_files, key=lambda item: (item["from"], item["to"])),
+    )
     matcher = IgnoreMatcher(repo_root)
     classification = classify_project(repo_root)
 
@@ -223,6 +231,7 @@ def scan_repository(repo_root: Path) -> RepositoryInventory:
         branch=git_status.branch,
         head_commit=git_status.head_commit,
         dirty_state=git_status.dirty,
+        git_status=git_snapshot,
         files=files,
         docs=docs,
         manifests=manifests,

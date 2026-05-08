@@ -1,8 +1,15 @@
 # AICtx Documentation
 
-This directory is for human-facing public documentation.
+This directory is for human-facing public and developer documentation.
 
-Currently, AICtx does not yet implement the public-docs update pipeline. The main developer documentation lives in the repository root:
+Current implemented status:
+
+- `aictx scan` is implemented.
+- `aictx init` creates `docs/AIprojectcontext/context.lock.json` as a baseline lockfile.
+- `aictx verify --strict` performs deterministic hash-only verification against that lockfile.
+- `aictx run` and `aictx public-docs update` remain stubbed.
+
+The main documentation lives in the repository root and this directory:
 
 - [`README.md`](../README.md) — Project overview and quick start.
 - [`DOCUMENTATION.md`](DOCUMENTATION.md) — Install, CLI usage, tests, and troubleshooting.

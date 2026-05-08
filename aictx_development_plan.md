@@ -1,6 +1,6 @@
 # AI Context Agent Development Plan
 
-> **Current status:** Only the v0.1.0 scanner milestone is fully implemented. Context generation, verification, public-docs update, and OCI integration are stubbed. See the version roadmap at the end of this document for details.
+> **Current status:** The scanner milestone is implemented, and a baseline `context.lock.json` plus hash-only verifier MVP are now implemented. Context generation, semantic verification, public-docs update, and OCI integration remain planned.
 
 ## Overall goal
 
@@ -141,10 +141,10 @@ aictx clean --oci
 
 Initial behavior:
 
-- `aictx init` creates `.aictx/config.toml` in the target repo or user config directory.
+- `aictx init` currently creates `docs/AIprojectcontext/context.lock.json` and `.aictxignore` if missing. Config initialization is deferred.
 - `aictx scan` prints and writes a repository inventory.
 - `aictx run` initially calls the dry-run model provider and writes placeholder context only behind `--apply`.
-- `aictx verify` checks for required generated files.
+- `aictx verify` currently performs deterministic hash-only validation against the baseline lockfile.
 - `aictx public-docs update` can exist as a stub that exits with a clear "not implemented yet" status.
 - `aictx clean --oci` can exist as a stub until OCI remote mode exists.
 

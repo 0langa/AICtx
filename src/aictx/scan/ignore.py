@@ -36,7 +36,7 @@ def _load_spec(path: Path) -> pathspec.PathSpec | None:  # type: ignore[type-arg
     if not path.exists():
         return None
     lines = path.read_text(encoding="utf-8").splitlines()
-    return pathspec.PathSpec.from_lines("gitwildmatch", lines)
+    return pathspec.PathSpec.from_lines("gitignore", lines)
 
 
 class IgnoreMatcher:
@@ -44,7 +44,7 @@ class IgnoreMatcher:
 
     def __init__(self, repo_root: Path) -> None:
         self.repo_root = repo_root
-        self.builtin = pathspec.PathSpec.from_lines("gitwildmatch", BUILTIN_HARD_EXCLUDES)
+        self.builtin = pathspec.PathSpec.from_lines("gitignore", BUILTIN_HARD_EXCLUDES)
         self.gitignore = _load_spec(repo_root / ".gitignore")
         self.aictxignore = _load_spec(repo_root / ".aictxignore")
 

@@ -36,6 +36,17 @@ class SecretFinding(BaseModel):
     line_number: int | None = None
 
 
+class GitStatusSnapshot(BaseModel):
+    """Deterministic snapshot of the current git worktree status."""
+
+    is_dirty: bool
+    tracked_files: list[str] = Field(default_factory=list)
+    untracked_files: list[str] = Field(default_factory=list)
+    modified_files: list[str] = Field(default_factory=list)
+    deleted_files: list[str] = Field(default_factory=list)
+    renamed_files: list[dict[str, str]] = Field(default_factory=list)
+
+
 class RepositoryInventory(BaseModel):
     """Complete repository inventory snapshot."""
 
@@ -43,6 +54,7 @@ class RepositoryInventory(BaseModel):
     branch: str
     head_commit: str
     dirty_state: bool
+    git_status: GitStatusSnapshot
     files: list[FileEntry] = Field(default_factory=list)
     docs: list[FileEntry] = Field(default_factory=list)
     manifests: list[FileEntry] = Field(default_factory=list)
