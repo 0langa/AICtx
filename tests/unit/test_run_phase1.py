@@ -146,8 +146,13 @@ def test_run_phase1_apply_writes_repo_outputs_and_lockfile() -> None:
     assert lock is not None
     assert lock.model_provider == "dry_run"
     assert lock.model_name == "dry_run"
-    assert any(entry.path == "docs/AIprojectcontext/project-state.md" for entry in lock.generated_files)
-    assert any(section.generated_file == "docs/AIprojectcontext/architecture.md" for section in lock.sections)
+    assert any(
+        entry.path == "docs/AIprojectcontext/project-state.md" for entry in lock.generated_files
+    )
+    assert any(
+        section.generated_file == "docs/AIprojectcontext/architecture.md"
+        for section in lock.sections
+    )
 
     ai_index = (context_dir / "ai-index.md").read_text(encoding="utf-8")
     assert "project-state.md" in ai_index

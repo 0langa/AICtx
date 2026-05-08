@@ -28,7 +28,9 @@ def run_local_context_pipeline(
 ) -> RunReport:
     """Run the local Phase 1 context generation pipeline."""
     if scope != "full":
-        raise NotImplementedError("Changed-scope refresh is not implemented yet for local Phase 1 runs.")
+        raise NotImplementedError(
+            "Changed-scope refresh is not implemented yet for local Phase 1 runs."
+        )
 
     inventory = scan_repository(repo_root)
     if inventory.secrets:
@@ -52,12 +54,19 @@ def run_local_context_pipeline(
 
     provider = DryRunProvider()
     typed_plan = cast(dict[str, Any], plan)
-    fact_packs = extract_facts(repo_root=repo_root, plan=typed_plan, provider=provider, run_id=run_id)
+    fact_packs = extract_facts(
+        repo_root=repo_root, plan=typed_plan, provider=provider, run_id=run_id
+    )
 
     runs_dir = repo_root / ".aictx" / "runs" / run_id
     out_dir = runs_dir / "out"
     out_dir.mkdir(parents=True, exist_ok=True)
-    _write_run_artifacts(runs_dir=runs_dir, inventory=inventory.model_dump(mode="json"), plan=typed_plan, fact_packs=fact_packs)
+    _write_run_artifacts(
+        runs_dir=runs_dir,
+        inventory=inventory.model_dump(mode="json"),
+        plan=typed_plan,
+        fact_packs=fact_packs,
+    )
 
     staged_context_dir = out_dir / config.project.context_dir
     generated_paths = write_context_scaffold(
@@ -173,8 +182,12 @@ def _write_run_artifacts(
                 }
             ),
         )
-    safe_write(runs_dir / "coverage-report.json", _json_dump({"status": "deterministic", "missing": []}))
-    safe_write(runs_dir / "contradictions.json", _json_dump({"status": "none", "contradictions": []}))
+    safe_write(
+        runs_dir / "coverage-report.json", _json_dump({"status": "deterministic", "missing": []})
+    )
+    safe_write(
+        runs_dir / "contradictions.json", _json_dump({"status": "none", "contradictions": []})
+    )
 
 
 def _json_dump(payload: Any) -> str:

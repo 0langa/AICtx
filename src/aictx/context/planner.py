@@ -26,7 +26,9 @@ def plan_context(
 
     important_docs = {"README.md", "CHANGELOG.md", "ROADMAP.md", "AGENTS.md"}
     for entry in sorted(inventory.docs, key=lambda item: item.path):
-        if (entry.path in important_docs or entry.path.startswith("docs/")) and entry.path not in reasons:
+        if (
+            entry.path in important_docs or entry.path.startswith("docs/")
+        ) and entry.path not in reasons:
             selected_entries.append(entry)
             reasons[entry.path] = "doc"
 
@@ -62,7 +64,9 @@ def plan_context(
         "manifest_files": [entry.path for entry in selected_entries if entry.is_manifest],
         "build_files": [entry.path for entry in selected_entries if entry.is_manifest],
         "test_files": [entry.path for entry in selected_entries if entry.is_test],
-        "files_excluded_from_llm": [entry.path for entry in inventory.files if entry.is_ignored or entry.is_binary],
+        "files_excluded_from_llm": [
+            entry.path for entry in inventory.files if entry.is_ignored or entry.is_binary
+        ],
         "reason_per_selected_file": reasons,
         "estimated_token_cost": estimated_token_cost,
         "selected_files": selected_files,

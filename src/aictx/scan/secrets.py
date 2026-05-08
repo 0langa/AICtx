@@ -88,14 +88,10 @@ def _should_skip_secret_scan(file_path: Path) -> bool:
     """Skip files that intentionally embed detector examples or fixtures."""
     normalized_parts = {part.casefold() for part in file_path.parts}
     return (
-        file_path.name == "secrets.py"
-        and {"src", "aictx", "scan"}.issubset(normalized_parts)
+        file_path.name == "secrets.py" and {"src", "aictx", "scan"}.issubset(normalized_parts)
     ) or bool(normalized_parts & SELF_MATCH_EXCLUDED_PARTS)
 
 
 def _is_suppressed(lines: list[str], line_no: int) -> bool:
     indexes = [line_no - 2, line_no - 1, line_no]
-    for index in indexes:
-        if 0 <= index < len(lines) and IGNORE_MARKER in lines[index]:
-            return True
-    return False
+    return any(0 <= index < len(lines) and IGNORE_MARKER in lines[index] for index in indexes)

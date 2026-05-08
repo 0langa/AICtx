@@ -38,7 +38,9 @@ def write_context_scaffold(
         "docs/AIprojectcontext/architecture.md": _render_architecture(fact_map),
         "docs/AIprojectcontext/workflows.md": _render_workflows(inventory, fact_map),
         "docs/AIprojectcontext/public-docs-map.md": _render_public_docs_map(inventory),
-        "docs/AIprojectcontext/change-impact-map.md": _render_change_impact_map(selected_files, reasons),
+        "docs/AIprojectcontext/change-impact-map.md": _render_change_impact_map(
+            selected_files, reasons
+        ),
         "docs/AIprojectcontext/schema.md": _render_schema(),
         "docs/AIprojectcontext/validation-report.md": _render_validation_report(fact_packs),
         "AGENTS.md": generate_agents_md(repo_root.name),
@@ -83,7 +85,9 @@ def build_context_lock(
         for fact in pack["facts"]:
             source_hashes = []
             for source_path in fact["source_paths"]:
-                match = next((entry.sha256 for entry in source_files if entry.path == source_path), "unknown")
+                match = next(
+                    (entry.sha256 for entry in source_files if entry.path == source_path), "unknown"
+                )
                 source_hashes.append(match)
             sections.append(
                 SectionEntry(
