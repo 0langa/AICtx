@@ -45,6 +45,12 @@ class VerificationError(AictxError):
     pass
 
 
+class PatchApplyError(AictxError):
+    """Raised when a patch cannot be safely applied."""
+
+    pass
+
+
 class RemoteJobError(AictxError):
     """Raised when a remote OCI job fails."""
 

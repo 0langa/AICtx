@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import json
+import shutil
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Annotated
 
 import typer
 from rich.console import Console
@@ -57,6 +60,9 @@ def init(
     from aictx.scan.scanner import scan_repository
 
     repo_root = _resolve_repo_root(project)
+    ignore_path = repo_root / ".aictxignore"
+    if not ignore_path.exists():
+        ignore_path.write_text("# AICtx custom ignore patterns\n", encoding="utf-8")
 
     inventory = scan_repository(repo_root)
     context_dir = repo_root / "docs" / "AIprojectcontext"
@@ -81,10 +87,6 @@ def init(
             }
         )
     write_lockfile(context_dir, lock)
-
-    ignore_path = repo_root / ".aictxignore"
-    if not ignore_path.exists():
-        ignore_path.write_text("# AICtx custom ignore patterns\n", encoding="utf-8")
 
     tracked_files = len(lock.source_files)
     console.print("[bold green]AICtx initialized[/bold green]")
@@ -146,6 +148,11 @@ def run(
     execution: str = typer.Option("local", "--execution", "-e", help="Execution target."),
     scope: str = typer.Option("full", "--scope", help="Run scope: full or changed."),
     write: str = typer.Option("patch", "--write", "-w", help="Write mode: patch or apply."),
+    provider: str | None = typer.Option(None, "--provider", help="Model provider override."),
+    allow_ai: bool = typer.Option(False, "--allow-ai", help="Permit non-dry-run AI providers."),
+    allow_dirty: bool = typer.Option(
+        False, "--allow-dirty", help="Permit apply on dirty worktree."
+    ),
 ) -> None:
     """Run the aictx pipeline."""
     from aictx.config import load_config
@@ -163,9 +170,20 @@ def run(
     if write not in {"patch", "apply"}:
         console.print(f"[bold red]Unsupported write mode:[/bold red] {write}")
         raise typer.Exit(code=1)
+    if provider is not None and provider not in {"dry_run", "oci_genai"}:
+        console.print(f"[bold red]Unsupported provider:[/bold red] {provider}")
+        raise typer.Exit(code=1)
 
     repo_root = _resolve_repo_root(project)
     config = load_config(repo_root)
+    if provider is not None:
+        config = config.model_copy(
+            update={"llm": config.llm.model_copy(update={"provider": provider})}
+        )
+    if allow_dirty:
+        config = config.model_copy(
+            update={"execution": config.execution.model_copy(update={"allow_dirty": True})}
+        )
     run_id = datetime.now(UTC).strftime("%Y-%m-%dT%H%M%SZ-run")
 
     try:
@@ -175,6 +193,8 @@ def run(
             config=config,
             scope=scope,  # type: ignore[arg-type]
             write_mode=write,  # type: ignore[arg-type]
+            allow_ai=allow_ai,
+            allow_dirty=allow_dirty,
         )
     except Exception as exc:
         console.print(f"[bold red]run failed:[/bold red] {exc}")
@@ -202,19 +222,68 @@ def run(
 def verify(
     project: str = typer.Option(".", "--project", "-p", help="Path to the target repository."),
     strict: bool = typer.Option(False, "--strict", help="Enable strict verification."),
+    json_output: bool = typer.Option(False, "--json", help="Emit structured JSON."),
 ) -> None:
     """Verify generated AI context freshness."""
-    from aictx.verify.verifier import verify as run_verify
+    from aictx.verify.verifier import verify_detailed
 
     repo_root = _resolve_repo_root(project)
 
-    result = run_verify(repo_root, strict=strict)
-    if result == "PASS":
+    report = verify_detailed(repo_root, strict=strict)
+    if json_output:
+        console.print_json(report.model_dump_json())
+    elif report.result == "PASS":
         console.print("[bold green]PASS[/bold green]")
+    else:
+        console.print(f"[bold red]{report.result}[/bold red]")
+        if report.next_command:
+            console.print(f"next: {report.next_command}")
+
+    if report.result == "PASS":
         raise typer.Exit(code=0)
 
-    console.print(f"[bold red]{result}[/bold red]")
     raise typer.Exit(code=1)
+
+
+@app.command()
+def status(
+    project: str = typer.Option(".", "--project", "-p", help="Path to the target repository."),
+    strict: bool = typer.Option(False, "--strict", help="Enable strict verification."),
+    json_output: bool = typer.Option(False, "--json", help="Emit structured JSON."),
+) -> None:
+    """Show repository and context readiness status."""
+    from aictx.context.lockfile import load_lockfile
+    from aictx.scan.scanner import scan_repository
+    from aictx.verify.verifier import determine_changed_source_paths, verify_detailed
+
+    repo_root = _resolve_repo_root(project)
+    inventory = scan_repository(repo_root)
+    lock = load_lockfile(repo_root / "docs" / "AIprojectcontext")
+    report = verify_detailed(repo_root, strict=strict)
+    changed_paths = determine_changed_source_paths(inventory, lock)
+    payload = {
+        "repo": str(repo_root),
+        "branch": inventory.branch,
+        "head": inventory.head_commit,
+        "dirty": inventory.dirty_state,
+        "files": len([file for file in inventory.files if not file.is_ignored]),
+        "changed_sources": changed_paths,
+        "verification": report.model_dump(mode="json"),
+    }
+    if json_output:
+        console.print_json(json.dumps(payload, indent=2, sort_keys=True))
+        raise typer.Exit(code=0 if report.result == "PASS" else 1)
+
+    console.print("[bold green]AICtx status[/bold green]")
+    console.print(f"repo: {repo_root}")
+    console.print(f"branch: {inventory.branch}")
+    console.print(f"head: {inventory.head_commit}")
+    console.print(f"dirty: {inventory.dirty_state}")
+    console.print(f"changed sources: {len(changed_paths)}")
+    console.print(f"verify: {report.result}")
+    if report.next_command:
+        console.print(f"next: {report.next_command}")
+    raise typer.Exit(code=0 if report.result == "PASS" else 1)
 
 
 public_docs_app = typer.Typer(help="Manage public-facing documentation.")
@@ -228,22 +297,119 @@ def public_docs_update(
     write: str = typer.Option("patch", "--write", "-w", help="Write mode: patch or apply."),
 ) -> None:
     """Update public-facing documentation."""
-    console.print(
-        f"[bold yellow]public-docs update[/bold yellow] not yet implemented "
-        f"(project={project}, scope={scope}, write={write})"
-    )
-    raise typer.Exit(code=1)
+    from aictx.public_docs.updater import update_public_docs
+
+    if scope not in {"changed", "full"}:
+        console.print(f"[bold red]Unsupported scope:[/bold red] {scope}")
+        raise typer.Exit(code=1)
+    if write not in {"patch", "apply"}:
+        console.print(f"[bold red]Unsupported write mode:[/bold red] {write}")
+        raise typer.Exit(code=1)
+
+    repo_root = _resolve_repo_root(project)
+    try:
+        patch_path = update_public_docs(
+            repo_root=repo_root,
+            scope=scope,  # type: ignore[arg-type]
+            write_mode=write,  # type: ignore[arg-type]
+        )
+    except Exception as exc:
+        console.print(f"[bold red]public-docs update failed:[/bold red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    if patch_path is None:
+        console.print("[bold green]No public docs updates needed[/bold green]")
+    else:
+        console.print("[bold green]Public docs review generated[/bold green]")
+        console.print(f"patch: {patch_path}")
+        if write == "apply":
+            console.print("review: docs/AIprojectcontext/public-docs-review.md")
+    raise typer.Exit(code=0)
+
+
+oci_app = typer.Typer(help="OCI readiness helpers.")
+app.add_typer(oci_app, name="oci")
+
+
+@oci_app.command("doctor")
+def oci_doctor(
+    profile: str = typer.Option("DEFAULT", "--profile", help="OCI profile name."),
+    config_file: Annotated[
+        Path | None, typer.Option("--config-file", help="OCI config path.")
+    ] = None,
+    json_output: bool = typer.Option(False, "--json", help="Emit structured JSON."),
+) -> None:
+    """Check local OCI readiness without network calls."""
+    from aictx.oci.doctor import run_oci_doctor
+
+    report = run_oci_doctor(profile=profile, config_file=config_file)
+    if json_output:
+        console.print_json(report.model_dump_json())
+    else:
+        console.print("[bold green]OCI doctor[/bold green]")
+        console.print(f"sdk: {report.sdk_available}")
+        console.print(f"config: {report.config_file_exists} ({report.config_file})")
+        console.print(f"profile: {report.profile_exists} ({report.profile})")
+        console.print(f"compartment: {report.compartment_id_present}")
+        console.print(f"ready: {report.ready}")
+        if report.missing:
+            console.print("missing:")
+            for item in report.missing:
+                console.print(f"- {item}")
+    raise typer.Exit(code=0 if report.ready else 1)
 
 
 @app.command()
 def clean(
+    project: str = typer.Option(".", "--project", "-p", help="Path to the target repository."),
     oci: bool = typer.Option(False, "--oci", help="Clean OCI remote artifacts."),
     run_id: str | None = typer.Option(None, "--run-id", help="Specific run ID to clean."),
+    keep_runs: int | None = typer.Option(None, "--keep-runs", help="Keep newest N local runs."),
+    yes: bool = typer.Option(False, "--yes", help="Apply local cleanup."),
 ) -> None:
     """Clean generated or remote artifacts."""
-    console.print(
-        f"[bold green]clean[/bold green] not yet implemented (oci={oci}, run_id={run_id})"
-    )
+    if oci:
+        console.print("[bold red]OCI cleanup not implemented; local clean only.[/bold red]")
+        raise typer.Exit(code=1)
+    if keep_runs is not None and keep_runs < 0:
+        console.print("[bold red]--keep-runs must be >= 0[/bold red]")
+        raise typer.Exit(code=1)
+
+    repo_root = _resolve_repo_root(project)
+    runs_dir = repo_root / ".aictx" / "runs"
+    if not runs_dir.exists():
+        console.print("[bold green]No local runs to clean[/bold green]")
+        raise typer.Exit(code=0)
+
+    targets: list[Path] = []
+    if run_id:
+        target = runs_dir / run_id
+        if not target.exists() or not target.is_dir():
+            console.print(f"[bold red]Unknown run id:[/bold red] {run_id}")
+            raise typer.Exit(code=1)
+        targets = [target]
+    elif keep_runs is not None:
+        run_dirs = sorted([path for path in runs_dir.iterdir() if path.is_dir()])
+        targets = run_dirs[: max(0, len(run_dirs) - keep_runs)]
+    else:
+        console.print("[bold red]clean requires --run-id or --keep-runs[/bold red]")
+        raise typer.Exit(code=1)
+
+    if not targets:
+        console.print("[bold green]No local runs to clean[/bold green]")
+        raise typer.Exit(code=0)
+
+    if not yes:
+        console.print("[bold yellow]Dry run[/bold yellow]")
+        for target in targets:
+            console.print(f"would remove: {target}")
+        console.print("rerun with --yes to apply")
+        raise typer.Exit(code=0)
+
+    for target in targets:
+        shutil.rmtree(target)
+        console.print(f"removed: {target}")
+    raise typer.Exit(code=0)
 
 
 if __name__ == "__main__":

@@ -9,12 +9,15 @@ from aictx import __version__
 from aictx.context.agents_md import generate_agents_md
 from aictx.io.files import safe_write
 from aictx.models.context_lock import (
+    ChangeImpactMapEntry,
     ContextLock,
     GeneratedFileEntry,
+    PublicDocsMapEntry,
     SectionEntry,
     SourceFileEntry,
 )
 from aictx.models.inventory import RepositoryInventory
+from aictx.public_docs.mapper import build_public_docs_map_from_inventory
 from aictx.verify.hashes import sha256_file, sha256_text
 
 
@@ -73,6 +76,8 @@ def build_context_lock(
     generated_paths: list[Path],
     model_provider: str,
     model_name: str,
+    existing_lock: ContextLock | None = None,
+    changed_files: list[str] | None = None,
 ) -> ContextLock:
     """Build a Phase 1 lockfile for generated context artifacts."""
     selected_set = set(plan["selected_files"])
@@ -111,6 +116,32 @@ def build_context_lock(
                 )
             )
 
+    public_docs_map = _build_public_docs_lock_entries(
+        inventory=inventory,
+        existing_lock=existing_lock,
+        changed_files=changed_files or [],
+    )
+
+    section_ids_by_source: dict[str, set[str]] = {}
+    for section in sections:
+        for source_path in section.source_paths:
+            section_ids_by_source.setdefault(source_path, set()).add(section.section_id)
+    public_docs_by_source: dict[str, set[str]] = {}
+    for doc_entry in public_docs_map:
+        for source_path in doc_entry.source_paths:
+            public_docs_by_source.setdefault(source_path, set()).add(doc_entry.path)
+    change_impact_map = [
+        ChangeImpactMapEntry(
+            source_glob=source.path,
+            ai_context_sections=sorted(section_ids_by_source.get(source.path, set())),
+            public_doc_paths=sorted(public_docs_by_source.get(source.path, set())),
+            no_impact_reason=None
+            if source.path in section_ids_by_source or source.path in public_docs_by_source
+            else "No generated context or public-doc link.",
+        )
+        for source in source_files
+    ]
+
     generated_files = [
         GeneratedFileEntry(
             path=path.relative_to(out_dir).as_posix(),
@@ -133,7 +164,40 @@ def build_context_lock(
         generated_files=generated_files,
         source_files=source_files,
         sections=sections,
+        public_docs_map=public_docs_map,
+        change_impact_map=change_impact_map,
     )
+
+
+def _build_public_docs_lock_entries(
+    inventory: RepositoryInventory,
+    existing_lock: ContextLock | None,
+    changed_files: list[str],
+) -> list[PublicDocsMapEntry]:
+    """Build public-doc lock entries without prematurely clearing doc review impact."""
+    entries = [
+        PublicDocsMapEntry(**entry.model_dump())
+        for entry in build_public_docs_map_from_inventory(inventory).entries
+    ]
+    if existing_lock is None:
+        return entries
+
+    changed_set = set(changed_files)
+    old_entries = {entry.path: entry for entry in existing_lock.public_docs_map}
+    for entry in entries:
+        old_entry = old_entries.get(entry.path)
+        if old_entry is None or entry.path in changed_set:
+            continue
+        old_hashes = dict(
+            zip(old_entry.source_paths, old_entry.last_verified_source_hashes, strict=False)
+        )
+        entry.last_verified_source_hashes = [
+            old_hashes.get(source_path, source_hash)
+            for source_path, source_hash in zip(
+                entry.source_paths, entry.last_verified_source_hashes, strict=True
+            )
+        ]
+    return entries
 
 
 def _render_ai_index() -> str:

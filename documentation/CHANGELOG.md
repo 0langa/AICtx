@@ -18,6 +18,16 @@
 - context scaffold + generated `AGENTS.md`
 - run artifact output + staged patch output
 - apply-by-copy mode
+- changed-scope detection recorded in run plans
+- dirty-worktree gate for `--write apply`
+- `status --json`
+- `verify --json` detailed reports + next-command hints
+- deterministic public-doc source map + review patch generation
+- public-doc impact preservation until mapped doc changes
+- safe local `clean`
+- guarded `apply_patch` helper using `git apply --check`
+- guarded provider factory; non-dry providers require `--allow-ai`
+- `oci doctor` local readiness check
 - test coverage for CLI/scanner/verify/Phase1 run
 - lockfile metadata preservation in `init`
 - false-positive hardening for secret detector source/examples + test/fixture paths
@@ -29,16 +39,12 @@
 
 ### Current limitations
 
-- `clean` stub
-- `public-docs update` stub
-- `run --scope changed` not implemented
+- `run --scope changed` uses full-safe regeneration path; partial shard regeneration not implemented
 - `verify` remains deterministic and does not perform semantic freshness checks
 - `init` does not generate context shards
 - contradiction/coverage reports are placeholder JSON
-- `apply_patch` helper is no-op stub
 - `compressor.py` pass-through stub
-- `verify/impact.py` empty-list stub
 - `verify/reports.py` one-line placeholder
-- `public_docs/*` stubs
-- `oci/*` stubs
-- `llm/oci_genai.py` stub; only `dry_run` works
+- public-doc updates are review artifacts only; manual content edits required
+- OCI object storage / remote job / cleanup stubs
+- `llm/oci_genai.py` runtime stub; only `dry_run` calls succeed

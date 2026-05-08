@@ -11,27 +11,35 @@ Implemented:
 - `scan`
 - `init`
 - `run --mode setup-context --execution local --scope full --write patch|apply`
+- `run --mode setup-context --execution local --scope changed --write patch|apply`
 - `verify --strict`
+- `verify --strict --json`
+- `status --json`
+- `public-docs update --scope changed|full --write patch|apply`
+- `clean --run-id <id>` / `clean --keep-runs <n> --yes`
+- `oci doctor --json`
 - deterministic scanner
 - baseline lockfile bootstrap
-- hash-only verifier MVP
+- deterministic verifier MVP
 - strict generated-context structure checks
+- structured verification reports + next-command hints
 - local Phase 1 context pipeline
 - dry-run provider
+- provider factory; non-dry providers require `--allow-ai`
 - generated context scaffold + `AGENTS.md`
 - generated artifact isolation during scan/planning
 - patch output + apply-by-copy
+- safe patch apply helper with `git apply --check`
+- changed-scope detection recorded in run plan
+- deterministic public-doc impact review artifact
+- public-doc verification hashes preserved until mapped doc changes
+- dirty-worktree apply gate with `--allow-dirty`
 - tests + Ruff + mypy + pytest setup
 
-Stubbed/not implemented:
+Still stubbed/not implemented:
 
-- `clean`
-- `public-docs update`
-- `run --scope changed`
-- real patch replay in `io.patches.apply_patch`
 - `oci_genai` provider runtime
 - semantic freshness verification
-- change-impact mapping
 - remote OCI execution
 - CI workflow generation
 
@@ -54,8 +62,11 @@ uv run aictx --version
 uv run aictx scan --project .
 uv run aictx init --project .
 uv run aictx verify --project . --strict
+uv run aictx status --project . --strict --json
 uv run aictx run --project . --mode setup-context --execution local --scope full --write patch
 uv run aictx run --project . --mode setup-context --execution local --scope full --write apply
+uv run aictx public-docs update --project . --scope changed --write patch
+uv run aictx oci doctor --json
 ```
 
 ## Command surface
@@ -64,10 +75,12 @@ uv run aictx run --project . --mode setup-context --execution local --scope full
 | --- | --- | --- |
 | `scan` | implemented | deterministic inventory + secret scan |
 | `init` | implemented | writes/refreshes `docs/AIprojectcontext/context.lock.json`; preserves generated metadata when present |
-| `run` | implemented | local Phase 1 only; `setup-context`; `scope=full` only |
-| `verify` | implemented | hash verification plus strict generated-file/source-link checks |
-| `clean` | stub | no cleanup |
-| `public-docs update` | stub | exits 1 |
+| `run` | implemented | local Phase 1 only; `setup-context`; `scope=full|changed`; patch/apply; apply blocks dirty unless allowed |
+| `verify` | implemented | hash verification plus strict generated-file/source-link checks; JSON report |
+| `status` | implemented | scan + verify summary for automation |
+| `clean` | implemented | safe local run cleanup; dry-run until `--yes`; OCI cleanup still unsupported |
+| `public-docs update` | implemented | deterministic review/patch for mapped doc impacts; manual prose edits still required |
+| `oci doctor` | implemented | local SDK/config/compartment readiness check; no network calls |
 
 ## What `run --write apply` writes
 
@@ -84,6 +97,7 @@ uv run aictx run --project . --mode setup-context --execution local --scope full
 - `AGENTS.md`
 
 Existing unmanaged second-level sections in `AGENTS.md` are preserved during regeneration.
+`--write apply` refuses dirty worktrees unless config or `--allow-dirty` opts in.
 
 ## Dev commands
 
@@ -106,12 +120,12 @@ uv run mypy src
 
 - scanner never prints secret values
 - no auto-commit / auto-push
-- no silent overwrite beyond explicit `--write apply`
+- no silent overwrite beyond explicit `--write apply`; dirty apply requires `--allow-dirty`
 - runtime-only: `.aictx/runs/`, `.aictx/cache/`, `.aictx/tmp/`
 - committed generated baseline: `docs/AIprojectcontext/context.lock.json`
 - generated `docs/AIprojectcontext/**` and generated `AGENTS.md` are not fed back into context selection
 - contradiction/coverage outputs are deterministic placeholders only
-- only working provider: `dry_run`
+- default provider: `dry_run`; `oci_genai` factory path requires `--allow-ai` but runtime remains stubbed
 
 ## License
 

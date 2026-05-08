@@ -20,8 +20,13 @@ uv run aictx --help
 uv run aictx scan --project <path>
 uv run aictx init --project <path>
 uv run aictx verify --project <path> --strict
+uv run aictx verify --project <path> --strict --json
+uv run aictx status --project <path> --strict --json
 uv run aictx run --project <path> --mode setup-context --execution local --scope full --write patch
 uv run aictx run --project <path> --mode setup-context --execution local --scope full --write apply
+uv run aictx run --project <path> --mode setup-context --execution local --scope changed --write patch
+uv run aictx public-docs update --project <path> --scope changed --write patch
+uv run aictx oci doctor --json
 ```
 
 ## `scan`
@@ -44,10 +49,10 @@ Inventory includes deterministic `dirty_state` + `git_status` lists.
 Behavior:
 
 1. validate target inside git repo
-2. run scanner
-3. create `docs/AIprojectcontext/` if missing
-4. write `docs/AIprojectcontext/context.lock.json`
-5. create `.aictxignore` if missing
+2. create `.aictxignore` if missing
+3. run scanner
+4. create `docs/AIprojectcontext/` if missing
+5. write `docs/AIprojectcontext/context.lock.json`
 
 If existing lockfile contains generated metadata from prior apply run, preserve generated metadata and refresh source-side hashes.
 
@@ -59,19 +64,24 @@ Supported now:
 
 - `--mode setup-context`
 - `--execution local`
-- `--scope full`
+- `--scope full|changed`
 - `--write patch|apply`
+- `--provider dry_run|oci_genai`
+- `--allow-ai`
+- `--allow-dirty`
 
 Behavior:
 
 1. validate args
 2. load `.aictx/config.toml` if present
 3. scan repo; fail on detected secrets
-4. build deterministic selection plan
-5. extract deterministic fact packs via `dry_run`
-6. generate staged context files + `AGENTS.md` under `.aictx/runs/<timestamp>-run/out/`
-7. write `.aictx/runs/<timestamp>-run/aictx.patch`
-8. if `--write apply`, copy staged outputs into repo
+4. fail `--write apply` on dirty worktree unless `--allow-dirty` or config allows it
+5. compute changed files against existing lock
+6. build deterministic selection plan
+7. extract deterministic fact packs via configured provider (`dry_run` default)
+8. generate staged context files + `AGENTS.md` under `.aictx/runs/<timestamp>-run/out/`
+9. write `.aictx/runs/<timestamp>-run/aictx.patch`
+10. if `--write apply`, copy staged outputs into repo
 
 Applied outputs:
 
@@ -91,10 +101,11 @@ Notes:
 
 - `--write patch` = staged files + patch only
 - `--write apply` = copy staged outputs into repo
+- `--scope changed` currently records changed files and regenerates deterministic context through the same full-safe writer path
 - generated context artifacts are excluded from future source selection
 - unmanaged second-level sections in existing generated `AGENTS.md` are preserved
-- `src/aictx/io/patches.py:apply_patch` not used; still stubbed
-- `--scope changed` accepted by CLI, rejected by pipeline
+- public-doc source verification hashes stay stale until the mapped public doc changes
+- non-dry provider use requires explicit `--allow-ai`; `oci_genai` runtime still raises `NotImplementedError`
 
 ## `verify --strict`
 
@@ -109,13 +120,18 @@ Current checks:
 - strict mode requires the expected generated context files
 - strict mode verifies section source paths and source hashes
 - strict mode verifies generated `AGENTS.md` links to `docs/AIprojectcontext/ai-index.md`
+- public docs impacts are reported from lockfile doc/source maps
+- `--json` emits structured verification details and next-command hints
 
-Current scope = hash-only. No semantic freshness. No public-docs impact validation.
+Current scope = deterministic hash/linkage only. No semantic freshness.
 
-## Stub commands
+## Operational commands
 
-- `aictx clean --oci --run-id <id>` → stub message
-- `aictx public-docs update --project <path> --scope <scope> --write <mode>` → prints `not yet implemented`, exits 1
+- `aictx status --project <path> --strict --json` → scan + verify status for automation
+- `aictx clean --project <path> --run-id <id> --yes` → delete one local run
+- `aictx clean --project <path> --keep-runs <n> --yes` → keep newest N local runs
+- `aictx public-docs update --project <path> --scope changed --write patch` → write deterministic review patch
+- `aictx oci doctor --json` → local SDK/config/compartment readiness; no network mutation
 
 ## Typical workflows
 
@@ -132,6 +148,14 @@ Generated-context:
 2. `uv run aictx run --project . --mode setup-context --execution local --scope full --write apply`
 3. `uv run aictx verify --project . --strict`
 4. commit changes + regenerated context files + lockfile
+
+Public-doc review:
+
+1. change source
+2. `uv run aictx run --project . --mode setup-context --execution local --scope changed --write patch`
+3. `uv run aictx public-docs update --project . --scope changed --write patch`
+4. manually update impacted public docs from source facts
+5. `uv run aictx verify --project . --strict`
 
 ## Scanner output shape
 
@@ -167,7 +191,8 @@ uv run mypy src
 - not a git repo → target must be inside repo with at least one commit
 - real secret findings → remove real secret; do not suppress
 - `.pytest-tmp` ignored intentionally to avoid transient scan/test/lint drift
-- unsupported `run` mode/execution → only local `setup-context` + `scope=full` implemented
+- dirty apply rejected → rerun with `--allow-dirty` only when dirty files are intentional
+- unsupported `run` mode/execution → only local `setup-context` implemented
 - fresh clone verify fail → create/commit `docs/AIprojectcontext/context.lock.json` first via `init`
 
 ## Related docs

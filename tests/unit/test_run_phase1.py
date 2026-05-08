@@ -399,3 +399,115 @@ def test_run_phase1_writes_expected_fact_artifacts() -> None:
     assert (facts_dir / "workflow_facts.json").exists()
     assert (facts_dir / "docs_facts.json").exists()
     assert (facts_dir / "risk_facts.json").exists()
+
+
+def test_run_changed_scope_records_changed_files() -> None:
+    repo = create_git_repo(
+        {
+            "README.md": "# Test repo",
+            "src/main.py": "print('ok')\n",
+        }
+    )
+    apply_result = runner.invoke(
+        app,
+        [
+            "run",
+            "--project",
+            str(repo),
+            "--mode",
+            "setup-context",
+            "--execution",
+            "local",
+            "--scope",
+            "full",
+            "--write",
+            "apply",
+        ],
+    )
+    assert apply_result.exit_code == 0, apply_result.output
+
+    (repo / "src" / "main.py").write_text("print('changed')\n", encoding="utf-8")
+    patch_result = runner.invoke(
+        app,
+        [
+            "run",
+            "--project",
+            str(repo),
+            "--mode",
+            "setup-context",
+            "--execution",
+            "local",
+            "--scope",
+            "changed",
+            "--write",
+            "patch",
+        ],
+    )
+    assert patch_result.exit_code == 0, patch_result.output
+    latest = sorted([path for path in (repo / ".aictx" / "runs").iterdir() if path.is_dir()])[-1]
+    plan = json.loads((latest / "context-plan.json").read_text(encoding="utf-8"))
+
+    assert plan["changed_files"] == ["src/main.py"]
+    assert plan["selected_files"] == ["README.md", "src/main.py"]
+    assert plan["reason_per_selected_file"]["src/main.py"] == "source:changed"
+
+
+def test_run_apply_refuses_dirty_worktree_without_override() -> None:
+    repo = create_git_repo(
+        {
+            "README.md": "# Test repo",
+            "src/main.py": "print('ok')\n",
+        }
+    )
+    (repo / "src" / "main.py").write_text("print('dirty')\n", encoding="utf-8")
+
+    result = runner.invoke(
+        app,
+        [
+            "run",
+            "--project",
+            str(repo),
+            "--mode",
+            "setup-context",
+            "--execution",
+            "local",
+            "--scope",
+            "full",
+            "--write",
+            "apply",
+        ],
+    )
+
+    assert result.exit_code == 1
+    assert "--allow-dirty" in result.output
+
+
+def test_run_apply_allows_dirty_worktree_with_override() -> None:
+    repo = create_git_repo(
+        {
+            "README.md": "# Test repo",
+            "src/main.py": "print('ok')\n",
+        }
+    )
+    (repo / "src" / "main.py").write_text("print('dirty')\n", encoding="utf-8")
+
+    result = runner.invoke(
+        app,
+        [
+            "run",
+            "--project",
+            str(repo),
+            "--mode",
+            "setup-context",
+            "--execution",
+            "local",
+            "--scope",
+            "full",
+            "--write",
+            "apply",
+            "--allow-dirty",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert (repo / "docs" / "AIprojectcontext" / "context.lock.json").exists()

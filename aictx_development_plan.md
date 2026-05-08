@@ -10,29 +10,33 @@ Trust code over docs. Read `docs/AIprojectcontext/ai-index.md` first. Do not exp
   - `aictx --version`
   - `aictx scan --project <repo>`
   - `aictx init --project <repo>`
-  - `aictx run --project <repo> --mode setup-context --execution local --scope full --write patch|apply`
-  - `aictx verify --project <repo> --strict`
-- `aictx public-docs update` = stub, exits 1.
-- `aictx clean` = stub message only.
-- `--scope changed` accepted by CLI, rejected in pipeline with `NotImplementedError`.
+  - `aictx run --project <repo> --mode setup-context --execution local --scope full|changed --write patch|apply`
+  - `aictx verify --project <repo> --strict [--json]`
+  - `aictx status --project <repo> --strict [--json]`
+  - `aictx public-docs update --project <repo> --scope changed|full --write patch|apply`
+  - `aictx clean --project <repo> --run-id <id>|--keep-runs <n> [--yes]`
+  - `aictx oci doctor [--json]`
 
 ## Current pipeline facts
 
 - scan: deterministic inventory + git status + ignore handling + generated-artifact detection + secret scan.
 - init: writes `docs/AIprojectcontext/context.lock.json`; preserves existing generated metadata if lock already has it.
-- run local/full:
+- run local:
   - blocks on detected secrets
+  - blocks dirty `--write apply` unless allowed
+  - records changed files against existing lock for `--scope changed`
   - builds deterministic plan
-  - uses `DryRunProvider`
+  - uses provider factory; `dry_run` default; non-dry requires `--allow-ai`
   - writes run artifacts under `.aictx/runs/<run-id>/`
   - writes scaffold to `.aictx/runs/<run-id>/out/`
   - writes patch file `aictx.patch`
   - `--write apply` copies staged files into repo
   - generated context artifacts are excluded from future source selection
   - unmanaged second-level sections in generated `AGENTS.md` are preserved
+  - public-doc source verification hashes preserve review impact until mapped doc changes
   - applied lockfile path = `docs/AIprojectcontext/context.lock.json`
   - root `context.lock.json` must not exist
-- verify: checks lock exists, schema supported, source files exist/hash-match, generated files exist/hash-match, expected generated files, section source/hash links, and generated `AGENTS.md` index link.
+- verify: checks lock exists, schema supported, source files exist/hash-match, generated files exist/hash-match, expected generated files, section source/hash links, generated `AGENTS.md` index link, and public-doc source impacts.
 
 ## Generated outputs expected from run/apply
 
@@ -70,11 +74,10 @@ Trust code over docs. Read `docs/AIprojectcontext/ai-index.md` first. Do not exp
 
 1. Dogfood local flow on AICtx end-to-end until stable.
 2. Improve deterministic fact quality/source tracing.
-3. Expand verifier beyond raw hashes.
-4. Implement real change-impact mapping.
-5. Implement `--scope changed` refresh.
-6. Implement real public-docs update.
-7. Only then consider OCI provider work.
+3. Make changed-scope regeneration partial instead of full-safe.
+4. Convert public-doc review into source-grounded doc patching.
+5. Implement OCI provider/runtime behind current opt-in seam.
+6. Add CI/release hardening after local contracts stay stable.
 
 ## Immediate tasks
 
@@ -124,7 +127,7 @@ Add deterministic checks for:
 
 ### P2 changed-scope
 
-Implement real changed refresh:
+Upgrade changed refresh:
 
 - diff base
 - map impacted source paths
@@ -134,13 +137,13 @@ Implement real changed refresh:
 
 ### P3 public docs
 
-Current state: `public_docs/*` all stubbed despite generated placeholder files.
+Current state: deterministic map + review patch exists; no prose generation.
 
 Need:
 
-- real source->public-doc mapping
-- changed/full doc update modes
-- verifier integration for docs impact
+- source-grounded doc patching
+- stronger feature/doc mapping than conservative all-source map
+- apply-review workflow that keeps manual edits auditable
 
 ## Deferred until local flow solid
 
@@ -155,7 +158,7 @@ Need:
 
 - local-first
 - no auto-commit/push
-- no silent overwrite claims beyond current apply-copy behavior
+- no silent overwrite beyond explicit apply; dirty apply must be opt-in
 - no claiming planned work as implemented
 - no sending secrets to model providers
 - no monolithic rewrite
@@ -166,11 +169,13 @@ Need:
 - `src/aictx/scan/` = implemented scanner path
 - `src/aictx/context/pipeline.py` = implemented local Phase 1 orchestration
 - `src/aictx/context/compressor.py` = stub/pass-through
-- `src/aictx/verify/verifier.py` = implemented hash-only verifier
-- `src/aictx/public_docs/` = stubs
+- `src/aictx/verify/verifier.py` = implemented deterministic verifier + detailed reports
+- `src/aictx/public_docs/` = deterministic mapping/review flow
 - `src/aictx/llm/dry_run.py` = only working provider
+- `src/aictx/llm/providers.py` = guarded provider factory
 - `src/aictx/llm/oci_genai.py` = stub
-- `src/aictx/oci/` = stubs
+- `src/aictx/oci/doctor.py` = local readiness check
+- OCI remote modules = stubs
 
 ## Definition of actually done v1
 
@@ -185,7 +190,7 @@ After source change:
 
 must fail correctly, then:
 
-    aictx run --project <repo> --mode setup-context --scope changed --write apply
+    aictx run --project <repo> --mode setup-context --scope changed --write apply --allow-dirty
     aictx public-docs update --project <repo> --scope changed --write patch
     aictx verify --project <repo> --strict
 

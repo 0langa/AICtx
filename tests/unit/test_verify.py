@@ -134,3 +134,26 @@ def test_verify_cli_fails_when_lockfile_missing() -> None:
 
     assert result.exit_code != 0
     assert "FAIL_LOCK_MISMATCH" in result.output
+
+
+def test_verify_cli_can_emit_json() -> None:
+    repo = create_git_repo({"README.md": "# Test"})
+    result = runner.invoke(app, ["verify", "--project", str(repo), "--strict", "--json"])
+
+    assert result.exit_code != 0
+    payload = json.loads(result.output)
+    assert payload["result"] == "FAIL_LOCK_MISMATCH"
+    assert payload["next_command"] == "aictx init --project ."
+
+
+def test_status_cli_reports_changed_sources_json() -> None:
+    repo = create_git_repo({"README.md": "# Test", "src/main.py": "print('ok')\n"})
+    runner.invoke(app, ["init", "--project", str(repo)])
+    (repo / "src" / "main.py").write_text("print('changed')\n", encoding="utf-8")
+
+    result = runner.invoke(app, ["status", "--project", str(repo), "--strict", "--json"])
+
+    assert result.exit_code != 0
+    payload = json.loads(result.output)
+    assert payload["verification"]["result"] == "FAIL_STALE_AI_CONTEXT"
+    assert payload["changed_sources"] == ["src/main.py"]

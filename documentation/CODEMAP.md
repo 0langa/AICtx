@@ -29,6 +29,7 @@
       llm/
         base.py        provider ABC + request/response types
         dry_run.py     only working provider
+        providers.py   guarded provider factory; non-dry requires opt-in
         oci_genai.py   stub; `chat()` raises `NotImplementedError`
 
       context/
@@ -36,23 +37,24 @@
         pipeline.py    local Phase 1 run orchestration
         planner.py     deterministic file-selection plan + token estimate
         fact_extractor.py deterministic fact extraction via provider
-        writer.py      context scaffold + generated lock builder
+        writer.py      context scaffold + generated lock builder + public-doc hash preservation
         compressor.py  pass-through stub
         lockfile.py    baseline lock build/load/write
 
       verify/
-        verifier.py    strict verifier for hashes + generated context structure
+        verifier.py    strict verifier + detailed report + changed-file detection
         hashes.py      SHA-256 helpers
-        impact.py      stub; empty change-impact mapping
+        impact.py      lockfile change-impact mapping helper
         reports.py     stub; placeholder validation report
 
       public_docs/
-        mapper.py      stub
-        updater.py     stub
-        patcher.py     stub
+        mapper.py      deterministic public-doc/source mapping
+        updater.py     public-doc impact review/patch generation
+        patcher.py     public-doc diff helper
 
       oci/
         config.py      stub
+        doctor.py      local OCI SDK/config readiness check
         object_storage.py stub
         remote_job.py  stub
         cleanup.py     stub
@@ -60,7 +62,7 @@
       io/
         files.py       `safe_write`, `read_text`
         jsonl.py       JSONL helpers
-        patches.py     `make_unified_diff`; `apply_patch` no-op stub
+        patches.py     unified diff creation + guarded `git apply --check` replay
 
 ## Tests
 
@@ -72,6 +74,7 @@
       unit/test_scan_integration.py integration scanner tests
       unit/test_verify.py      init + verifier tests
       unit/test_run_phase1.py  local Phase 1 pipeline tests
+      unit/test_operational_readiness.py provider/OCI/patch/public-doc/clean tests
 
 ## Runtime / generated
 

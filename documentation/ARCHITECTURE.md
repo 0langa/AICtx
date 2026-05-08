@@ -11,6 +11,8 @@ Codebase is source of truth.
 - current working execution = local only
 - committed baseline = `docs/AIprojectcontext/context.lock.json`
 - runtime artifacts = `.aictx/**` (local-only, ignored)
+- non-dry model providers require explicit `--allow-ai`
+- dirty apply requires config opt-in or `--allow-dirty`
 
 ## Implemented layers
 
@@ -21,10 +23,12 @@ Codebase is source of truth.
 - `--version`
 - `scan`
 - `init`
-- `run` (`setup-context`, `execution=local`, `scope=full`, `write=patch|apply`)
-- `verify --strict`
-- `clean` stub
-- `public-docs update` stub
+- `run` (`setup-context`, `execution=local`, `scope=full|changed`, `write=patch|apply`)
+- `verify --strict [--json]`
+- `status [--json]`
+- `clean` local run cleanup
+- `public-docs update`
+- `oci doctor`
 
 ### Scanner
 
@@ -58,14 +62,16 @@ Run order:
 
 1. rescan repo
 2. fail on secrets
-3. load config if present
-4. build deterministic plan, excluding generated context artifacts from source input
-5. estimate token cost
-6. use `DryRunProvider`
-7. extract deterministic fact packs
-8. write staged scaffold under `.aictx/runs/<run-id>/out/`
-9. write `aictx.patch`
-10. if apply mode, copy staged files into repo
+3. block dirty apply unless explicitly allowed
+4. load config if present
+5. compute changed files against existing lock
+6. build deterministic plan, excluding generated context artifacts from source input
+7. estimate token cost
+8. create provider through guarded factory (`dry_run` default)
+9. extract deterministic fact packs
+10. write staged scaffold under `.aictx/runs/<run-id>/out/`
+11. write `aictx.patch`
+12. if apply mode, copy staged files into repo
 
 Generated targets:
 
@@ -106,6 +112,8 @@ Current verifier checks:
 - strict mode requires expected generated context files
 - strict mode verifies section source paths/hash links
 - strict mode verifies generated `AGENTS.md` points to `docs/AIprojectcontext/ai-index.md`
+- public-doc source changes mapped in lock
+- detailed JSON report + next-command hint
 
 Result codes in current architecture:
 
@@ -116,7 +124,25 @@ Result codes in current architecture:
 - `FAIL_MISSING_SOURCE`
 - `FAIL_UNSUPPORTED_SCHEMA`
 
-Only hash-based outcomes are actually implemented now.
+Verifier remains deterministic/hash-based; no semantic freshness.
+
+### Public docs
+
+`src/aictx/public_docs/`
+
+- maps public docs (`README.md`, `docs/**`, `documentation/**`) to source/manifest files
+- stores map in `context.lock.json`
+- preserves previous source verification hashes until the mapped public doc itself changes
+- `public-docs update` writes review artifacts and patches; it does not invent public-doc prose
+
+### OCI readiness
+
+`src/aictx/oci/doctor.py`
+
+- checks local OCI SDK presence
+- checks OCI config/profile presence
+- checks compartment id from env/config
+- no network calls, no remote mutation
 
 ## Safety behavior
 
@@ -124,7 +150,8 @@ Only hash-based outcomes are actually implemented now.
 - symlinks skipped
 - hard excludes block `.aictx/`, `.git/`, build outputs, credential files from inventory
 - pipeline blocks when secrets found
-- dirty-worktree gating not enforced yet
+- dirty-worktree apply gate enforced
+- non-dry providers require `--allow-ai`
 - contradiction/coverage gating not enforced yet
 
 ## Lockfile behavior
@@ -141,18 +168,15 @@ Generated context artifacts are tracked in `generated_files`, not `source_files`
 - `context/compressor.py` = pass-through stub
 - contradiction report = deterministic empty placeholder
 - coverage report = deterministic empty placeholder
-- `verify/impact.py` = empty-list stub
 - `verify/reports.py` = one-line placeholder
-- `public_docs/*` = stubs
 - `llm/oci_genai.py` = stub
-- `oci/*` = stubs
-- `io/patches.apply_patch` = no-op stub
+- OCI object storage / remote job / cleanup = stubs
 
 ## Current limits
 
-- `run`: local `setup-context` + `scope=full` only
-- `verify`: no semantic freshness, no public-docs impact validation
+- `run`: local `setup-context` only; changed scope records changed files but still uses full-safe regeneration
+- `verify`: no semantic freshness
 - `init`: no context shard generation
-- `clean`: no cleanup
-- `public-docs update`: not implemented
+- `public-docs update`: deterministic review flow only; manual doc edits required
+- `oci doctor`: local readiness only
 - no CI workflow generation

@@ -1,11 +1,11 @@
 {
   "schema_version": "1.0",
   "tool_version": "0.1.0",
-  "repo_head_commit": "b14f7a6b3655915fea98137217297fe4e6d361a2",
-  "generated_at": "2026-05-08T07:59:54.442995Z",
+  "repo_head_commit": "1fbf6c2b67c448f19ec159314c9643809182f147",
+  "generated_at": "2026-05-08T10:31:05.492447Z",
   "model_provider": "dry_run",
   "model_name": "dry_run",
-  "scanner_config_hash": "6c850f861fcb238ba88efcfb9a11a9ad4b261bf4f93093a01db14a803d3dc65d",
+  "scanner_config_hash": "c3265016c5b569213fea670f9bb2c4977f1ad2e73fa209570d59843545caa89e",
   "generated_files": [
     {
       "path": "AGENTS.md",
@@ -19,7 +19,7 @@
     },
     {
       "path": "docs/AIprojectcontext/architecture.md",
-      "sha256": "07109100852ae88f614be90fdfc2cdc66c684c929881c35de1f6d71e036bd385",
+      "sha256": "889f187c0de881dc118b4211f4597d22176faa75e06cf75997a0938f89542490",
       "generated_from_sections": [
         "architecture-c49d105346f0",
         "architecture-6c86d176dcf5",
@@ -29,7 +29,7 @@
         "architecture-8d8e53f8f38b",
         "architecture-3ef6041aa82b",
         "architecture-204d516ee13d",
-        "architecture-50d0840d8117",
+        "architecture-2bcfd4e31f35",
         "architecture-c3bccc035632",
         "architecture-13fa5b94620b",
         "architecture-439416cabd48",
@@ -40,11 +40,12 @@
         "architecture-bbf850199103",
         "architecture-c38c5cca89c9",
         "architecture-e12cce509db1",
-        "architecture-80b1c68642f2",
+        "architecture-f107de1f76e1",
         "architecture-523dc92e7900",
         "architecture-1813492cdba1",
         "architecture-284e40438b91",
         "architecture-765a3f8a840d",
+        "architecture-50306ef564f8",
         "architecture-3afad6567591",
         "architecture-3fa493fa51ef",
         "architecture-8c1a536d4561",
@@ -54,6 +55,7 @@
         "architecture-e684407f3eb2",
         "architecture-d18f808a5ef2",
         "architecture-f96343160a8d",
+        "architecture-1c1931721001",
         "architecture-2eead7bd187c",
         "architecture-3d7624e1ad28",
         "architecture-b05b1536b217",
@@ -63,7 +65,7 @@
         "architecture-53e0282ee6c0",
         "architecture-095b14932920",
         "architecture-1ec6ed7b670a",
-        "architecture-935eef5c5987",
+        "architecture-0a5b145193a1",
         "architecture-c2b10cc284da",
         "architecture-de3e2cb306a7",
         "architecture-40a6fa8f714d",
@@ -71,6 +73,7 @@
         "architecture-37061be7e299",
         "architecture-aa6a75cdd4f3",
         "architecture-cad87ef34345",
+        "architecture-115d9e817412",
         "architecture-f3a3df150f94",
         "architecture-f817bf84a3cd",
         "architecture-88cead944d60",
@@ -79,12 +82,12 @@
     },
     {
       "path": "docs/AIprojectcontext/change-impact-map.md",
-      "sha256": "c7169df29963f9406f93918379ad08f36afe5696ac9dcda649f8324d5ba0bcc6",
+      "sha256": "a1e4ea58cfe44a9344b69b41196bc5fd02932e580733b9c85e68f6d07b7e338b",
       "generated_from_sections": []
     },
     {
       "path": "docs/AIprojectcontext/code-map.md",
-      "sha256": "4746b62580ab43c38a57710212447988868bc7721d786263b8b0e01968e3ac57",
+      "sha256": "e066b33c391d8c024b0cd418d43f5c0f43363b4f3640d8ea76962aef6e8560f1",
       "generated_from_sections": [
         "feature-0bee25f8136d",
         "feature-b802401f2a5c",
@@ -94,7 +97,7 @@
         "feature-ae5204cd96c4",
         "feature-e39d9c0baf88",
         "feature-b84e29cff27d",
-        "feature-ce67bd4b9db4",
+        "feature-add09883eb7a",
         "feature-90b9757fe44d",
         "feature-da51035eaa95",
         "feature-6510fa1cdc1e",
@@ -105,11 +108,12 @@
         "feature-169031e06e2c",
         "feature-902f71238ab0",
         "feature-af3e585fe731",
-        "feature-e07b5b98e0ee",
+        "feature-9e9a3ec21311",
         "feature-75018de70cec",
         "feature-dd830c3f981c",
         "feature-ef5fe2e10848",
         "feature-904908050f24",
+        "feature-811d05529a1b",
         "feature-b0185e158bd3",
         "feature-49814f990a5d",
         "feature-5ca7aecf703a",
@@ -119,6 +123,7 @@
         "feature-33d65137a30b",
         "feature-33e306b0aa86",
         "feature-0a949df3e037",
+        "feature-7f82e0b01746",
         "feature-9bc831bc73b2",
         "feature-6b7fb631dbb1",
         "feature-aed48960651a",
@@ -128,7 +133,7 @@
         "feature-0aa93905bdaf",
         "feature-614bf179ee41",
         "feature-4c73f7861418",
-        "feature-f1b82ee8dce3",
+        "feature-4bc598eb831f",
         "feature-e7fc277f1d30",
         "feature-3d4affb3f651",
         "feature-79c263b9dc82",
@@ -136,6 +141,7 @@
         "feature-8e54915f4c55",
         "feature-39b3548260f4",
         "feature-db55ebc12b3a",
+        "feature-9ed9cafafd06",
         "feature-fa42e6acbb69",
         "feature-c628463adbc3",
         "feature-58e10b4983cb",
@@ -144,7 +150,7 @@
     },
     {
       "path": "docs/AIprojectcontext/project-state.md",
-      "sha256": "f7415e503cb0b6083f881fd490305203962083eaf8f17532700b8d1a90940baa",
+      "sha256": "0a493c47f81df37768c6be90c091671f9f9a85038166fdd27721538f2a76d6de",
       "generated_from_sections": [
         "project_identity-5efe173a4c90"
       ]
@@ -161,12 +167,12 @@
     },
     {
       "path": "docs/AIprojectcontext/validation-report.md",
-      "sha256": "1e30eca7919f7aec453ffc1b38779d91e2fc535f6e6cccb28b704b46686ea922",
+      "sha256": "2afcc72cf6b73f383ee2a48d78cec72aff3ec6f0fffe1111b04eb25d27dc6e83",
       "generated_from_sections": []
     },
     {
       "path": "docs/AIprojectcontext/workflows.md",
-      "sha256": "7fa6c3f7f07a07255cd8469815054078826b69eab60fc48b74dfc2281d1bc0aa",
+      "sha256": "65558ed7b05dcff4e175c3d699d516491842f2fc8b62fdd2541601df1a06114e",
       "generated_from_sections": [
         "workflow-9d0f59d0452b",
         "workflow-a92a92d855ae",
@@ -174,6 +180,7 @@
         "workflow-22b0a05e0c76",
         "workflow-67437acf4569",
         "workflow-d3793b08d2c1",
+        "workflow-23689090ea2f",
         "workflow-435ae6346696",
         "workflow-724649cae436",
         "workflow-f8535b943739",
@@ -202,49 +209,49 @@
     },
     {
       "path": "README.md",
-      "sha256": "ec64fda8cb28efe29ba767d1078d41af178e09b83784387f54803bdeafaa8b99",
+      "sha256": "3a7bc205873f62de717316573c34b874e6769c3800e8dfae97a10489925d14cf",
       "kind": "doc",
       "included_in_generation": true
     },
     {
       "path": "aictx_development_plan.md",
-      "sha256": "c9c48ecdcde7b310affe42ddf5b118e46e91ea011a79f9f385d615aa0e95edd4",
+      "sha256": "c376db163aa8004b8bad16d18d8b9a617982a08e9d49e18b0430bb35ff9847e4",
       "kind": "doc",
       "included_in_generation": false
     },
     {
       "path": "documentation/ARCHITECTURE.md",
-      "sha256": "5efd86740f569986c744ce805155d0bbe20c7078002cf2f5f91741161429d0de",
+      "sha256": "d2be51ad9d765996ec5f7af1ad8109f949ea991d9b5c287735d27a7b5bd81259",
       "kind": "doc",
       "included_in_generation": false
     },
     {
       "path": "documentation/CHANGELOG.md",
-      "sha256": "d350bd54972e9ea575bee147ecf600053d81162ec361f837fc83904246e71612",
+      "sha256": "eec6083421b0afa3062d3c76bbe80348887e898b97e7394b4271b94a2e19d8bd",
       "kind": "doc",
       "included_in_generation": false
     },
     {
       "path": "documentation/CODEMAP.md",
-      "sha256": "eebbd0c216053044d6972801bda55db3789c2c771002198377cd6f0c1e241a94",
+      "sha256": "2752039ccc9d1e96def12f9d5d116744cebbc609d3703cbb675b51bb6ba2335d",
       "kind": "doc",
       "included_in_generation": false
     },
     {
       "path": "documentation/DOCUMENTATION.md",
-      "sha256": "2660c23dbcee59c40997438290abcded20e50bf4c2330d626caea23ad6271ff1",
+      "sha256": "76a97a923e6a5cd9737b74d05b218eb16f20b730310031116767d37efaf41545",
       "kind": "doc",
       "included_in_generation": false
     },
     {
       "path": "documentation/README.md",
-      "sha256": "a7dea0d539bddb570f350929e50f0352f71a771940358d1553fbea898bc8daa7",
+      "sha256": "21a7681d5458a1fcbac8a7af5dca3b6ef07bec8567e03e835dab48ad2725bc38",
       "kind": "doc",
       "included_in_generation": false
     },
     {
       "path": "pyproject.toml",
-      "sha256": "8f0af1b72f70761023adbb8072331755bcc11a14148be296208ac7b866ded544",
+      "sha256": "c26d51d9834731f8aac573936dfaf38b3069dfff117a59118848feea3756a933",
       "kind": "manifest",
       "included_in_generation": true
     },
@@ -256,13 +263,13 @@
     },
     {
       "path": "src/aictx/cli.py",
-      "sha256": "d24145c5b495cdd88c6f868df762c327cff1ee16f13b9e3eb1b4440c6d4d5f0f",
+      "sha256": "aaa12986c63395824dfc7ab8e8dcfcf8d276e75cf7ebd2984edc75c94db88a71",
       "kind": "source",
       "included_in_generation": true
     },
     {
       "path": "src/aictx/config.py",
-      "sha256": "1c08d632fb8de4836d3eb3194d63b308466e1608bc34bde6b0660fb9e9008e25",
+      "sha256": "29e612b8e6dd93bc8ed5d3fd64539afeda3885b0dcd5ded2af369b2425048dfe",
       "kind": "source",
       "included_in_generation": true
     },
@@ -298,25 +305,25 @@
     },
     {
       "path": "src/aictx/context/pipeline.py",
-      "sha256": "497a758a429c835f5b9dc93980d894847385de4fadc3ae4b96e015cdd268c32f",
+      "sha256": "d61eb3b44533d17ba339ba903c01d5d97ee1c91e0649a9ca15a3d70214ab9e1c",
       "kind": "source",
       "included_in_generation": true
     },
     {
       "path": "src/aictx/context/planner.py",
-      "sha256": "ffe7974110246ca732445dea17c2c3e22734cbd21f8dba4d9b95d145777a8a2f",
+      "sha256": "9e00dec3d063c8194b2d8dfe177c1ae5f4c39e9169ef94d38c2dea85f51b2682",
       "kind": "source",
       "included_in_generation": true
     },
     {
       "path": "src/aictx/context/writer.py",
-      "sha256": "2edf751a3a2703b06b8e67cdcaffcc810e3ed1005543d5d61369ce5aced95cd1",
+      "sha256": "a62a97266863475dfca5d5c39ffc1d4b58284ae063176b0ada1ce0c90cc6683d",
       "kind": "source",
       "included_in_generation": true
     },
     {
       "path": "src/aictx/errors.py",
-      "sha256": "584327e7075255b31087c19910c1a53ef255eb81d80052c7fdb931f958b0f29c",
+      "sha256": "d6e8a01852e1d3c65a5c91eaa137c23378efd9a4833fcfb85d4a70fb398f4d0a",
       "kind": "source",
       "included_in_generation": true
     },
@@ -364,7 +371,7 @@
     },
     {
       "path": "src/aictx/io/patches.py",
-      "sha256": "531a46341b8ea57d8ec70a4a8cdd90b49f9e38849c3aa28087303fff4e9891ba",
+      "sha256": "7928a97fff11af6b79d9de5b24b44d4f847df5faad43a9b5d09c5aef50e5c3ce",
       "kind": "source",
       "included_in_generation": true
     },
@@ -389,6 +396,12 @@
     {
       "path": "src/aictx/llm/oci_genai.py",
       "sha256": "f2e0c2e48044206056ee1844a953dfcef02dae10561f53d45e373b69f22dc22d",
+      "kind": "source",
+      "included_in_generation": true
+    },
+    {
+      "path": "src/aictx/llm/providers.py",
+      "sha256": "f601870b289cffe388ad7c393f88a9d7002334a05f0193b0c53821d4e62a2673",
       "kind": "source",
       "included_in_generation": true
     },
@@ -447,6 +460,12 @@
       "included_in_generation": true
     },
     {
+      "path": "src/aictx/oci/doctor.py",
+      "sha256": "41d0057e7fc755e96e8bc86aec6c757c10fbcbd33e5a7794fab4ad2397889c09",
+      "kind": "source",
+      "included_in_generation": true
+    },
+    {
       "path": "src/aictx/oci/object_storage.py",
       "sha256": "1a1b9f7ccf03a85529e5fb8145f5e44925c25f1ccdbbd9cd4741d21c804eb6ec",
       "kind": "source",
@@ -466,19 +485,19 @@
     },
     {
       "path": "src/aictx/public_docs/mapper.py",
-      "sha256": "1cbea0df9c6ad57c60d6c4a30f60f0868479948b4dec72f76c74f144a20e110e",
+      "sha256": "d6e74ff8e9ffc7e3fa555b8c4e080a30a2c56bf1c0a017b4e257589b18f4fcaf",
       "kind": "doc",
       "included_in_generation": false
     },
     {
       "path": "src/aictx/public_docs/patcher.py",
-      "sha256": "41649ea51230f938db3a51d68e54e9f156c212f2fb17f4027382f00cc27026ad",
+      "sha256": "49efc49341b2a52cec46679d864565867b1cb43c99d3f57b8217117780369dd1",
       "kind": "doc",
       "included_in_generation": false
     },
     {
       "path": "src/aictx/public_docs/updater.py",
-      "sha256": "a5cfb08658ab4e97f301b0969c68967d5ff7200381f86b83189b95ed11f1a180",
+      "sha256": "d73144c0d80824d4402fc31e5252a63673a8f26dd632a28246385e741722271e",
       "kind": "doc",
       "included_in_generation": false
     },
@@ -526,7 +545,7 @@
     },
     {
       "path": "src/aictx/verify/impact.py",
-      "sha256": "27f58851c726725c8df46c83d2d7c4dae01671a3ee6966bb85200dd23e077a77",
+      "sha256": "038a491cc4b5155400e987490e1982dbcff212dc1dac1a58c041f60eb0a12e3a",
       "kind": "source",
       "included_in_generation": true
     },
@@ -538,13 +557,13 @@
     },
     {
       "path": "src/aictx/verify/verifier.py",
-      "sha256": "fcb20006e7757db1dae55c0130071f69710872b25d778a2f815fafe62ae95664",
+      "sha256": "0d684bfcbe991e571ecdf3e2dca184028dcae68eea4908ff32ba9e177890635e",
       "kind": "source",
       "included_in_generation": true
     },
     {
       "path": "tests/conftest.py",
-      "sha256": "4876b6fc29646213ae90dcf8c8bd4a1cce3d637dcbab936a1404bd04a568a97a",
+      "sha256": "5364b5196fcef744fea3d3449a9456ba4bb828fcf81c6143024b6831b9f0bc80",
       "kind": "test",
       "included_in_generation": true
     },
@@ -573,8 +592,14 @@
       "included_in_generation": true
     },
     {
+      "path": "tests/unit/test_operational_readiness.py",
+      "sha256": "8e8dab8d07d7f0d001193d5a099e3c701dd2189f38109785ae82f1f0d30f3bfd",
+      "kind": "test",
+      "included_in_generation": true
+    },
+    {
       "path": "tests/unit/test_run_phase1.py",
-      "sha256": "e01bc5cc4d992d80e8190bc76e2055aa3615615e93835845829d7388f6282581",
+      "sha256": "a3a03a2530ad8ecafc60a8ea1878c25c1781df47602e5c0f7fccd076f10728eb",
       "kind": "test",
       "included_in_generation": true
     },
@@ -592,7 +617,7 @@
     },
     {
       "path": "tests/unit/test_verify.py",
-      "sha256": "2fa5be2c5c7f1de7517a49b77ad0c6fb5ac581b62ce72d4e48385b6b7f704874",
+      "sha256": "6a7302d6e649057721e7997f491493539d26a368c347ee4690d475011add8167",
       "kind": "test",
       "included_in_generation": true
     }
@@ -606,7 +631,7 @@
         "README.md"
       ],
       "source_hashes": [
-        "ec64fda8cb28efe29ba767d1078d41af178e09b83784387f54803bdeafaa8b99"
+        "3a7bc205873f62de717316573c34b874e6769c3800e8dfae97a10489925d14cf"
       ],
       "fact_ids": [
         "project_identity-5efe173a4c90"
@@ -636,7 +661,7 @@
         "src/aictx/cli.py"
       ],
       "source_hashes": [
-        "d24145c5b495cdd88c6f868df762c327cff1ee16f13b9e3eb1b4440c6d4d5f0f"
+        "aaa12986c63395824dfc7ab8e8dcfcf8d276e75cf7ebd2984edc75c94db88a71"
       ],
       "fact_ids": [
         "architecture-6c86d176dcf5"
@@ -651,7 +676,7 @@
         "src/aictx/config.py"
       ],
       "source_hashes": [
-        "1c08d632fb8de4836d3eb3194d63b308466e1608bc34bde6b0660fb9e9008e25"
+        "29e612b8e6dd93bc8ed5d3fd64539afeda3885b0dcd5ded2af369b2425048dfe"
       ],
       "fact_ids": [
         "architecture-5b09921affe4"
@@ -734,17 +759,17 @@
       "status": "current"
     },
     {
-      "section_id": "architecture-50d0840d8117",
+      "section_id": "architecture-2bcfd4e31f35",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
         "src/aictx/context/pipeline.py"
       ],
       "source_hashes": [
-        "497a758a429c835f5b9dc93980d894847385de4fadc3ae4b96e015cdd268c32f"
+        "d61eb3b44533d17ba339ba903c01d5d97ee1c91e0649a9ca15a3d70214ab9e1c"
       ],
       "fact_ids": [
-        "architecture-50d0840d8117"
+        "architecture-2bcfd4e31f35"
       ],
       "status": "current"
     },
@@ -756,7 +781,7 @@
         "src/aictx/context/planner.py"
       ],
       "source_hashes": [
-        "ffe7974110246ca732445dea17c2c3e22734cbd21f8dba4d9b95d145777a8a2f"
+        "9e00dec3d063c8194b2d8dfe177c1ae5f4c39e9169ef94d38c2dea85f51b2682"
       ],
       "fact_ids": [
         "architecture-c3bccc035632"
@@ -771,7 +796,7 @@
         "src/aictx/context/writer.py"
       ],
       "source_hashes": [
-        "2edf751a3a2703b06b8e67cdcaffcc810e3ed1005543d5d61369ce5aced95cd1"
+        "a62a97266863475dfca5d5c39ffc1d4b58284ae063176b0ada1ce0c90cc6683d"
       ],
       "fact_ids": [
         "architecture-13fa5b94620b"
@@ -786,7 +811,7 @@
         "src/aictx/errors.py"
       ],
       "source_hashes": [
-        "584327e7075255b31087c19910c1a53ef255eb81d80052c7fdb931f958b0f29c"
+        "d6e8a01852e1d3c65a5c91eaa137c23378efd9a4833fcfb85d4a70fb398f4d0a"
       ],
       "fact_ids": [
         "architecture-439416cabd48"
@@ -899,17 +924,17 @@
       "status": "current"
     },
     {
-      "section_id": "architecture-80b1c68642f2",
+      "section_id": "architecture-f107de1f76e1",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
         "src/aictx/io/patches.py"
       ],
       "source_hashes": [
-        "531a46341b8ea57d8ec70a4a8cdd90b49f9e38849c3aa28087303fff4e9891ba"
+        "7928a97fff11af6b79d9de5b24b44d4f847df5faad43a9b5d09c5aef50e5c3ce"
       ],
       "fact_ids": [
-        "architecture-80b1c68642f2"
+        "architecture-f107de1f76e1"
       ],
       "status": "current"
     },
@@ -970,6 +995,21 @@
       ],
       "fact_ids": [
         "architecture-765a3f8a840d"
+      ],
+      "status": "current"
+    },
+    {
+      "section_id": "architecture-50306ef564f8",
+      "generated_file": "docs/AIprojectcontext/architecture.md",
+      "heading": "architecture",
+      "source_paths": [
+        "src/aictx/llm/providers.py"
+      ],
+      "source_hashes": [
+        "f601870b289cffe388ad7c393f88a9d7002334a05f0193b0c53821d4e62a2673"
+      ],
+      "fact_ids": [
+        "architecture-50306ef564f8"
       ],
       "status": "current"
     },
@@ -1109,6 +1149,21 @@
       "status": "current"
     },
     {
+      "section_id": "architecture-1c1931721001",
+      "generated_file": "docs/AIprojectcontext/architecture.md",
+      "heading": "architecture",
+      "source_paths": [
+        "src/aictx/oci/doctor.py"
+      ],
+      "source_hashes": [
+        "41d0057e7fc755e96e8bc86aec6c757c10fbcbd33e5a7794fab4ad2397889c09"
+      ],
+      "fact_ids": [
+        "architecture-1c1931721001"
+      ],
+      "status": "current"
+    },
+    {
       "section_id": "architecture-2eead7bd187c",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
@@ -1244,17 +1299,17 @@
       "status": "current"
     },
     {
-      "section_id": "architecture-935eef5c5987",
+      "section_id": "architecture-0a5b145193a1",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
       "source_paths": [
         "src/aictx/verify/impact.py"
       ],
       "source_hashes": [
-        "27f58851c726725c8df46c83d2d7c4dae01671a3ee6966bb85200dd23e077a77"
+        "038a491cc4b5155400e987490e1982dbcff212dc1dac1a58c041f60eb0a12e3a"
       ],
       "fact_ids": [
-        "architecture-935eef5c5987"
+        "architecture-0a5b145193a1"
       ],
       "status": "current"
     },
@@ -1281,7 +1336,7 @@
         "src/aictx/verify/verifier.py"
       ],
       "source_hashes": [
-        "fcb20006e7757db1dae55c0130071f69710872b25d778a2f815fafe62ae95664"
+        "0d684bfcbe991e571ecdf3e2dca184028dcae68eea4908ff32ba9e177890635e"
       ],
       "fact_ids": [
         "architecture-de3e2cb306a7"
@@ -1296,7 +1351,7 @@
         "tests/conftest.py"
       ],
       "source_hashes": [
-        "4876b6fc29646213ae90dcf8c8bd4a1cce3d637dcbab936a1404bd04a568a97a"
+        "5364b5196fcef744fea3d3449a9456ba4bb828fcf81c6143024b6831b9f0bc80"
       ],
       "fact_ids": [
         "architecture-40a6fa8f714d"
@@ -1364,6 +1419,21 @@
       "status": "current"
     },
     {
+      "section_id": "architecture-115d9e817412",
+      "generated_file": "docs/AIprojectcontext/architecture.md",
+      "heading": "architecture",
+      "source_paths": [
+        "tests/unit/test_operational_readiness.py"
+      ],
+      "source_hashes": [
+        "8e8dab8d07d7f0d001193d5a099e3c701dd2189f38109785ae82f1f0d30f3bfd"
+      ],
+      "fact_ids": [
+        "architecture-115d9e817412"
+      ],
+      "status": "current"
+    },
+    {
       "section_id": "architecture-f3a3df150f94",
       "generated_file": "docs/AIprojectcontext/architecture.md",
       "heading": "architecture",
@@ -1371,7 +1441,7 @@
         "tests/unit/test_run_phase1.py"
       ],
       "source_hashes": [
-        "e01bc5cc4d992d80e8190bc76e2055aa3615615e93835845829d7388f6282581"
+        "a3a03a2530ad8ecafc60a8ea1878c25c1781df47602e5c0f7fccd076f10728eb"
       ],
       "fact_ids": [
         "architecture-f3a3df150f94"
@@ -1416,7 +1486,7 @@
         "tests/unit/test_verify.py"
       ],
       "source_hashes": [
-        "2fa5be2c5c7f1de7517a49b77ad0c6fb5ac581b62ce72d4e48385b6b7f704874"
+        "6a7302d6e649057721e7997f491493539d26a368c347ee4690d475011add8167"
       ],
       "fact_ids": [
         "architecture-b03dd2648e9c"
@@ -1446,7 +1516,7 @@
         "src/aictx/cli.py"
       ],
       "source_hashes": [
-        "d24145c5b495cdd88c6f868df762c327cff1ee16f13b9e3eb1b4440c6d4d5f0f"
+        "aaa12986c63395824dfc7ab8e8dcfcf8d276e75cf7ebd2984edc75c94db88a71"
       ],
       "fact_ids": [
         "feature-b802401f2a5c"
@@ -1461,7 +1531,7 @@
         "src/aictx/config.py"
       ],
       "source_hashes": [
-        "1c08d632fb8de4836d3eb3194d63b308466e1608bc34bde6b0660fb9e9008e25"
+        "29e612b8e6dd93bc8ed5d3fd64539afeda3885b0dcd5ded2af369b2425048dfe"
       ],
       "fact_ids": [
         "feature-8b87f7868c56"
@@ -1544,17 +1614,17 @@
       "status": "current"
     },
     {
-      "section_id": "feature-ce67bd4b9db4",
+      "section_id": "feature-add09883eb7a",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
         "src/aictx/context/pipeline.py"
       ],
       "source_hashes": [
-        "497a758a429c835f5b9dc93980d894847385de4fadc3ae4b96e015cdd268c32f"
+        "d61eb3b44533d17ba339ba903c01d5d97ee1c91e0649a9ca15a3d70214ab9e1c"
       ],
       "fact_ids": [
-        "feature-ce67bd4b9db4"
+        "feature-add09883eb7a"
       ],
       "status": "current"
     },
@@ -1566,7 +1636,7 @@
         "src/aictx/context/planner.py"
       ],
       "source_hashes": [
-        "ffe7974110246ca732445dea17c2c3e22734cbd21f8dba4d9b95d145777a8a2f"
+        "9e00dec3d063c8194b2d8dfe177c1ae5f4c39e9169ef94d38c2dea85f51b2682"
       ],
       "fact_ids": [
         "feature-90b9757fe44d"
@@ -1581,7 +1651,7 @@
         "src/aictx/context/writer.py"
       ],
       "source_hashes": [
-        "2edf751a3a2703b06b8e67cdcaffcc810e3ed1005543d5d61369ce5aced95cd1"
+        "a62a97266863475dfca5d5c39ffc1d4b58284ae063176b0ada1ce0c90cc6683d"
       ],
       "fact_ids": [
         "feature-da51035eaa95"
@@ -1596,7 +1666,7 @@
         "src/aictx/errors.py"
       ],
       "source_hashes": [
-        "584327e7075255b31087c19910c1a53ef255eb81d80052c7fdb931f958b0f29c"
+        "d6e8a01852e1d3c65a5c91eaa137c23378efd9a4833fcfb85d4a70fb398f4d0a"
       ],
       "fact_ids": [
         "feature-6510fa1cdc1e"
@@ -1709,17 +1779,17 @@
       "status": "current"
     },
     {
-      "section_id": "feature-e07b5b98e0ee",
+      "section_id": "feature-9e9a3ec21311",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
         "src/aictx/io/patches.py"
       ],
       "source_hashes": [
-        "531a46341b8ea57d8ec70a4a8cdd90b49f9e38849c3aa28087303fff4e9891ba"
+        "7928a97fff11af6b79d9de5b24b44d4f847df5faad43a9b5d09c5aef50e5c3ce"
       ],
       "fact_ids": [
-        "feature-e07b5b98e0ee"
+        "feature-9e9a3ec21311"
       ],
       "status": "current"
     },
@@ -1780,6 +1850,21 @@
       ],
       "fact_ids": [
         "feature-904908050f24"
+      ],
+      "status": "current"
+    },
+    {
+      "section_id": "feature-811d05529a1b",
+      "generated_file": "docs/AIprojectcontext/code-map.md",
+      "heading": "feature",
+      "source_paths": [
+        "src/aictx/llm/providers.py"
+      ],
+      "source_hashes": [
+        "f601870b289cffe388ad7c393f88a9d7002334a05f0193b0c53821d4e62a2673"
+      ],
+      "fact_ids": [
+        "feature-811d05529a1b"
       ],
       "status": "current"
     },
@@ -1919,6 +2004,21 @@
       "status": "current"
     },
     {
+      "section_id": "feature-7f82e0b01746",
+      "generated_file": "docs/AIprojectcontext/code-map.md",
+      "heading": "feature",
+      "source_paths": [
+        "src/aictx/oci/doctor.py"
+      ],
+      "source_hashes": [
+        "41d0057e7fc755e96e8bc86aec6c757c10fbcbd33e5a7794fab4ad2397889c09"
+      ],
+      "fact_ids": [
+        "feature-7f82e0b01746"
+      ],
+      "status": "current"
+    },
+    {
       "section_id": "feature-9bc831bc73b2",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
@@ -2054,17 +2154,17 @@
       "status": "current"
     },
     {
-      "section_id": "feature-f1b82ee8dce3",
+      "section_id": "feature-4bc598eb831f",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
       "source_paths": [
         "src/aictx/verify/impact.py"
       ],
       "source_hashes": [
-        "27f58851c726725c8df46c83d2d7c4dae01671a3ee6966bb85200dd23e077a77"
+        "038a491cc4b5155400e987490e1982dbcff212dc1dac1a58c041f60eb0a12e3a"
       ],
       "fact_ids": [
-        "feature-f1b82ee8dce3"
+        "feature-4bc598eb831f"
       ],
       "status": "current"
     },
@@ -2091,7 +2191,7 @@
         "src/aictx/verify/verifier.py"
       ],
       "source_hashes": [
-        "fcb20006e7757db1dae55c0130071f69710872b25d778a2f815fafe62ae95664"
+        "0d684bfcbe991e571ecdf3e2dca184028dcae68eea4908ff32ba9e177890635e"
       ],
       "fact_ids": [
         "feature-3d4affb3f651"
@@ -2106,7 +2206,7 @@
         "tests/conftest.py"
       ],
       "source_hashes": [
-        "4876b6fc29646213ae90dcf8c8bd4a1cce3d637dcbab936a1404bd04a568a97a"
+        "5364b5196fcef744fea3d3449a9456ba4bb828fcf81c6143024b6831b9f0bc80"
       ],
       "fact_ids": [
         "feature-79c263b9dc82"
@@ -2174,6 +2274,21 @@
       "status": "current"
     },
     {
+      "section_id": "feature-9ed9cafafd06",
+      "generated_file": "docs/AIprojectcontext/code-map.md",
+      "heading": "feature",
+      "source_paths": [
+        "tests/unit/test_operational_readiness.py"
+      ],
+      "source_hashes": [
+        "8e8dab8d07d7f0d001193d5a099e3c701dd2189f38109785ae82f1f0d30f3bfd"
+      ],
+      "fact_ids": [
+        "feature-9ed9cafafd06"
+      ],
+      "status": "current"
+    },
+    {
       "section_id": "feature-fa42e6acbb69",
       "generated_file": "docs/AIprojectcontext/code-map.md",
       "heading": "feature",
@@ -2181,7 +2296,7 @@
         "tests/unit/test_run_phase1.py"
       ],
       "source_hashes": [
-        "e01bc5cc4d992d80e8190bc76e2055aa3615615e93835845829d7388f6282581"
+        "a3a03a2530ad8ecafc60a8ea1878c25c1781df47602e5c0f7fccd076f10728eb"
       ],
       "fact_ids": [
         "feature-fa42e6acbb69"
@@ -2226,7 +2341,7 @@
         "tests/unit/test_verify.py"
       ],
       "source_hashes": [
-        "2fa5be2c5c7f1de7517a49b77ad0c6fb5ac581b62ce72d4e48385b6b7f704874"
+        "6a7302d6e649057721e7997f491493539d26a368c347ee4690d475011add8167"
       ],
       "fact_ids": [
         "feature-cc09f48861d1"
@@ -2241,7 +2356,7 @@
         "pyproject.toml"
       ],
       "source_hashes": [
-        "8f0af1b72f70761023adbb8072331755bcc11a14148be296208ac7b866ded544"
+        "c26d51d9834731f8aac573936dfaf38b3069dfff117a59118848feea3756a933"
       ],
       "fact_ids": [
         "workflow-9d0f59d0452b"
@@ -2256,7 +2371,7 @@
         "tests/conftest.py"
       ],
       "source_hashes": [
-        "4876b6fc29646213ae90dcf8c8bd4a1cce3d637dcbab936a1404bd04a568a97a"
+        "5364b5196fcef744fea3d3449a9456ba4bb828fcf81c6143024b6831b9f0bc80"
       ],
       "fact_ids": [
         "workflow-a92a92d855ae"
@@ -2324,6 +2439,21 @@
       "status": "current"
     },
     {
+      "section_id": "workflow-23689090ea2f",
+      "generated_file": "docs/AIprojectcontext/workflows.md",
+      "heading": "workflow",
+      "source_paths": [
+        "tests/unit/test_operational_readiness.py"
+      ],
+      "source_hashes": [
+        "8e8dab8d07d7f0d001193d5a099e3c701dd2189f38109785ae82f1f0d30f3bfd"
+      ],
+      "fact_ids": [
+        "workflow-23689090ea2f"
+      ],
+      "status": "current"
+    },
+    {
       "section_id": "workflow-435ae6346696",
       "generated_file": "docs/AIprojectcontext/workflows.md",
       "heading": "workflow",
@@ -2331,7 +2461,7 @@
         "tests/unit/test_run_phase1.py"
       ],
       "source_hashes": [
-        "e01bc5cc4d992d80e8190bc76e2055aa3615615e93835845829d7388f6282581"
+        "a3a03a2530ad8ecafc60a8ea1878c25c1781df47602e5c0f7fccd076f10728eb"
       ],
       "fact_ids": [
         "workflow-435ae6346696"
@@ -2376,7 +2506,7 @@
         "tests/unit/test_verify.py"
       ],
       "source_hashes": [
-        "2fa5be2c5c7f1de7517a49b77ad0c6fb5ac581b62ce72d4e48385b6b7f704874"
+        "6a7302d6e649057721e7997f491493539d26a368c347ee4690d475011add8167"
       ],
       "fact_ids": [
         "workflow-e89d05078cee"
@@ -2384,7 +2514,917 @@
       "status": "current"
     }
   ],
-  "public_docs_map": [],
-  "change_impact_map": [],
+  "public_docs_map": [
+    {
+      "path": "README.md",
+      "purpose": "public project documentation",
+      "audience": "repository users and maintainers",
+      "described_features": [],
+      "source_paths": [
+        "src/aictx/cli.py"
+      ],
+      "last_verified_source_hashes": [
+        "aaa12986c63395824dfc7ab8e8dcfcf8d276e75cf7ebd2984edc75c94db88a71"
+      ],
+      "stale_risk": "medium"
+    },
+    {
+      "path": "documentation/ARCHITECTURE.md",
+      "purpose": "public project documentation",
+      "audience": "repository users and maintainers",
+      "described_features": [],
+      "source_paths": [
+        "pyproject.toml",
+        "src/aictx/cli.py"
+      ],
+      "last_verified_source_hashes": [
+        "c26d51d9834731f8aac573936dfaf38b3069dfff117a59118848feea3756a933",
+        "aaa12986c63395824dfc7ab8e8dcfcf8d276e75cf7ebd2984edc75c94db88a71"
+      ],
+      "stale_risk": "medium"
+    },
+    {
+      "path": "documentation/CHANGELOG.md",
+      "purpose": "public project documentation",
+      "audience": "repository users and maintainers",
+      "described_features": [],
+      "source_paths": [
+        "src/aictx/cli.py",
+        "src/aictx/context/pipeline.py",
+        "src/aictx/oci/doctor.py",
+        "src/aictx/verify/verifier.py"
+      ],
+      "last_verified_source_hashes": [
+        "aaa12986c63395824dfc7ab8e8dcfcf8d276e75cf7ebd2984edc75c94db88a71",
+        "243caa4d3b8509b908fb9ca61de832c975b4a879c98280c737dea2f8f65316a3",
+        "41d0057e7fc755e96e8bc86aec6c757c10fbcbd33e5a7794fab4ad2397889c09",
+        "0d684bfcbe991e571ecdf3e2dca184028dcae68eea4908ff32ba9e177890635e"
+      ],
+      "stale_risk": "medium"
+    },
+    {
+      "path": "documentation/CODEMAP.md",
+      "purpose": "public project documentation",
+      "audience": "repository users and maintainers",
+      "described_features": [],
+      "source_paths": [
+        "src/aictx/__init__.py",
+        "src/aictx/cli.py",
+        "src/aictx/config.py",
+        "src/aictx/context/__init__.py",
+        "src/aictx/context/agents_md.py",
+        "src/aictx/context/compressor.py",
+        "src/aictx/context/fact_extractor.py",
+        "src/aictx/context/lockfile.py",
+        "src/aictx/context/pipeline.py",
+        "src/aictx/context/planner.py",
+        "src/aictx/context/writer.py",
+        "src/aictx/errors.py",
+        "src/aictx/git/__init__.py",
+        "src/aictx/git/diff.py",
+        "src/aictx/git/repo.py",
+        "src/aictx/git/status.py",
+        "src/aictx/io/__init__.py",
+        "src/aictx/io/files.py",
+        "src/aictx/io/jsonl.py",
+        "src/aictx/io/patches.py",
+        "src/aictx/llm/__init__.py",
+        "src/aictx/llm/base.py",
+        "src/aictx/llm/dry_run.py",
+        "src/aictx/llm/oci_genai.py",
+        "src/aictx/llm/providers.py",
+        "src/aictx/logging.py",
+        "src/aictx/models/__init__.py",
+        "src/aictx/models/context_lock.py",
+        "src/aictx/models/docs_map.py",
+        "src/aictx/models/inventory.py",
+        "src/aictx/models/run_report.py",
+        "src/aictx/oci/__init__.py",
+        "src/aictx/oci/cleanup.py",
+        "src/aictx/oci/config.py",
+        "src/aictx/oci/doctor.py",
+        "src/aictx/oci/object_storage.py",
+        "src/aictx/oci/remote_job.py",
+        "src/aictx/scan/__init__.py",
+        "src/aictx/scan/classify.py",
+        "src/aictx/scan/ignore.py",
+        "src/aictx/scan/scanner.py",
+        "src/aictx/scan/secrets.py",
+        "src/aictx/verify/__init__.py",
+        "src/aictx/verify/hashes.py",
+        "src/aictx/verify/impact.py",
+        "src/aictx/verify/reports.py",
+        "src/aictx/verify/verifier.py"
+      ],
+      "last_verified_source_hashes": [
+        "f866e4a9672daafa6f8b00c0681d189d7eda093a7faccc832eab6fb398c4249d",
+        "aaa12986c63395824dfc7ab8e8dcfcf8d276e75cf7ebd2984edc75c94db88a71",
+        "29e612b8e6dd93bc8ed5d3fd64539afeda3885b0dcd5ded2af369b2425048dfe",
+        "b509ca2c8e11f9ead36d2ba7db1132373bb8697bb68b1c2a1995658ea82c53bb",
+        "0a0188eb28b3d6bcad7919a05a47c17a5b0c5a6aa2a3546b18e0186878f54670",
+        "bad0dd685544134b2be70ee6d967b3ca37752a53d9b25658ce44409f68ecc1c5",
+        "7db3a08ce6c71b172f1c171fe5a0d0e17dd9ac76566af5b9436e7dc07be96143",
+        "5047110547d669cc9cec9ba5d9c82c3ccdb427b3e0e3c6c6415096727c652c97",
+        "243caa4d3b8509b908fb9ca61de832c975b4a879c98280c737dea2f8f65316a3",
+        "ffe7974110246ca732445dea17c2c3e22734cbd21f8dba4d9b95d145777a8a2f",
+        "a62a97266863475dfca5d5c39ffc1d4b58284ae063176b0ada1ce0c90cc6683d",
+        "d6e8a01852e1d3c65a5c91eaa137c23378efd9a4833fcfb85d4a70fb398f4d0a",
+        "09b73624e0759437169f3a064048ea33a2b5ec17b3cfa1209a0a03146ec7181a",
+        "900d3256060b5175f8ee78494d9750f00dec8b67f3fc2e204a203e1471fedfcd",
+        "87b28d8ddf8609b22b070e47b85411abe2620b52168cd77cfd92dd54ee3ab18a",
+        "6cbeb7c9866076bc80ed7b1d0b1d160381a5c937d5da4f4e469e6aff7af5e079",
+        "b725d8a4268864009d561357529a1dfe07d021bcebe1673fd2a9f71118f5e6f2",
+        "4b7399990a7e31619c5d3830bbda047c4193adfccab9fe4ce29cb20aa64a147d",
+        "102670400876cb20a9bb34a5ea68241902b1f96d079cb1529a6548fb1cf0bed2",
+        "7928a97fff11af6b79d9de5b24b44d4f847df5faad43a9b5d09c5aef50e5c3ce",
+        "d6e85ca0c70a38a550449896b91eb275a01904f109b145409bd76b8c10feda09",
+        "77be24c22b216e7a942b5afa15d11dc7fe89d24ee88280431c81820a957c4566",
+        "270a498f75bc83e2b2d52d43265079a0c7e8c4c3f06108b317ebbc751cf80df5",
+        "f2e0c2e48044206056ee1844a953dfcef02dae10561f53d45e373b69f22dc22d",
+        "f601870b289cffe388ad7c393f88a9d7002334a05f0193b0c53821d4e62a2673",
+        "0b2cc6a4cb6854c49ae016dfd2c2ff7267b1a6d66056b5efdc7704d3a380e341",
+        "36a766a549010a8c263437c7e83193ad51ca410a5aa479c43ef7828a5fa5794c",
+        "6184b379d9b37d73115432b32fa4646ef05fce6473f3e163d93de59c1568c0f1",
+        "db27c6a84f5b85a24bd94c119e2483de49f7ebfc84e1bef0d17e72f476d35eca",
+        "2cae62663868380a17bdb06deb50f6561bd9cbe11f37e62af8320f65a06d0b10",
+        "cf0fa602f57d7aa87c0380aa6fa3768a3d9a685287f90213278717c09cc45652",
+        "496636073d7e84ac90e33ff7e7dbf5100af6e788a812a7f35679ab0cdda51827",
+        "daefd4e92ce2932af44533d2f07379af5a8f9b67297f09766b3309c3ba19d5e5",
+        "4dc2ebbcb9382a8c28a955351467e9fc4af3280e608585072e69377ea07c4a0e",
+        "41d0057e7fc755e96e8bc86aec6c757c10fbcbd33e5a7794fab4ad2397889c09",
+        "1a1b9f7ccf03a85529e5fb8145f5e44925c25f1ccdbbd9cd4741d21c804eb6ec",
+        "4aed2d6a4c0a07b54cbb794fc6be6b8e0b035ba94478738c6a087e17ccf283f5",
+        "55e9bbb4145c9be46041f8e6f2016c39d78d926c5744e135c27870d3b5572c07",
+        "7344165ac67e955be02536dd57c7895f08c9b7979c405858f5b0bfa05f6d22d7",
+        "6d83a527be49a44cffb53a91936550964fa536c7b48c47fa8abf0fac09145fae",
+        "af344a6874f837897cdf61caf28d4b3012ced00e422d8785ea974f696240bdea",
+        "417e65fafc583b12efa117a1b008e074ebaf93a5e63a64c72d8774c56feae617",
+        "21353e3df7271755da5c30bb440d07abaf70ddce867b6a8d8f0ca7d07199697d",
+        "d303be8b38909fc95928127d0e12d50487eaab129c213bbb9dcd8ddd3338e7d9",
+        "038a491cc4b5155400e987490e1982dbcff212dc1dac1a58c041f60eb0a12e3a",
+        "713d76bd771963405801cbb3e84bba2f0e692a970c2a4861dcac8e600d99452c",
+        "0d684bfcbe991e571ecdf3e2dca184028dcae68eea4908ff32ba9e177890635e"
+      ],
+      "stale_risk": "medium"
+    },
+    {
+      "path": "documentation/DOCUMENTATION.md",
+      "purpose": "public project documentation",
+      "audience": "repository users and maintainers",
+      "described_features": [],
+      "source_paths": [
+        "pyproject.toml",
+        "src/aictx/cli.py",
+        "src/aictx/config.py"
+      ],
+      "last_verified_source_hashes": [
+        "c26d51d9834731f8aac573936dfaf38b3069dfff117a59118848feea3756a933",
+        "aaa12986c63395824dfc7ab8e8dcfcf8d276e75cf7ebd2984edc75c94db88a71",
+        "29e612b8e6dd93bc8ed5d3fd64539afeda3885b0dcd5ded2af369b2425048dfe"
+      ],
+      "stale_risk": "medium"
+    },
+    {
+      "path": "documentation/README.md",
+      "purpose": "public project documentation",
+      "audience": "repository users and maintainers",
+      "described_features": [],
+      "source_paths": [
+        "pyproject.toml",
+        "src/aictx/cli.py"
+      ],
+      "last_verified_source_hashes": [
+        "c26d51d9834731f8aac573936dfaf38b3069dfff117a59118848feea3756a933",
+        "aaa12986c63395824dfc7ab8e8dcfcf8d276e75cf7ebd2984edc75c94db88a71"
+      ],
+      "stale_risk": "medium"
+    }
+  ],
+  "change_impact_map": [
+    {
+      "source_glob": ".aictxignore",
+      "ai_context_sections": [],
+      "public_doc_paths": [],
+      "no_impact_reason": "No generated context or public-doc link."
+    },
+    {
+      "source_glob": ".gitignore",
+      "ai_context_sections": [],
+      "public_doc_paths": [],
+      "no_impact_reason": "No generated context or public-doc link."
+    },
+    {
+      "source_glob": "LICENSE",
+      "ai_context_sections": [],
+      "public_doc_paths": [],
+      "no_impact_reason": "No generated context or public-doc link."
+    },
+    {
+      "source_glob": "README.md",
+      "ai_context_sections": [
+        "project_identity-5efe173a4c90"
+      ],
+      "public_doc_paths": [],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "aictx_development_plan.md",
+      "ai_context_sections": [],
+      "public_doc_paths": [],
+      "no_impact_reason": "No generated context or public-doc link."
+    },
+    {
+      "source_glob": "documentation/ARCHITECTURE.md",
+      "ai_context_sections": [],
+      "public_doc_paths": [],
+      "no_impact_reason": "No generated context or public-doc link."
+    },
+    {
+      "source_glob": "documentation/CHANGELOG.md",
+      "ai_context_sections": [],
+      "public_doc_paths": [],
+      "no_impact_reason": "No generated context or public-doc link."
+    },
+    {
+      "source_glob": "documentation/CODEMAP.md",
+      "ai_context_sections": [],
+      "public_doc_paths": [],
+      "no_impact_reason": "No generated context or public-doc link."
+    },
+    {
+      "source_glob": "documentation/DOCUMENTATION.md",
+      "ai_context_sections": [],
+      "public_doc_paths": [],
+      "no_impact_reason": "No generated context or public-doc link."
+    },
+    {
+      "source_glob": "documentation/README.md",
+      "ai_context_sections": [],
+      "public_doc_paths": [],
+      "no_impact_reason": "No generated context or public-doc link."
+    },
+    {
+      "source_glob": "pyproject.toml",
+      "ai_context_sections": [
+        "workflow-9d0f59d0452b"
+      ],
+      "public_doc_paths": [
+        "documentation/ARCHITECTURE.md",
+        "documentation/DOCUMENTATION.md",
+        "documentation/README.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/__init__.py",
+      "ai_context_sections": [
+        "architecture-c49d105346f0",
+        "feature-0bee25f8136d"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/cli.py",
+      "ai_context_sections": [
+        "architecture-6c86d176dcf5",
+        "feature-b802401f2a5c"
+      ],
+      "public_doc_paths": [
+        "README.md",
+        "documentation/ARCHITECTURE.md",
+        "documentation/CHANGELOG.md",
+        "documentation/CODEMAP.md",
+        "documentation/DOCUMENTATION.md",
+        "documentation/README.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/config.py",
+      "ai_context_sections": [
+        "architecture-5b09921affe4",
+        "feature-8b87f7868c56"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md",
+        "documentation/DOCUMENTATION.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/context/__init__.py",
+      "ai_context_sections": [
+        "architecture-a4edb5af2590",
+        "feature-bcd8c4dbaa6e"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/context/agents_md.py",
+      "ai_context_sections": [
+        "architecture-ff15ab96990a",
+        "feature-43ba089f56c1"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/context/compressor.py",
+      "ai_context_sections": [
+        "architecture-8d8e53f8f38b",
+        "feature-ae5204cd96c4"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/context/fact_extractor.py",
+      "ai_context_sections": [
+        "architecture-3ef6041aa82b",
+        "feature-e39d9c0baf88"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/context/lockfile.py",
+      "ai_context_sections": [
+        "architecture-204d516ee13d",
+        "feature-b84e29cff27d"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/context/pipeline.py",
+      "ai_context_sections": [
+        "architecture-2bcfd4e31f35",
+        "feature-add09883eb7a"
+      ],
+      "public_doc_paths": [
+        "documentation/CHANGELOG.md",
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/context/planner.py",
+      "ai_context_sections": [
+        "architecture-c3bccc035632",
+        "feature-90b9757fe44d"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/context/writer.py",
+      "ai_context_sections": [
+        "architecture-13fa5b94620b",
+        "feature-da51035eaa95"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/errors.py",
+      "ai_context_sections": [
+        "architecture-439416cabd48",
+        "feature-6510fa1cdc1e"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/git/__init__.py",
+      "ai_context_sections": [
+        "architecture-3f16c8136be2",
+        "feature-b286253274a4"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/git/diff.py",
+      "ai_context_sections": [
+        "architecture-e9194b19f674",
+        "feature-81fb8547eff8"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/git/repo.py",
+      "ai_context_sections": [
+        "architecture-1fc6617bd844",
+        "feature-bc5f1b32e6df"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/git/status.py",
+      "ai_context_sections": [
+        "architecture-2665c6ab77c4",
+        "feature-e290aa5a05c0"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/io/__init__.py",
+      "ai_context_sections": [
+        "architecture-bbf850199103",
+        "feature-169031e06e2c"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/io/files.py",
+      "ai_context_sections": [
+        "architecture-c38c5cca89c9",
+        "feature-902f71238ab0"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/io/jsonl.py",
+      "ai_context_sections": [
+        "architecture-e12cce509db1",
+        "feature-af3e585fe731"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/io/patches.py",
+      "ai_context_sections": [
+        "architecture-f107de1f76e1",
+        "feature-9e9a3ec21311"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/llm/__init__.py",
+      "ai_context_sections": [
+        "architecture-523dc92e7900",
+        "feature-75018de70cec"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/llm/base.py",
+      "ai_context_sections": [
+        "architecture-1813492cdba1",
+        "feature-dd830c3f981c"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/llm/dry_run.py",
+      "ai_context_sections": [
+        "architecture-284e40438b91",
+        "feature-ef5fe2e10848"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/llm/oci_genai.py",
+      "ai_context_sections": [
+        "architecture-765a3f8a840d",
+        "feature-904908050f24"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/llm/providers.py",
+      "ai_context_sections": [
+        "architecture-50306ef564f8",
+        "feature-811d05529a1b"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/logging.py",
+      "ai_context_sections": [
+        "architecture-3afad6567591",
+        "feature-b0185e158bd3"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/models/__init__.py",
+      "ai_context_sections": [
+        "architecture-3fa493fa51ef",
+        "feature-49814f990a5d"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/models/context_lock.py",
+      "ai_context_sections": [
+        "architecture-8c1a536d4561",
+        "feature-5ca7aecf703a"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/models/docs_map.py",
+      "ai_context_sections": [
+        "architecture-6bf29168994b",
+        "feature-d88207b33ddf"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/models/inventory.py",
+      "ai_context_sections": [
+        "architecture-ce915b5776b3",
+        "feature-d93292188468"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/models/run_report.py",
+      "ai_context_sections": [
+        "architecture-76b3bc74bf3e",
+        "feature-7b9041734534"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/oci/__init__.py",
+      "ai_context_sections": [
+        "architecture-e684407f3eb2",
+        "feature-33d65137a30b"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/oci/cleanup.py",
+      "ai_context_sections": [
+        "architecture-d18f808a5ef2",
+        "feature-33e306b0aa86"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/oci/config.py",
+      "ai_context_sections": [
+        "architecture-f96343160a8d",
+        "feature-0a949df3e037"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/oci/doctor.py",
+      "ai_context_sections": [
+        "architecture-1c1931721001",
+        "feature-7f82e0b01746"
+      ],
+      "public_doc_paths": [
+        "documentation/CHANGELOG.md",
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/oci/object_storage.py",
+      "ai_context_sections": [
+        "architecture-2eead7bd187c",
+        "feature-9bc831bc73b2"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/oci/remote_job.py",
+      "ai_context_sections": [
+        "architecture-3d7624e1ad28",
+        "feature-6b7fb631dbb1"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/public_docs/__init__.py",
+      "ai_context_sections": [],
+      "public_doc_paths": [],
+      "no_impact_reason": "No generated context or public-doc link."
+    },
+    {
+      "source_glob": "src/aictx/public_docs/mapper.py",
+      "ai_context_sections": [],
+      "public_doc_paths": [],
+      "no_impact_reason": "No generated context or public-doc link."
+    },
+    {
+      "source_glob": "src/aictx/public_docs/patcher.py",
+      "ai_context_sections": [],
+      "public_doc_paths": [],
+      "no_impact_reason": "No generated context or public-doc link."
+    },
+    {
+      "source_glob": "src/aictx/public_docs/updater.py",
+      "ai_context_sections": [],
+      "public_doc_paths": [],
+      "no_impact_reason": "No generated context or public-doc link."
+    },
+    {
+      "source_glob": "src/aictx/scan/__init__.py",
+      "ai_context_sections": [
+        "architecture-b05b1536b217",
+        "feature-aed48960651a"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/scan/classify.py",
+      "ai_context_sections": [
+        "architecture-32493ba7fdc6",
+        "feature-8215588a8e0f"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/scan/ignore.py",
+      "ai_context_sections": [
+        "architecture-21d0af3cd69f",
+        "feature-8ce87057e4ad"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/scan/scanner.py",
+      "ai_context_sections": [
+        "architecture-808028907c72",
+        "feature-cf1e52762588"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/scan/secrets.py",
+      "ai_context_sections": [
+        "architecture-53e0282ee6c0",
+        "feature-0aa93905bdaf"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/verify/__init__.py",
+      "ai_context_sections": [
+        "architecture-095b14932920",
+        "feature-614bf179ee41"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/verify/hashes.py",
+      "ai_context_sections": [
+        "architecture-1ec6ed7b670a",
+        "feature-4c73f7861418"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/verify/impact.py",
+      "ai_context_sections": [
+        "architecture-0a5b145193a1",
+        "feature-4bc598eb831f"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/verify/reports.py",
+      "ai_context_sections": [
+        "architecture-c2b10cc284da",
+        "feature-e7fc277f1d30"
+      ],
+      "public_doc_paths": [
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "src/aictx/verify/verifier.py",
+      "ai_context_sections": [
+        "architecture-de3e2cb306a7",
+        "feature-3d4affb3f651"
+      ],
+      "public_doc_paths": [
+        "documentation/CHANGELOG.md",
+        "documentation/CODEMAP.md"
+      ],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "tests/conftest.py",
+      "ai_context_sections": [
+        "architecture-40a6fa8f714d",
+        "feature-79c263b9dc82",
+        "workflow-a92a92d855ae"
+      ],
+      "public_doc_paths": [],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "tests/fixtures/git_repos.py",
+      "ai_context_sections": [
+        "architecture-01d88d432262",
+        "feature-c0f4b714ae94",
+        "workflow-98ab6f911ff7"
+      ],
+      "public_doc_paths": [],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "tests/integration/__init__.py",
+      "ai_context_sections": [
+        "architecture-37061be7e299",
+        "feature-8e54915f4c55",
+        "workflow-22b0a05e0c76"
+      ],
+      "public_doc_paths": [],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "tests/unit/__init__.py",
+      "ai_context_sections": [
+        "architecture-aa6a75cdd4f3",
+        "feature-39b3548260f4",
+        "workflow-67437acf4569"
+      ],
+      "public_doc_paths": [],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "tests/unit/test_cli.py",
+      "ai_context_sections": [
+        "architecture-cad87ef34345",
+        "feature-db55ebc12b3a",
+        "workflow-d3793b08d2c1"
+      ],
+      "public_doc_paths": [],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "tests/unit/test_operational_readiness.py",
+      "ai_context_sections": [
+        "architecture-115d9e817412",
+        "feature-9ed9cafafd06",
+        "workflow-23689090ea2f"
+      ],
+      "public_doc_paths": [],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "tests/unit/test_run_phase1.py",
+      "ai_context_sections": [
+        "architecture-f3a3df150f94",
+        "feature-fa42e6acbb69",
+        "workflow-435ae6346696"
+      ],
+      "public_doc_paths": [],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "tests/unit/test_scan_integration.py",
+      "ai_context_sections": [
+        "architecture-f817bf84a3cd",
+        "feature-c628463adbc3",
+        "workflow-724649cae436"
+      ],
+      "public_doc_paths": [],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "tests/unit/test_scanner.py",
+      "ai_context_sections": [
+        "architecture-88cead944d60",
+        "feature-58e10b4983cb",
+        "workflow-f8535b943739"
+      ],
+      "public_doc_paths": [],
+      "no_impact_reason": null
+    },
+    {
+      "source_glob": "tests/unit/test_verify.py",
+      "ai_context_sections": [
+        "architecture-b03dd2648e9c",
+        "feature-cc09f48861d1",
+        "workflow-e89d05078cee"
+      ],
+      "public_doc_paths": [],
+      "no_impact_reason": null
+    }
+  ],
   "last_validation": null
 }

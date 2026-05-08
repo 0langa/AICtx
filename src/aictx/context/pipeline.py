@@ -8,15 +8,16 @@ from typing import Any, Literal, cast
 
 from aictx.config import AictxConfig
 from aictx.context.fact_extractor import extract_facts
-from aictx.context.lockfile import write_lockfile
+from aictx.context.lockfile import load_lockfile, write_lockfile
 from aictx.context.planner import plan_context
 from aictx.context.writer import build_context_lock, write_context_scaffold
-from aictx.errors import SecretScanError, TokenBudgetExceededError
+from aictx.errors import SafetyError, SecretScanError, TokenBudgetExceededError
 from aictx.io.files import safe_write
 from aictx.io.patches import make_unified_diff
-from aictx.llm.dry_run import DryRunProvider
+from aictx.llm.providers import create_model_provider
 from aictx.models.run_report import RunReport
 from aictx.scan.scanner import scan_repository
+from aictx.verify.verifier import determine_changed_source_paths
 
 
 def run_local_context_pipeline(
@@ -25,19 +26,24 @@ def run_local_context_pipeline(
     config: AictxConfig,
     scope: Literal["full", "changed"],
     write_mode: Literal["patch", "apply"],
+    allow_ai: bool = False,
+    allow_dirty: bool = False,
 ) -> RunReport:
     """Run the local Phase 1 context generation pipeline."""
-    if scope != "full":
-        raise NotImplementedError(
-            "Changed-scope refresh is not implemented yet for local Phase 1 runs."
-        )
-
     inventory = scan_repository(repo_root)
     if inventory.secrets:
         raise SecretScanError("High-confidence secrets detected; refusing context generation.")
+    if (
+        write_mode == "apply"
+        and inventory.dirty_state
+        and not (config.execution.allow_dirty or allow_dirty)
+    ):
+        raise SafetyError("Refusing --write apply on dirty worktree without --allow-dirty.")
 
     existing_context_dir = repo_root / config.project.context_dir
     existing_agents_md = repo_root / config.project.agents_file
+    existing_lock = load_lockfile(existing_context_dir)
+    changed_files = determine_changed_source_paths(inventory, existing_lock)
 
     plan = plan_context(
         inventory=inventory,
@@ -45,15 +51,18 @@ def run_local_context_pipeline(
         existing_agents_md=existing_agents_md if existing_agents_md.exists() else None,
         scope=scope,
         config=config,
+        existing_lock=existing_lock,
+        changed_files=changed_files,
     )
+    typed_plan = cast(dict[str, Any], plan)
+    typed_plan["changed_files"] = changed_files if scope == "changed" else []
     estimated_token_cost = cast(int, plan["estimated_token_cost"])
     if estimated_token_cost > config.limits.max_input_tokens_per_run:
         raise TokenBudgetExceededError(
             "Planned context exceeds configured max_input_tokens_per_run."
         )
 
-    provider = DryRunProvider()
-    typed_plan = cast(dict[str, Any], plan)
+    provider = create_model_provider(config.llm, allow_ai=allow_ai)
     fact_packs = extract_facts(
         repo_root=repo_root, plan=typed_plan, provider=provider, run_id=run_id
     )
@@ -83,8 +92,10 @@ def run_local_context_pipeline(
         plan=typed_plan,
         fact_packs=fact_packs,
         generated_paths=generated_paths,
-        model_provider="dry_run",
-        model_name="dry_run",
+        model_provider=config.llm.provider,
+        model_name=config.llm.model,
+        existing_lock=existing_lock,
+        changed_files=changed_files,
     )
     write_lockfile(staged_context_dir, lock)
     generated_paths = [*generated_paths, staged_context_dir / "context.lock.json"]
@@ -114,7 +125,14 @@ def run_local_context_pipeline(
         model_calls=len(fact_packs),
         generated_files=[path.relative_to(out_dir).as_posix() for path in generated_paths],
         selected_files=cast(list[str], typed_plan["selected_files"]),
-        warnings=cast(list[str], typed_plan.get("warnings", [])),
+        warnings=[
+            *cast(list[str], typed_plan.get("warnings", [])),
+            *(
+                [f"changed scope detected {len(changed_files)} changed source files"]
+                if scope == "changed"
+                else []
+            ),
+        ],
         output_dir=str(out_dir),
         patch_path=str(patch_path),
     )

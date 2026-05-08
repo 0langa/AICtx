@@ -5,8 +5,11 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Literal
 
+from pydantic import BaseModel, Field
+
 from aictx.context.lockfile import SUPPORTED_SCHEMA_VERSIONS, load_lockfile
 from aictx.models.context_lock import ContextLock
+from aictx.models.inventory import RepositoryInventory
 from aictx.verify.hashes import sha256_file
 
 VerificationResult = Literal[
@@ -32,39 +35,97 @@ REQUIRED_GENERATED_CONTEXT_FILES = {
 }
 
 
+class VerificationReport(BaseModel):
+    """Detailed verification result for CLI and automation."""
+
+    result: VerificationResult
+    strict: bool = False
+    lock_path: str = "docs/AIprojectcontext/context.lock.json"
+    missing_sources: list[str] = Field(default_factory=list)
+    stale_sources: list[str] = Field(default_factory=list)
+    missing_generated: list[str] = Field(default_factory=list)
+    generated_mismatches: list[str] = Field(default_factory=list)
+    section_errors: list[str] = Field(default_factory=list)
+    public_docs_impacts: dict[str, list[str]] = Field(default_factory=dict)
+    next_command: str | None = None
+
+
 def verify(repo_root: Path, strict: bool = False) -> VerificationResult:
     """Run verification against the repository."""
+    return verify_detailed(repo_root, strict=strict).result
+
+
+def verify_detailed(repo_root: Path, strict: bool = False) -> VerificationReport:
+    """Run verification and return structured details."""
     context_dir = repo_root / "docs" / "AIprojectcontext"
     lock = load_lockfile(context_dir)
     if lock is None:
-        return "FAIL_LOCK_MISMATCH"
+        return VerificationReport(
+            result="FAIL_LOCK_MISMATCH",
+            strict=strict,
+            next_command="aictx init --project .",
+        )
 
     if lock.schema_version not in SUPPORTED_SCHEMA_VERSIONS:
-        return "FAIL_UNSUPPORTED_SCHEMA"
+        return VerificationReport(result="FAIL_UNSUPPORTED_SCHEMA", strict=strict)
 
     source_hashes_by_path = {
         source_file.path: source_file.sha256 for source_file in lock.source_files
     }
+    missing_sources: list[str] = []
+    stale_sources: list[str] = []
     for source_file in lock.source_files:
         path = repo_root / source_file.path
         if not path.exists():
-            return "FAIL_MISSING_SOURCE"
-        if sha256_file(path) != source_file.sha256:
-            return "FAIL_STALE_AI_CONTEXT"
+            missing_sources.append(source_file.path)
+        elif sha256_file(path) != source_file.sha256:
+            stale_sources.append(source_file.path)
 
     generated_paths: set[str] = set()
+    missing_generated: list[str] = []
+    generated_mismatches: list[str] = []
     for generated_file in lock.generated_files:
         generated_paths.add(generated_file.path)
         path = repo_root / generated_file.path
         if not path.exists():
-            return "FAIL_LOCK_MISMATCH"
-        if sha256_file(path) != generated_file.sha256:
-            return "FAIL_LOCK_MISMATCH"
+            missing_generated.append(generated_file.path)
+        elif sha256_file(path) != generated_file.sha256:
+            generated_mismatches.append(generated_file.path)
 
+    section_errors: list[str] = []
     if strict:
-        return _verify_strict_structure(repo_root, lock, source_hashes_by_path, generated_paths)
+        section_errors = _verify_strict_structure(
+            repo_root, lock, source_hashes_by_path, generated_paths
+        )
 
-    return "PASS"
+    public_docs_impacts = _detect_public_docs_impacts(repo_root, lock, source_hashes_by_path)
+
+    result: VerificationResult = "PASS"
+    next_command: str | None = None
+    if missing_sources:
+        result = "FAIL_MISSING_SOURCE"
+        next_command = "aictx run --project . --mode setup-context --scope changed --write patch"
+    elif stale_sources:
+        result = "FAIL_STALE_AI_CONTEXT"
+        next_command = "aictx run --project . --mode setup-context --scope changed --write patch"
+    elif missing_generated or generated_mismatches or section_errors:
+        result = "FAIL_LOCK_MISMATCH"
+        next_command = "aictx run --project . --mode setup-context --scope full --write patch"
+    elif public_docs_impacts:
+        result = "FAIL_PUBLIC_DOCS_IMPACT"
+        next_command = "aictx public-docs update --project . --scope changed --write patch"
+
+    return VerificationReport(
+        result=result,
+        strict=strict,
+        missing_sources=missing_sources,
+        stale_sources=stale_sources,
+        missing_generated=missing_generated,
+        generated_mismatches=generated_mismatches,
+        section_errors=section_errors,
+        public_docs_impacts=public_docs_impacts,
+        next_command=next_command,
+    )
 
 
 def _verify_strict_structure(
@@ -72,36 +133,88 @@ def _verify_strict_structure(
     lock: ContextLock,
     source_hashes_by_path: dict[str, str],
     generated_paths: set[str],
-) -> VerificationResult:
+) -> list[str]:
     """Verify deterministic lock structure beyond raw file hashes."""
+    errors: list[str] = []
     if lock.generated_files:
         missing_generated = REQUIRED_GENERATED_CONTEXT_FILES - generated_paths
-        if missing_generated:
-            return "FAIL_LOCK_MISMATCH"
+        errors.extend(
+            f"missing generated file in lock: {path}" for path in sorted(missing_generated)
+        )
 
     section_ids: set[str] = set()
     for section in lock.sections:
         if section.section_id in section_ids:
-            return "FAIL_LOCK_MISMATCH"
+            errors.append(f"duplicate section id: {section.section_id}")
         section_ids.add(section.section_id)
 
         if section.generated_file not in generated_paths:
-            return "FAIL_LOCK_MISMATCH"
+            errors.append(f"section target not generated: {section.section_id}")
         if len(section.source_paths) != len(section.source_hashes):
-            return "FAIL_LOCK_MISMATCH"
+            errors.append(f"section source/hash length mismatch: {section.section_id}")
+            continue
         for source_path, source_hash in zip(
             section.source_paths, section.source_hashes, strict=True
         ):
             if source_hashes_by_path.get(source_path) != source_hash:
-                return "FAIL_LOCK_MISMATCH"
+                errors.append(f"section source hash mismatch: {section.section_id}:{source_path}")
 
     if "AGENTS.md" in generated_paths:
         agents_path = repo_root / "AGENTS.md"
         try:
             agents_text = agents_path.read_text(encoding="utf-8")
         except OSError:
-            return "FAIL_LOCK_MISMATCH"
-        if "docs/AIprojectcontext/ai-index.md" not in agents_text:
-            return "FAIL_LOCK_MISMATCH"
+            errors.append("generated AGENTS.md unreadable")
+        else:
+            if "docs/AIprojectcontext/ai-index.md" not in agents_text:
+                errors.append("generated AGENTS.md missing ai-index link")
 
-    return "PASS"
+    return errors
+
+
+def _detect_public_docs_impacts(
+    repo_root: Path,
+    lock: ContextLock,
+    source_hashes_by_path: dict[str, str],
+) -> dict[str, list[str]]:
+    impacts: dict[str, list[str]] = {}
+    for entry in lock.public_docs_map:
+        impacted_sources: list[str] = []
+        for source_path, recorded_hash in zip(
+            entry.source_paths, entry.last_verified_source_hashes, strict=False
+        ):
+            current_hash = source_hashes_by_path.get(source_path)
+            path = repo_root / source_path
+            if path.exists():
+                current_hash = sha256_file(path)
+            if current_hash != recorded_hash:
+                impacted_sources.append(source_path)
+        if impacted_sources:
+            impacts[entry.path] = impacted_sources
+    return impacts
+
+
+def determine_changed_source_paths(
+    inventory: RepositoryInventory, lock: ContextLock | None
+) -> list[str]:
+    """Return source paths that differ from lockfile source state."""
+    current = {
+        file.path: file.sha256
+        for file in inventory.files
+        if not file.is_ignored
+        and not file.is_binary
+        and not file.is_generated
+        and file.sha256 != "skipped"
+        and file.path != "docs/AIprojectcontext/context.lock.json"
+    }
+    if lock is None:
+        return sorted(current)
+
+    locked = {entry.path: entry.sha256 for entry in lock.source_files}
+    changed = [
+        path
+        for path, current_hash in current.items()
+        if locked.get(path) is None or locked[path] != current_hash
+    ]
+    changed.extend(path for path in locked if path not in current)
+    return sorted(set(changed))
