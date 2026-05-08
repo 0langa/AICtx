@@ -1,57 +1,104 @@
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Distribution / packaging
+*.so
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
+.python-version
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.pytype/
+.coverage
+coverage.xml
+htmlcov/
 
 # Virtual environments
-.venv
+.venv/
 venv/
-ENV/
 env/
+ENV/
 
-# IDE
+# Build / packaging
+build/
+dist/
+site/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# uv
+.uv/
+uv.lock
+
+# IDEs / editors
 .vscode/
 .idea/
-*.swp
-*.swo
-*~
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-
-# MyPy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Ruff
-.ruff_cache/
-
-# aictx runtime
-.aictx/cache/
-.aictx/runs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
 
 # OS
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# Logs
+logs/
+*.log
+
+# Temp
+tmp/
+temp/
+.cache/
+
+# AICtx runtime/cache
+.aictx/cache/
+.aictx/runs/
+.aictx/tmp/
+
+# Generated runtime artifacts
+*.patch
+*.diff
+
+# OCI / cloud
+oci_api_key.pem
+oci_config_backup*
+*.oci.bak
+
+# Secrets
+.env
+.env.*
+*.key
+*.pem
+*.pfx
+*.snk
+secrets.json
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Node (if frontend/tools later)
+node_modules/
+
+# Generated docs artifacts
+docs/AIprojectcontext/validation-report.md
+
+# Optional:
+# Uncomment if you do NOT want generated AI context committed
+# docs/AIprojectcontext/
+
+# Terraform (if OCI infra added later)
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+terraform.tfvars
