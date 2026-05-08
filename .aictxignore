@@ -1,0 +1,19 @@
+# Default hard excludes for aictx scanning
+.git/**
+.aictx/cache/**
+.aictx/runs/**
+bin/**
+obj/**
+node_modules/**
+dist/**
+build/**
+.vs/**
+.idea/**
+*.pfx
+*.snk
+*.key
+*.pem
+.env
+.env.*
+*.sqlite
+*.db
