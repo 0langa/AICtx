@@ -1,5 +1,7 @@
 # AI Context Agent Development Plan
 
+> **Current status:** Only the v0.1.0 scanner milestone is fully implemented. Context generation, verification, public-docs update, and OCI integration are stubbed. See the version roadmap at the end of this document for details.
+
 ## Overall goal
 
 Build a local-first CLI tool named `aictx` that prepares Git repositories for low-token AI-agent work. The tool scans a selected local project, builds a source-traced understanding of its code and documentation, generates a compact AI-facing context system under `docs/AIprojectcontext/`, creates or updates a strict root `AGENTS.md`, verifies that generated context is not stale, and optionally updates human-facing public docs through a high-token mode.
@@ -27,7 +29,7 @@ Core stack:
 - Typer for CLI commands
 - Rich for terminal output
 - Pydantic for config and lockfile schemas
-- GitPython or direct `git` subprocess calls for repository state
+- Direct `git` subprocess calls for repository state
 - `pathspec` for `.gitignore`/custom ignore matching
 - `tree-sitter` later for symbol extraction
 - OCI Python SDK for OCI Generative AI, Object Storage, and later remote jobs
@@ -1263,35 +1265,37 @@ Acceptance criteria:
 
 ## Step 30: Version roadmap
 
-### v0.1.0: Local scanner
+Progress as of the current codebase:
 
-Includes CLI skeleton, config, ignore handling, Git state, inventory, docs detection, and safe scan reports.
+### v0.1.0: Local scanner — COMPLETED
 
-### v0.2.0: Local context generation
+Includes CLI skeleton, config models, ignore handling, Git state, inventory, docs detection, project classification, secret scanning, and safe scan reports. All acceptance criteria are met and tests pass.
 
-Includes OCI model provider, dry-run provider, context planning, fact extraction, context scaffold writer, and `AGENTS.md` generation.
+### v0.2.0: Local context generation — PLANNED
 
-### v0.3.0: Verification and lockfile
+Includes context planning, fact extraction, context scaffold writer, and `AGENTS.md` generation. The dry-run model provider exists. The OCI model provider is stubbed. Context generation modules are stubbed.
 
-Includes `context.lock.json`, strict verifier, generated file hash checks, source hash checks, and stale section reports.
+### v0.3.0: Verification and lockfile — PLANNED
 
-### v0.4.0: Change impact and cheap refresh
+Includes `context.lock.json`, strict verifier, generated file hash checks, source hash checks, and stale section reports. The lockfile model and I/O helpers exist. The verifier always returns `PASS`.
 
-Includes `change-impact-map.md`, changed-scope regeneration, public docs impact detection, and targeted stale reports.
+### v0.4.0: Change impact and cheap refresh — PLANNED
 
-### v0.5.0: Public docs updater
+Includes `change-impact-map.md`, changed-scope regeneration, public docs impact detection, and targeted stale reports. Impact mapping is stubbed.
 
-Includes changed-scope and full-scope public-docs update mode, patch output, public docs map refresh, and verifier integration.
+### v0.5.0: Public docs updater — PLANNED
 
-### v0.6.0: GitHub Actions verifier
+Includes changed-scope and full-scope public-docs update mode, patch output, public docs map refresh, and verifier integration. All public-docs modules are stubbed.
+
+### v0.6.0: GitHub Actions verifier — PLANNED
 
 Includes CI workflow generation, PR-safe verifier, and no-model validation in CI.
 
-### v0.7.0: OCI remote heavy mode
+### v0.7.0: OCI remote heavy mode — PLANNED
 
-Includes sanitized snapshots, Object Storage exchange, remote worker, result bundles, cleanup, and remote public-docs refresh.
+Includes sanitized snapshots, Object Storage exchange, remote worker, result bundles, cleanup, and remote public-docs refresh. All OCI modules are stubbed.
 
-### v1.0.0: Stable personal workflow
+### v1.0.0: Stable personal workflow — PLANNED
 
 Includes safe defaults, tests, documentation, cost caps, OCI setup docs, stable generated scaffold, and successful runs on at least two real repositories.
 
@@ -1332,38 +1336,45 @@ automatic commits
 
 ## Implementation order summary
 
+Completed:
+
 1. CLI skeleton.
-2. Config and safety checks.
+2. Config models (TOML loading not yet implemented).
 3. Repository scanner.
 4. Inventory model.
 5. Project classifier.
 6. Dry-run model provider.
-7. OCI model provider.
-8. Context planning.
-9. Fact extraction.
-10. Coverage and contradiction checks.
-11. Context scaffold writer.
-12. `AGENTS.md` writer.
-13. Patch/apply writer.
-14. Lockfile.
-15. Strict verifier.
-16. Change impact map.
-17. Changed-scope refresh.
-18. Public docs map.
-19. Public docs updater.
-20. GitHub Actions verifier.
-21. OCI setup doctor.
-22. Snapshot/result bundle format.
-23. Object Storage exchange.
-24. Remote worker.
-25. Cost/runtime guardrails.
-26. Full test suite.
-27. Real-repo validation.
-28. Package/release workflow.
+7. Secret scanning.
+8. File I/O helpers and JSONL utilities.
+9. `AGENTS.md` template generator.
+10. Context lockfile model and I/O helpers.
+11. Basic test suite (scanner, CLI, integration).
+
+Planned / stubbed:
+
+12. OCI model provider.
+13. Context planning.
+14. Fact extraction.
+15. Coverage and contradiction checks.
+16. Context scaffold writer.
+17. Patch/apply writer.
+18. Strict verifier.
+19. Change impact map.
+20. Changed-scope refresh.
+21. Public docs map.
+22. Public docs updater.
+23. GitHub Actions verifier.
+24. OCI setup doctor.
+25. Snapshot/result bundle format.
+26. Object Storage exchange.
+27. Remote worker.
+28. Cost/runtime guardrails.
+29. Real-repo validation.
+30. Package/release workflow.
 
 ## Definition of done for the whole system
 
-The project is successful when this workflow works reliably:
+The project is not yet at the definition of done. The target end state is:
 
 ```text
 aictx run --project <repo> --mode setup-context --scope full --execution local --write apply
@@ -1387,6 +1398,8 @@ aictx verify --project <repo> --strict
 ```
 
 must return the repository to a verified state without forcing the coding agent to read huge human-facing docs.
+
+Currently, `aictx run` and `aictx verify` are stubbed, so this workflow is not yet achievable.
 
 ## Non-goals for v1
 
