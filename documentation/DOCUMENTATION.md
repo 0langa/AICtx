@@ -58,7 +58,7 @@ Supported values today:
 
 - `--mode setup-context`
 - `--execution local`
-- `--scope full|changed`
+- `--scope full`
 - `--write patch|apply`
 
 Current behavior:
@@ -89,7 +89,7 @@ Current generated repository files on `--write apply`:
 Important current behavior:
 
 - `--write patch` writes staged outputs plus `.aictx/runs/<timestamp>-run/aictx.patch`
-- `--write apply` copies the staged generated outputs into the repository
+- `--write apply` copies the staged generated outputs into the repository, including `docs/AIprojectcontext/context.lock.json`
 - `src/aictx/io/patches.py:apply_patch` is still stubbed and is not used yet for repo updates
 
 ### Initializing Baseline Lockfile
@@ -131,19 +131,30 @@ It currently checks:
 
 It does not yet perform semantic AI validation or public-docs impact verification.
 
-Typical workflow:
+Typical workflows:
+
+Baseline-only verification workflow:
 
 1. change code or docs
 2. run `uv run aictx verify --project . --strict`
-3. if verification fails, refresh baseline with `uv run aictx init --project .`
+3. if verification fails because locked source hashes changed, refresh the baseline with `uv run aictx init --project .`
 4. commit the code/doc changes together with the updated `docs/AIprojectcontext/context.lock.json`
+
+Generated-context workflow:
+
+1. change code or docs that affect generated AI context
+2. run `uv run aictx run --project . --mode setup-context --execution local --scope full --write apply`
+3. run `uv run aictx verify --project . --strict`
+4. commit the code/doc changes together with the refreshed generated context files and `docs/AIprojectcontext/context.lock.json`
+
+`init` refreshes the verification lockfile and preserves generated metadata when present, but it does not regenerate AI context markdown shards.
 
 ### Other Commands
 
 The following commands remain stubbed:
 
-- `aictx clean --oci --run-id <id>`
-- `aictx public-docs update --project <path> --scope <scope> --write <mode>`
+- `aictx clean --oci --run-id <id>` — placeholder command; currently prints a stub message and does not perform cleanup
+- `aictx public-docs update --project <path> --scope <scope> --write <mode>` — placeholder command; currently exits as not implemented
 
 ## Interpreting Scanner Output
 
@@ -209,7 +220,7 @@ The scanner uses regex-based detection, but it skips detector source/examples in
 
 ### Why is `.pytest-tmp` ignored?
 
-Pytest is configured to use a repository-local `.pytest-tmp` directory on Windows to avoid temp cleanup issues. That directory is excluded from test discovery, linting, and repository scanning so transient test artifacts do not create drift or false positives.
+The repository excludes `.pytest-tmp` from test discovery, linting, and repository scanning so transient local test artifacts do not create drift or false positives.
 
 ### `aictx run` does not support the mode I passed
 
@@ -219,12 +230,12 @@ Only local `setup-context` is implemented. Any other mode or execution target cu
 
 This is expected if `docs/AIprojectcontext/context.lock.json` has not been created or committed yet. Run `uv run aictx init --project .`, then commit the resulting lockfile.
 
-If you want the generated AI context scaffold instead of a baseline lock only, run `uv run aictx run --project . --mode setup-context --execution local --write apply`.
+If you want the generated AI context scaffold instead of a baseline lock only, run `uv run aictx run --project . --mode setup-context --execution local --write apply`. That command writes the generated context shards, `AGENTS.md`, and the generated `docs/AIprojectcontext/context.lock.json` into the repository.
 
 ## Repository Layout
 
-See `CODEMAP.md` for a detailed file-by-file map.
+See [`CODEMAP.md`](./CODEMAP.md) for a detailed file-by-file map.
 
-See `ARCHITECTURE.md` for the system architecture and current limitations.
+See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for the system architecture and current limitations.
 
-See `../aictx_development_plan.md` for the full roadmap.
+See [`../aictx_development_plan.md`](../aictx_development_plan.md) for the full roadmap.

@@ -1,1007 +1,1087 @@
-# AI Context Agent Development Plan
-
-> **Current status:** The scanner milestone, committed baseline `docs/AIprojectcontext/context.lock.json`, hash-only verifier MVP, and local Phase 1 context generation pipeline are implemented. The remaining work below is intentionally limited to not-yet-completed capabilities and is reorganized into five large implementation phases.
-
-## Overall goal
-
-Build a local-first CLI tool named `aictx` that prepares Git repositories for low-token AI-agent work. The tool should scan a selected local project, build a source-traced understanding of its code and documentation, generate a compact AI-facing context system under `docs/AIprojectcontext/`, create or update a strict root `AGENTS.md`, verify that generated context is not stale, and optionally update human-facing public docs through a high-token mode.
-
-The product should remain a safe local CLI first. OCI usage stays optional per command. Generated changes should remain reviewable as patches before apply.
-
-## Product principles
-
-1. Local repository state is the source of truth.
-2. Generated context must be compact, source-traced, and easy for future agents to route through.
-3. Normal coding agents should read `AGENTS.md` and `docs/AIprojectcontext/ai-index.md`, not huge human-facing docs.
-4. Human docs may be read and rewritten only in the dedicated public-docs mode or when the verifier reports a targeted docs impact.
-5. The tool must fail closed: if it cannot prove context freshness, it reports stale or uncertain sections instead of claiming success.
-6. No generated files are auto-committed, auto-pushed, or silently written over unrelated user changes.
-7. OCI usage is optional per command and guarded by cost, runtime, and upload limits.
-
-## Recommended implementation stack
-
-Use Python for the first version.
-
-Core stack:
-
-- Python 3.12+
-- `uv` for environment and packaging
-- Typer for CLI commands
-- Rich for terminal output
-- Pydantic for config and lockfile schemas
-- Direct `git` subprocess calls for repository state
-- `pathspec` for `.gitignore`/custom ignore matching
-- `tree-sitter` later for symbol extraction
-- OCI Python SDK for OCI Generative AI, Object Storage, and later remote jobs
-- pytest for tests
-- ruff for linting/formatting
-- mypy or pyright for type checking
-
-Prefer direct `git` subprocess calls for important Git operations because they match user expectations and avoid hidden abstractions.
-
-## Target repository layout for `aictx`
-
-```text
-aictx/
-  pyproject.toml
-  README.md
-  AGENTS.md
-  src/aictx/
-    __init__.py
-    cli.py
-    config.py
-    errors.py
-    logging.py
-    models/
-      inventory.py
-      context_lock.py
-      run_report.py
-      docs_map.py
-    git/
-      repo.py
-      diff.py
-      status.py
-    scan/
-      scanner.py
-      ignore.py
-      classify.py
-      docs.py
-      symbols.py
-      secrets.py
-    llm/
-      base.py
-      oci_genai.py
-      dry_run.py
-      prompts.py
-      token_budget.py
-    context/
-      planner.py
-      fact_extractor.py
-      compressor.py
-      writer.py
-      lockfile.py
-      agents_md.py
-    verify/
-      verifier.py
-      hashes.py
-      impact.py
-      reports.py
-    public_docs/
-      mapper.py
-      updater.py
-      patcher.py
-    oci/
-      config.py
-      object_storage.py
-      remote_job.py
-      cleanup.py
-    io/
-      files.py
-      patches.py
-      jsonl.py
-  tests/
-    fixtures/
-    unit/
-    integration/
-```
+# AICtx Corrected Development Roadmap
+
+## Current baseline
+
+This roadmap is based on the current repository.
+
+AICtx is no longer only a scanner scaffold. The repo now has a real local foundation:
+
+    implemented:
+      Typer CLI scaffold
+      aictx --help
+      aictx --version
+      aictx scan --project <repo>
+      deterministic repository scanner
+      Git state detection
+      structured Git status in inventory
+      ignored-directory pruning
+      .aictx runtime artifact exclusion
+      file/doc/test/manifest classification
+      secret finding reports
+      baseline docs/AIprojectcontext/context.lock.json
+      aictx init baseline lockfile behavior
+      hash-only aictx verify --strict MVP
+      dry_run model provider
+      local setup-context run pipeline
+      context planner
+      deterministic fact extraction
+      context scaffold writer
+      generated AGENTS.md content
+      staged patch output
+      optional apply mode
+      public docs under documentation/
+      unit/integration tests for scanner, init, verify, and Phase 1 run behavior
+
+    still stubbed or incomplete:
+      real LLM-backed fact extraction
+      OCI GenAI provider calls
+      semantic verification
+      public-docs updater
+      changed-scope refresh
+      full change impact mapping
+      OCI Object Storage exchange
+      OCI remote worker
+      GitHub Actions verifier generation
+      packaging/release hardening
+
+The immediate roadmap should not jump to OCI. The next step is to harden the local dry-run pipeline and then finish the deterministic local verification/refresh loop.
 
-## Target generated scaffold inside each processed project
+## Product goal
 
-```text
-AGENTS.md
-docs/AIprojectcontext/
-  ai-index.md
-  project-state.md
-  code-map.md
-  architecture.md
-  workflows.md
-  public-docs-map.md
-  change-impact-map.md
-  context.lock.json
-  validation-report.md
-  schema.md
-```
+AICtx is a local-first CLI that prepares Git repositories for low-token AI-agent work.
 
-Use this multi-file scaffold instead of one giant context file. A single giant file saves file count but wastes tokens because every future agent has to load irrelevant sections. A routed scaffold lets agents read only the context shard needed for the current task.
+The final workflow should be:
+
+    scan repository
+    generate compact source-traced AI context
+    write routed context under docs/AIprojectcontext/
+    create or update root AGENTS.md
+    maintain docs/AIprojectcontext/context.lock.json
+    verify context freshness
+    identify stale AI context and public-doc impact
+    optionally update public human-facing docs
+    optionally use OCI for expensive model calls or remote batch execution
+
+AICtx must remain safe by default:
+
+    local-first
+    patch/review oriented
+    deterministic where possible
+    no automatic commits
+    no automatic pushes
+    no hidden cloud uploads
+    no secret transfer to model providers
+    no planned features documented as implemented
+
+## Core architecture target
+
+Keep the current modular Python CLI architecture.
+
+    src/aictx/cli.py
+      command routing and user-facing CLI behavior
+
+    src/aictx/config.py
+      .aictx/config.toml loading and typed configuration
+
+    src/aictx/git/
+      direct Git subprocess helpers for repo root, status, and diffs
+
+    src/aictx/scan/
+      scanner, ignore rules, classification, secret detection
+
+    src/aictx/models/
+      Pydantic data contracts for inventory, lockfile, reports, docs maps
+
+    src/aictx/context/
+      planning, fact extraction, compression, scaffold writer, lockfile handling, AGENTS.md generation
+
+    src/aictx/verify/
+      hash checks, impact checks, reports, strict verifier
+
+    src/aictx/public_docs/
+      later public documentation mapping and update pipeline
+
+    src/aictx/llm/
+      provider interface, dry_run provider, later OCI provider
+
+    src/aictx/oci/
+      later OCI config, Object Storage, remote jobs, cleanup
 
-## Phase 1: Local context generation pipeline
+    src/aictx/io/
+      safe file writes, JSONL helpers, patch/diff helpers
 
-Status: implemented in local deterministic form.
-
-Goal: move from scanner-plus-lockfile MVP to actual source-traced AI context generation in local mode.
-
-This phase turned `aictx run` from a stub into a useful local pipeline for `setup-context` in local execution mode. Remaining improvements listed in this phase should now be treated as hardening or expansion work, not as unstarted core functionality.
-
-### Scope
+Do not collapse this into a monolithic tool. AICtx’s value depends on clean stage boundaries.
 
-#### CLI and config completion
-
-Implement or complete:
-
-```text
-aictx run --project <path> --mode setup-context --execution local
-```
-
-Expected behavior:
-
-- `aictx run` should stop being a stub.
-- Initial execution can use the dry-run provider during development.
-- Placeholder context generation should be replaced by real planned pipeline stages.
-- Config loading from `.aictx/config.toml` should be implemented.
-
-Example `.aictx/config.toml`:
-
-```toml
-[project]
-context_dir = "docs/AIprojectcontext"
-agents_file = "AGENTS.md"
-public_docs_dirs = ["docs", "."]
-
-[execution]
-default_execution = "local"
-write_mode = "patch"
-allow_dirty = false
-
-[limits]
-max_input_tokens_per_run = 500000
-max_output_tokens_per_run = 100000
-max_files_per_run = 5000
-max_file_bytes = 250000
-max_remote_runtime_minutes = 45
-
-[llm]
-provider = "oci_genai"
-model = "default"
-temperature = 0
-```
-
-#### Model provider interface completion
-
-Define and complete:
-
-```python
-class ModelProvider:
-    def chat(self, request: ChatRequest) -> ChatResponse: ...
-    def count_tokens(self, text: str) -> int | None: ...
-```
-
-Implement providers:
-
-```text
-dry_run
-oci_genai
-```
-
-Provider requirements:
-
-- Temperature defaults to `0`.
-- Every request is logged as metadata only.
-- Prompt content is stored only in local run logs when `debug_content_logs = true`.
-- Token/cost counters are estimated before sending.
-- Requests fail if they exceed configured caps.
-
-#### Context planning stage
-
-Input:
-
-```text
-inventory.json
-project classification
-existing docs/AIprojectcontext if present
-existing AGENTS.md if present
-```
-
-Output:
-
-```text
-context-plan.json
-```
-
-The plan should include:
-
-```text
-critical_source_files
-critical_doc_files
-manifest_files
-build_files
-test_files
-files_excluded_from_llm
-reason_per_selected_file
-estimated_token_cost
-```
-
-Selection strategy:
-
-1. Always include manifests and build files.
-2. Always include existing AI context files if present.
-3. Include root README/ROADMAP/CHANGELOG only for initial setup or public-docs mode.
-4. Include source entrypoints and core services.
-5. Include tests that reveal behavior.
-6. Exclude generated files, binary files, build outputs, and oversized docs unless specifically requested.
-7. Prefer changed files and impacted files on refresh runs.
-
-#### Fact extraction
-
-Create fact packs such as:
-
-```text
-project_identity.json
-architecture_facts.json
-feature_facts.json
-workflow_facts.json
-docs_facts.json
-risk_facts.json
-```
-
-Each fact must have:
-
-```text
-id
-claim
-confidence
-source_paths
-source_spans optional
-derived_from
-needs_source boolean
-```
-
-Fact extraction passes:
-
-1. Project identity pass.
-2. Architecture pass.
-3. Feature/system pass.
-4. Build/test/release workflow pass.
-5. Public docs map pass.
-6. Known risks/limitations pass.
-
-#### Contradiction and coverage checks
-
-Checks:
-
-- Same feature described with conflicting status.
-- Referenced files do not exist.
-- Claimed commands are missing from manifests/workflows.
-- Claimed docs do not exist.
-- Facts have no source path.
-- Important detected files are not represented in any fact pack.
-- Existing context claims changed since previous lockfile.
-
-Output:
-
-```text
-.aictx/runs/<run-id>/coverage-report.json
-.aictx/runs/<run-id>/contradictions.json
-```
-
-Fail the run if:
-
-- Critical facts are source-less.
-- Contradictions affect project identity, build/test commands, release process, storage model, or public docs mapping.
-- Referenced files are missing.
-
-#### AI context scaffold generation
-
-Generated files:
+## Repository documentation layout
 
-```text
-docs/AIprojectcontext/ai-index.md
-docs/AIprojectcontext/project-state.md
-docs/AIprojectcontext/code-map.md
-docs/AIprojectcontext/architecture.md
-docs/AIprojectcontext/workflows.md
-docs/AIprojectcontext/public-docs-map.md
-docs/AIprojectcontext/change-impact-map.md
-docs/AIprojectcontext/schema.md
-docs/AIprojectcontext/validation-report.md
-docs/AIprojectcontext/context.lock.json
-```
-
-Format rules:
-
-- Short lines.
-- Dense key-value style.
-- No tutorial prose.
-- No marketing language.
-- No duplicated explanations across files.
-- Source references for important claims.
-- Explicit `unknown` or `needs-source` markers where needed.
-- Stable headings so diffs are clean.
-
-Recommended file budgets:
-
-```text
-ai-index.md <= 500 tokens
-project-state.md <= 2000 tokens
-code-map.md <= 3000 tokens
-architecture.md <= 2000 tokens
-workflows.md <= 1200 tokens
-public-docs-map.md <= 1500 tokens
-change-impact-map.md <= 1500 tokens
-```
-
-#### `AGENTS.md` generation/update
-
-`AGENTS.md` must include:
-
-```text
-required first read: docs/AIprojectcontext/ai-index.md
-primary context source: docs/AIprojectcontext/
-avoid huge public docs for general context
-when public docs may be read
-required pre-commit verification
-what to do when AI context is stale
-what to do when public docs are impacted
-accuracy rules
-source-tracing rules
-no-fabrication rule
-```
-
-Important rule:
-
-Normal agents should not read human docs for general project context. They may read public docs only if the task is documentation-related or `aictx verify --strict` reports a public-docs impact.
-
-### Acceptance criteria
-
-- `aictx run --project <repo> --mode setup-context --execution local --write patch` produces the AI context scaffold.
-- Generated facts include source paths and mark unsupported claims as `needs_source`.
-- `AGENTS.md` points future agents to `docs/AIprojectcontext/ai-index.md`.
-- The generated context is smaller and more task-routed than the full public docs.
-
-## Phase 2: Safe writing, freshness gating, and targeted refresh
-
-Goal: make generated context safely writable, strictly verifiable, and cheap to refresh after changes.
-
-This phase extends the existing lockfile/verifier foundation into a complete freshness system.
-
-### Scope
-
-#### Safe writing and patch/apply mode
-
-Write flow:
-
-1. Generate all files under `.aictx/runs/<run-id>/out/`.
-2. Compare generated output with current repository files.
-3. Create a unified diff.
-4. Write patch to `.aictx/runs/<run-id>/aictx.patch`.
-5. Print summary of files to create/update/delete.
-6. Apply only if `--apply` is passed.
-
-Write modes:
-
-```text
---write patch
---write apply
-```
-
-Default must be patch.
-
-Never auto-delete user-authored docs unless the generated scaffold explicitly owns the file. For the MVP, avoid deletion entirely.
-
-#### Full `context.lock.json` expansion
-
-The lockfile should contain:
-
-```text
-schema_version
-tool_version
-repo_head_commit
-generated_at
-model_provider
-model_name
-scanner_config_hash
-generated_files[]
-source_files[]
-sections[]
-public_docs_map[]
-change_impact_map[]
-last_validation
-```
-
-For each generated file:
-
-```text
-path
-sha256
-generated_from_sections
-```
-
-For each source file:
-
-```text
-path
-sha256
-kind
-included_in_generation
-```
-
-For each section:
-
-```text
-section_id
-generated_file
-heading
-source_paths
-source_hashes
-fact_ids
-status
-```
-
-#### Strict verifier completion
-
-Checks:
-
-1. Required context files exist.
-2. `AGENTS.md` exists and points to `ai-index.md`.
-3. `context.lock.json` exists and has a supported schema version.
-4. Generated file hashes match the lockfile.
-5. Referenced source files exist.
-6. Source hashes match the lockfile.
-7. Changed source paths map to AI context sections.
-8. Changed source paths map to public docs or explicitly declare no public-doc impact.
-9. Build/test commands in `workflows.md` still exist.
-10. No `needs-source` markers remain in critical sections.
-11. No stale generated sections are hidden.
-
-Verifier output:
-
-```text
-PASS
-FAIL_STALE_AI_CONTEXT
-FAIL_PUBLIC_DOCS_IMPACT
-FAIL_LOCK_MISMATCH
-FAIL_MISSING_SOURCE
-FAIL_UNSUPPORTED_SCHEMA
-```
-
-#### Change impact mapping
-
-Generate both markdown and machine-readable mappings.
-
-Example:
-
-```text
-src/Services/Duplicate* -> ai:project-state, ai:architecture, docs:docs/public/duplicates.md
-src/UI/Settings* -> ai:code-map, ai:project-state, docs:docs/public/settings.md
-.github/workflows/* -> ai:workflows, docs:docs/public/release.md
-```
-
-Rules:
-
-- Map source areas to AI context files.
-- Map source areas to human docs when human docs exist.
-- If no public docs exist for a feature, record `docs:none`.
-- If a change truly has no public docs impact, require a reason marker.
-
-Add optional local marker file later:
-
-```text
-.aictx/no-doc-impact.toml
-```
-
-#### Changed-scope refresh
-
-Command:
-
-```text
-aictx run --project <repo> --mode setup-context --scope changed --write patch
-```
+Keep the current docs layout:
+
+    README.md
+    AGENTS.md
+    aictx_development_plan.md
+    documentation/
+      README.md
+      CODEMAP.md
+      ARCHITECTURE.md
+      DOCUMENTATION.md
+      CHANGELOG.md
+    docs/AIprojectcontext/
+      context.lock.json
+      future generated AI context shards
+
+Root docs should stay concise. Detailed human-facing docs belong under documentation/.
+
+Runtime output stays uncommitted:
+
+    .aictx/runs/
+    .aictx/cache/
+    .aictx/tmp/
+
+Versioned generated state should be committed when it is part of verification:
+
+    docs/AIprojectcontext/context.lock.json
+
+## OCI timing decision
+
+Do not start full OCI integration yet.
+
+Correct OCI timing:
+
+    before OCI:
+      local dry_run run pipeline works on AICtx itself
+      local dry_run run pipeline works on StorageMaster in patch mode
+      token-budget checks exist
+      secret findings can block model-transfer paths
+      config loading is stable
+      context scaffold is correct
+      verifier handles generated context files correctly
+      tests pass without OCI credentials
+
+    first OCI work:
+      thin optional oci_genai provider smoke test
+      local CLI calls OCI GenAI for one controlled request
+      no Object Storage
+      no remote jobs
+      no Terraform-heavy setup
+
+    real OCI work:
+      Phase 4 only
+      Object Storage
+      sanitized snapshots
+      remote workers
+      Data Science Jobs or Container Instances
+      cleanup
+      budgets and runtime guardrails
+
+Roadmap rule:
+
+    Phase 1 through Phase 3 should be fully useful locally.
+    Phase 4 is where real OCI-backed execution starts.
+
+## Phase 0: Foundation already completed
+
+Status: implemented.
+
+This phase created the deterministic local base.
+
+Delivered capabilities:
+
+    CLI scaffold
+    scanner
+    ignore handling
+    secret finding
+    inventory JSON
+    structured Git status
+    baseline lockfile
+    init command
+    hash-only verifier MVP
+    dry_run provider
+    local setup-context run pipeline
+    context scaffold writer
+    generated AGENTS.md
+    docs structure
+    tests
+
+Remaining Phase 0 cleanup that should be handled immediately:
+
+    finalize docs and dogfooding validation for the completed local hardening work
+
+## Phase 1: Local dry-run context pipeline hardening
+
+Status: active immediate phase.
+
+Goal: make local setup-context generation correct, deterministic, and safe enough to dogfood on AICtx itself and StorageMaster before any OCI work.
+
+### Phase 1.1 Tooling and formatting hardening
+
+Fix Ruff configuration so local virtual environments are never linted or formatted.
+
+Completed hardening:
+
+    .venv is excluded from Ruff and related local validation targets
+
+Required pyproject exclusions:
+
+    .git
+    .venv
+    .pytest-tmp
+    .pytest_cache
+    .mypy_cache
+    .ruff_cache
+    .aictx/runs
+    .aictx/cache
+    .aictx/tmp
+    build
+    dist
+    node_modules
+
+Then run:
+
+    uv run ruff format .
+    uv run ruff format --check .
+    uv run ruff check .
+    uv run mypy src
+    uv run pytest
+
+Acceptance:
+
+    ruff does not inspect .venv
+    format check passes
+    ruff check passes
+    mypy passes
+    pytest passes
+
+### Phase 1.2 Correct lockfile staging and apply behavior
+
+Completed hardening work:
+
+        run pipeline now stages the generated lockfile under the context directory path
+        apply mode no longer creates a root-level `context.lock.json`
+
+Correct behavior:
+
+    staged lockfile:
+      .aictx/runs/<run-id>/out/docs/AIprojectcontext/context.lock.json
+
+    applied lockfile:
+      docs/AIprojectcontext/context.lock.json
+
+    forbidden:
+      context.lock.json at repository root
+
+Patch output must target:
+
+    b/docs/AIprojectcontext/context.lock.json
+
+and must never target:
+
+    b/context.lock.json
+
+Implementation target:
+
+    update src/aictx/context/pipeline.py
+    use context_dir relative path when writing the generated lockfile into out/
+    include docs/AIprojectcontext/context.lock.json in generated_paths
+    remove any special second write that creates duplicate root-level lockfile
+    ensure _apply_out_dir copies only staged repo-relative outputs
+
+Acceptance tests:
+
+    test_run_phase1_patch_stages_lockfile_under_context_dir
+    test_run_phase1_apply_does_not_create_root_context_lock
+    test_run_phase1_patch_does_not_target_root_context_lock
+
+### Phase 1.3 Clarify patch/apply implementation
+
+Current reality:
+
+    make_unified_diff is implemented
+    patch file generation is implemented
+    apply mode copies staged generated files into the repo
+    low-level apply_patch helper remains stubbed
+
+Roadmap rule:
+
+    do not claim true patch application is implemented until io.patches.apply_patch actually applies patches
+
+Docs should describe current behavior as:
+
+    --write patch:
+      writes .aictx/runs/<run-id>/aictx.patch and staged outputs
+
+    --write apply:
+      writes staged generated outputs into their target repo paths
+
+    io.patches.apply_patch:
+      still stubbed until a later safe writing milestone
+
+### Phase 1.4 Secret suppression for intentional detector/test strings
+
+Completed hardening:
+
+    aictx run on AICtx itself now avoids intentional detector-source and test-fixture false positives
+
+Keep default behavior safe:
+
+    unsuppressed high-confidence findings should block model/context-transfer paths
+    scanner may still complete and report findings
+    secret values must never be printed
+
+Implemented suppression for intentional examples.
+
+Recommended mechanism:
+
+    inline marker:
+      aictx-secret-ignore
 
 Behavior:
 
-1. Read Git diff against a base ref.
-2. Identify impacted source files.
-3. Use `change-impact-map.md` and `context.lock.json`.
-4. Re-read only impacted source and context files.
-5. Regenerate only impacted context sections/files.
-6. Update lockfile.
-7. Run verifier.
+    if the marker appears on the same line or nearby comment, suppress that finding
+    suppressed findings should not block local dry-run context generation
+    unsuppressed findings must still be reported
 
-Options:
+Tests:
 
-```text
---base origin/main
---base HEAD~1
---scope full
---scope changed
-```
+    test_secret_scan_supports_inline_suppression
+    test_unsuppressed_secret_is_still_reported
 
-### Acceptance criteria
+Docs must explain:
 
-- Running without `--apply` does not modify the repo.
-- Running with `--apply` modifies only expected files.
-- Editing a mapped source file makes verification fail until impacted context is refreshed.
-- Changed-scope refresh produces targeted context diffs instead of full regeneration.
+    suppression is for intentional examples only
+    real secrets should be removed, not suppressed
 
-## Phase 3: Public documentation mapping and update mode
+### Phase 1.5 Complete deterministic run artifacts
 
-Goal: maintain human-facing docs accurately without forcing every coding task to load them.
+For every run, write these local artifacts:
 
-### Scope
+    .aictx/runs/<run-id>/inventory.json
+    .aictx/runs/<run-id>/context-plan.json
+    .aictx/runs/<run-id>/facts/project_identity.json
+    .aictx/runs/<run-id>/facts/architecture_facts.json
+    .aictx/runs/<run-id>/facts/feature_facts.json
+    .aictx/runs/<run-id>/facts/workflow_facts.json
+    .aictx/runs/<run-id>/facts/docs_facts.json
+    .aictx/runs/<run-id>/facts/risk_facts.json
+    .aictx/runs/<run-id>/coverage-report.json
+    .aictx/runs/<run-id>/contradictions.json
+    .aictx/runs/<run-id>/out/
+    .aictx/runs/<run-id>/aictx.patch
 
-#### Public docs map
-
-Generate:
-
-```text
-docs/AIprojectcontext/public-docs-map.md
-```
-
-Also store machine-readable mapping in `context.lock.json`.
-
-For each public doc:
-
-```text
-path
-purpose
-audience
-described_features
-source_paths
-last_verified_source_hashes
-stale_risk
-```
-
-Do not duplicate full human docs into AI context. Only map them.
-
-#### Public docs update mode
-
-Commands:
-
-```text
-aictx public-docs update --project <repo> --scope changed --write patch
-aictx public-docs update --project <repo> --scope full --write patch
-```
-
-Changed-scope behavior:
-
-1. Read changed files.
-2. Read impacted AI context sections.
-3. Read only mapped public docs.
-4. Generate patches for those docs.
-5. Update `public-docs-map.md`.
-6. Update `context.lock.json`.
-7. Run verifier.
-
-Full-scope behavior:
-
-1. Read all public docs selected by the scanner.
-2. Compare docs against source facts.
-3. Remove stale claims.
-4. Add missing implemented behavior.
-5. Preserve user-facing clarity.
-6. Update maps and lockfile.
-
-#### Optional LLM-based semantic verification
-
-Command:
-
-```text
-aictx verify --project <repo> --strict --llm
-```
-
-Semantic checks:
-
-- Generated context contradicts current source.
-- Public docs claim features that do not exist.
-- Public docs omit major implemented behavior.
-- `AGENTS.md` points to missing or outdated context rules.
-- Context compression removed critical safety or build information.
-
-This mode may cost more and should not be required for every local commit.
-
-### Acceptance criteria
-
-- The tool can say which public docs are impacted by a source change.
-- Changed-scope docs update patches only impacted docs.
-- Full-scope docs update can refresh public docs when explicitly requested.
-- Hash-only verification remains fast, and semantic verification remains optional.
-
-## Phase 4: OCI-backed execution and guardrails
-
-Goal: add optional OCI-powered model calls and remote heavy execution without changing the local-first safety model.
-
-### Scope
-
-#### OCI local model provider
-
-Command:
-
-```text
-aictx run --project <repo> --mode setup-context --execution local --provider oci_genai --write patch
-```
-
-Implementation:
-
-- Read OCI config from standard OCI config file or environment variables.
-- Support compartment OCID.
-- Support selected model ID.
-- Add request retries with strict caps.
-- Add token and approximate cost counters.
-- Add structured-output mode where possible.
-- Add clear error messages for auth, region, quota, and model access failures.
-
-#### OCI resource bootstrap
-
-Add:
-
-```text
-infra/oci/terraform/
-```
-
-Provision:
-
-```text
-compartment variable
-object storage bucket for temporary run artifacts
-log group
-budget recommendation docs
-IAM policy templates
-optional dynamic group for remote jobs
-```
-
-CLI helper:
-
-```text
-aictx oci doctor
-```
-
-Checks:
-
-- OCI config readable.
-- Compartment accessible.
-- Object Storage bucket accessible.
-- Generative AI endpoint accessible.
-- Required policies appear sufficient.
-- Budget warning is configured manually or documented.
-
-#### Remote execution package format
-
-Create snapshot format:
-
-```text
-aictx-snapshot.zip
-  manifest.json
-  repo/
-  inventory.json
-```
+These artifacts are now written for the current deterministic Phase 1 pipeline; remaining work is to deepen semantics rather than establish the files.
 
 Rules:
 
-- Include only scanner-approved files.
-- Exclude secrets and ignored files.
-- Store source hashes.
-- Encrypt snapshot before upload if implemented.
-- Never include `.git` unless needed later for diff metadata.
+    run artifacts are local-only
+    run artifacts are not committed
+    run artifacts must not affect future scans
+    persisted generated repo files must be under docs/AIprojectcontext/ or explicitly documented target paths
 
-Create result bundle:
+### Phase 1.6 Improve source tracing quality
 
-```text
-aictx-result.zip
-  run-report.json
-  validation-report.md
-  aictx.patch
-  generated/
-```
+Current deterministic facts are useful but shallow.
 
-#### OCI Object Storage exchange
+Improve local deterministic extraction before introducing real LLM calls.
 
-Implement:
+Minimum improvements:
 
-```text
-aictx oci upload-snapshot
-aictx oci download-result
-aictx clean --oci --run-id <id>
-```
+    fact IDs should be stable across runs where possible
+    facts should reference repo-relative source paths
+    critical facts should include source spans if easy
+    unsupported facts should be marked needs_source
+    facts should distinguish implemented, stubbed, and planned modules
 
-Object layout:
+Examples of source-traced fact categories:
 
-```text
-aictx-runs/<run-id>/input/aictx-snapshot.zip
-aictx-runs/<run-id>/output/aictx-result.zip
-aictx-runs/<run-id>/logs/
-```
+    project identity
+    CLI command surface
+    implemented commands
+    stubbed commands
+    scanner behavior
+    verifier behavior
+    run pipeline behavior
+    config behavior
+    dependency state
+    test coverage signals
+    known limitations
 
-Retention rule:
+### Phase 1.7 Phase 1 acceptance gate
 
-- Delete snapshots quickly.
-- Keep result bundles only briefly.
-- Keep minimal logs.
+Run from repo root:
 
-#### OCI remote worker
+    uv sync --extra dev
+    uv run python -m compileall src tests
+    uv run aictx --help
+    uv run aictx --version
+    uv run ruff format --check .
+    uv run ruff check .
+    uv run mypy src
+    uv run pytest
+    Remove-Item -Force context.lock.json -ErrorAction SilentlyContinue
+    uv run aictx run --project . --mode setup-context --execution local --scope full --write patch
+    uv run aictx run --project . --mode setup-context --execution local --scope full --write apply
+    Test-Path context.lock.json
+    Test-Path docs/AIprojectcontext/context.lock.json
+    uv run aictx verify --project . --strict
 
-Prefer OCI Data Science Jobs first. Use Container Instances if packaging as a simple container is easier.
+Expected:
 
-Remote worker behavior:
+    compileall passes
+    help/version pass
+    ruff format check passes
+    ruff check passes
+    mypy passes
+    pytest passes
+    patch mode works
+    apply mode works
+    root context.lock.json does not exist
+    docs/AIprojectcontext/context.lock.json exists
+    verify passes after apply
 
-1. Read run environment variables.
-2. Download snapshot from Object Storage.
-3. Unpack into temp directory.
-4. Run same `aictx` pipeline.
-5. Write patch/result bundle.
-6. Upload result bundle.
-7. Exit.
-8. Never push to GitHub directly in MVP.
+Phase 1 is complete only when AICtx can dogfood itself locally in dry-run mode.
+
+## Phase 2: Full deterministic verification and changed-scope refresh
+
+Goal: turn the generated context scaffold into a strict, cheap, deterministic freshness system.
+
+Do this after Phase 1 is stable.
+
+### Phase 2.1 Expand context.lock.json semantics
+
+The lockfile should fully represent:
+
+    schema_version
+    tool_version
+    repo_head_commit
+    generated_at
+    model_provider
+    model_name
+    scanner_config_hash
+    generated_files[]
+    source_files[]
+    sections[]
+    public_docs_map[]
+    change_impact_map[]
+    last_validation
+
+Generated file entries:
+
+    path
+    sha256
+    generated_from_sections
+
+Source file entries:
+
+    path
+    sha256
+    kind
+    included_in_generation
+
+Section entries:
+
+    section_id
+    generated_file
+    heading
+    source_paths
+    source_hashes
+    fact_ids
+    status
+
+Rules:
+
+    context.lock.json is generated-but-versioned
+    .aictx/runs is generated-and-local-only
+    lockfile must never include .aictx/runs
+    lockfile must never include .git internals
+    lockfile must preserve deterministic ordering
+
+### Phase 2.2 Complete strict verifier
+
+Verifier checks:
+
+    context.lock.json exists
+    schema version is supported
+    required context files exist
+    AGENTS.md points to docs/AIprojectcontext/ai-index.md
+    generated file hashes match lockfile
+    source file paths exist
+    source hashes match lockfile
+    section source paths exist
+    section source hashes match
+    critical needs_source markers fail
+    build/test commands in workflows.md exist
+    generated stale sections fail
+
+Verifier result codes:
+
+    PASS
+    FAIL_STALE_AI_CONTEXT
+    FAIL_PUBLIC_DOCS_IMPACT
+    FAIL_LOCK_MISMATCH
+    FAIL_MISSING_SOURCE
+    FAIL_UNSUPPORTED_SCHEMA
+
+Exit behavior:
+
+    PASS -> exit 0
+    any failure -> nonzero exit
+
+Do not add LLM semantic verification in Phase 2.
+
+### Phase 2.3 Change impact mapping
+
+Generate:
+
+    docs/AIprojectcontext/change-impact-map.md
+
+and machine-readable mappings in context.lock.json.
+
+Mappings should cover:
+
+    source paths -> AI context files
+    source paths -> public docs when known
+    workflow files -> workflows.md and relevant public docs
+    config files -> workflows.md/config docs
+    docs files -> public-docs-map.md or docs impact
+
+If no public docs impact exists, record:
+
+    docs:none
+
+Do not block on public-doc impact until the mapping is good enough.
+
+### Phase 2.4 Changed-scope refresh
+
+Command:
+
+    aictx run --project <repo> --mode setup-context --scope changed --write patch
+
+Behavior:
+
+    read Git diff against base
+    identify impacted source paths
+    read impacted source/context only
+    regenerate impacted sections/files
+    update context.lock.json
+    run verifier
+
+Options:
+
+    --base origin/main
+    --base HEAD~1
+    --scope full
+    --scope changed
+
+Acceptance:
+
+    editing mapped source makes verify fail
+    changed-scope refresh updates only impacted generated files
+    verify passes after refresh
+    patch remains small and targeted
+
+## Phase 3: Public documentation mapping and update mode
+
+Goal: maintain human-facing docs accurately without forcing every normal coding agent to read them.
+
+Do this after Phase 2’s impact mapping is reliable.
+
+### Phase 3.1 Public docs map
+
+Generate:
+
+    docs/AIprojectcontext/public-docs-map.md
+
+Also store machine-readable entries in context.lock.json:
+
+    path
+    purpose
+    audience
+    described_features
+    source_paths
+    last_verified_source_hashes
+    stale_risk
+
+Rules:
+
+    do not duplicate full public docs into AI context
+    map what public docs describe
+    keep public-docs-map compact
+    distinguish root docs from documentation/ docs
+
+### Phase 3.2 Public docs update command
 
 Commands:
 
-```text
-aictx run --project <repo> --mode setup-context --execution oci-job --write patch
-aictx public-docs update --project <repo> --scope full --execution oci-job --write patch
-```
+    aictx public-docs update --project <repo> --scope changed --write patch
+    aictx public-docs update --project <repo> --scope full --write patch
 
-#### Cost and runtime guardrails
+Changed-scope behavior:
 
-Implement local limits:
+    read changed source files
+    read impacted AI context sections
+    read only mapped public docs
+    generate doc patch
+    update public-docs-map.md
+    update context.lock.json
+    run verifier
 
-```text
-max_input_tokens_per_run
-max_output_tokens_per_run
-max_model_calls_per_run
-max_remote_runtime_minutes
-max_snapshot_size_mb
-max_files_per_run
-require_confirm_above_token_estimate
-```
+Full-scope behavior:
 
-Implement remote limits:
+    read all scanner-selected public docs
+    compare docs against source facts
+    remove stale claims
+    add missing implemented behavior
+    preserve human readability
+    update maps and lockfile
 
-```text
-job timeout
-object lifecycle deletion
-bounded retries
-fail on repeated model errors
-no infinite loops
-```
+Acceptance:
 
-### Acceptance criteria
+    changed-scope docs update touches only impacted docs
+    full-scope can refresh all public docs explicitly
+    normal coding-agent flow still avoids huge public docs
+    public docs never become source of truth over code
 
-- The CLI can call OCI Generative AI safely from local mode.
-- Snapshot packaging excludes ignored files and blocks secret-bearing content.
-- Remote worker can process a tiny repo and return a patch bundle.
-- Cost and runtime caps fail closed before expensive work proceeds.
+### Phase 3.3 Optional semantic verification
 
-## Phase 5: Validation, CI, packaging, and release hardening
+Command:
 
-Goal: prove the workflow on real repositories, enforce it in CI, and make the tool installable and repeatable.
+    aictx verify --project <repo> --strict --llm
 
-### Scope
+Checks:
 
-#### Expanded test coverage
+    generated AI context contradicts current source
+    public docs claim features not implemented
+    public docs omit major implemented behavior
+    AGENTS.md points to missing context
+    compression removed critical safety/build info
 
-Minimum tests:
+Rules:
 
-```text
-scanner ignores generated files
-scanner includes docs and manifests
-dirty worktree blocks apply
-secret scan blocks model/cloud transfer
-inventory stable across repeated runs
-dry-run provider works
-context scaffold writes expected files
-lockfile detects changed source hash
-verifier detects missing context file
-verifier detects manual context edit
-impact map reports stale docs
-patch mode does not modify repo
-apply mode modifies only expected files
-```
+    optional only
+    never required for every local commit
+    must use token/cost caps
+    must not send secrets
+    must fail closed
 
-Add integration fixtures:
+## Phase 4: Optional OCI-backed model provider and remote execution
 
-```text
-fixtures/python_cli_repo
-fixtures/dotnet_desktop_repo
-fixtures/docs_heavy_repo
-fixtures/dirty_repo
-fixtures/secret_repo
-```
+Goal: add OCI as an optional accelerator without weakening local-first behavior.
 
-#### Tiny repo end-to-end validation
+Start Phase 4 only after:
 
-Create a tiny test repository:
+    local dry-run run pipeline works
+    strict verifier works
+    changed-scope refresh works
+    secret gating exists for model-transfer paths
+    token budget checks exist
+    docs accurately describe local behavior
 
-```text
-README.md
-docs/public/manual.md
-src/app.py
-tests/test_app.py
-```
+### Phase 4.1 OCI GenAI local provider
+
+Command:
+
+    aictx run --project <repo> --mode setup-context --execution local --provider oci_genai --write patch
+
+Implementation:
+
+    keep oci dependency optional
+    read standard OCI config or env vars
+    support compartment OCID
+    support model ID
+    add auth smoke test
+    add structured request/response handling
+    add retries with strict caps
+    estimate token/cost before calls
+    log metadata only by default
+    fail clearly on auth, region, quota, and model-access errors
+
+Acceptance:
+
+    tests pass without OCI credentials
+    provider-specific tests are skipped without credentials
+    one controlled OCI chat call works when configured
+    secret findings block transfer
+    token budget caps block oversized runs
+
+### Phase 4.2 OCI setup doctor
+
+Command:
+
+    aictx oci doctor
+
+Checks:
+
+    OCI config readable
+    compartment accessible
+    Generative AI endpoint reachable
+    Object Storage bucket accessible when configured
+    policies likely sufficient
+    budget warning documented
+
+No heavy Terraform requirement yet.
+
+### Phase 4.3 Snapshot and Object Storage exchange
+
+Create snapshot format:
+
+    aictx-snapshot.zip
+      manifest.json
+      repo/
+      inventory.json
+
+Rules:
+
+    include only scanner-approved files
+    exclude ignored files
+    exclude secrets
+    store source hashes
+    never include .git unless explicitly needed
+    preferably encrypt before upload
+
+Create result bundle:
+
+    aictx-result.zip
+      run-report.json
+      validation-report.md
+      aictx.patch
+      generated/
+
+Object layout:
+
+    aictx-runs/<run-id>/input/aictx-snapshot.zip
+    aictx-runs/<run-id>/output/aictx-result.zip
+    aictx-runs/<run-id>/logs/
+
+### Phase 4.4 Remote worker
+
+Preferred first option:
+
+    OCI Data Science Jobs
+
+Alternative:
+
+    OCI Container Instances
+
+Worker behavior:
+
+    read run env vars
+    download snapshot
+    unpack into temp dir
+    run same AICtx pipeline
+    upload result bundle
+    exit
+    never push to GitHub
+
+Commands:
+
+    aictx run --project <repo> --mode setup-context --execution oci-job --write patch
+    aictx public-docs update --project <repo> --scope full --execution oci-job --write patch
+
+### Phase 4.5 Cost and runtime guardrails
+
+Required limits:
+
+    max_input_tokens_per_run
+    max_output_tokens_per_run
+    max_model_calls_per_run
+    max_remote_runtime_minutes
+    max_snapshot_size_mb
+    max_files_per_run
+    require_confirm_above_token_estimate
+
+Remote limits:
+
+    job timeout
+    object lifecycle cleanup
+    bounded retries
+    no infinite loops
+    fail on repeated model errors
+
+Acceptance:
+
+    too-large repos fail before cloud work
+    secret-bearing snapshots fail before upload
+    remote worker can process tiny repo
+    result patch returns locally
+    no persistent compute remains running
+
+## Phase 5: CI, packaging, and release hardening
+
+Goal: make AICtx repeatable across clones, CI, and real repos.
+
+### Phase 5.1 Expanded tests
+
+Minimum coverage:
+
+    scanner ignores generated files
+    scanner includes docs/manifests
+    dirty worktree blocks unsafe apply
+    secret findings block model/cloud transfer
+    inventory stable across repeated runs
+    dry_run provider works
+    context scaffold writes expected files
+    lockfile detects changed source hash
+    verifier detects missing context file
+    verifier detects manual generated-file edit
+    impact map reports stale docs
+    patch mode does not modify repo
+    apply mode modifies only expected files
+    public-docs update patches only mapped docs
+    OCI tests are optional/skipped without credentials
+
+Fixtures:
+
+    python_cli_repo
+    dotnet_desktop_repo
+    docs_heavy_repo
+    dirty_repo
+    secret_repo
+
+### Phase 5.2 Tiny repo end-to-end validation
+
+Create tiny repo:
+
+    README.md
+    docs/public/manual.md
+    src/app.py
+    tests/test_app.py
 
 Run:
 
-```text
-aictx init --project <tiny-repo>
-aictx scan --project <tiny-repo>
-aictx run --project <tiny-repo> --mode setup-context --execution local --write patch
-aictx run --project <tiny-repo> --mode setup-context --execution local --write apply
-aictx verify --project <tiny-repo> --strict
-```
+    aictx init --project <tiny-repo>
+    aictx scan --project <tiny-repo>
+    aictx run --project <tiny-repo> --mode setup-context --execution local --write patch
+    aictx run --project <tiny-repo> --mode setup-context --execution local --write apply
+    aictx verify --project <tiny-repo> --strict
 
-Then modify `src/app.py` and verify stale detection.
+Then modify src/app.py and verify stale detection.
 
-#### Real-repo validation
+### Phase 5.3 Real repo validation
 
-Run first in patch mode only:
+First real target:
 
-```text
-aictx scan --project <StorageMaster>
-aictx run --project <StorageMaster> --mode setup-context --scope full --execution local --write patch
-```
-
-Review:
-
-- Selected files.
-- Generated context density.
-- Whether `ai-index.md` routes well.
-- Whether `code-map.md` points to the actual important files.
-- Whether `AGENTS.md` gives correct future-agent rules.
-- Whether verifier passes.
-
-Then apply if the patch is good:
-
-```text
-aictx run --project <StorageMaster> --mode setup-context --scope full --execution local --write apply
-aictx verify --project <StorageMaster> --strict
-```
-
-#### GitHub Actions integration
-
-Generate workflow:
-
-```text
-.github/workflows/aictx-verify.yml
-```
+    StorageMaster
 
 Workflow:
 
-```text
-checkout
-install aictx
-run aictx verify --strict --base origin/main
-upload validation-report.md as artifact
-fail PR on stale AI context or public docs impact
-```
+    aictx scan --project <StorageMaster>
+    aictx run --project <StorageMaster> --mode setup-context --scope full --execution local --write patch
+    review generated context density
+    review ai-index routing
+    review code-map accuracy
+    review AGENTS.md rules
+    apply only after review
+    aictx verify --project <StorageMaster> --strict
 
-Optional PR output:
+Acceptance:
 
-- `ai-context-impact`
-- `public-docs-impact`
-- `no-doc-impact-required`
-- `aictx-verification-failed`
+    generated context is smaller than public docs
+    future agents can route through ai-index.md
+    verifier catches source/context drift
+    public docs are not required for normal coding context
 
-Do not require OCI credentials for the basic verifier. CI should run hash and impact checks without model calls.
+### Phase 5.4 GitHub Actions
 
-#### Packaging and release workflow
+For AICtx itself:
 
-Implement:
+    lint
+    format check
+    typecheck
+    tests
+    build package
 
-```text
-uv build
-pipx install .
-```
+For repos processed by AICtx:
 
-Add GitHub Actions for `aictx` itself:
+    checkout
+    install aictx
+    run aictx verify --strict
+    upload validation-report.md as artifact
+    fail PR on stale AI context or docs impact
 
-```text
-lint
-typecheck
-test
-build package
-```
+Basic verifier CI must not require OCI credentials.
 
-Do not add signing or complex release automation yet.
+### Phase 5.5 Packaging
 
-### Acceptance criteria
+Commands:
 
-- `uv run pytest`, `uv run ruff check .`, and `uv run mypy src` pass with expanded coverage.
-- Tiny-repo workflow succeeds end to end, including stale detection after source changes.
-- At least one real repo run demonstrates useful routed context and verifier behavior.
-- Fresh clone install and package build work reproducibly.
+    uv build
+    pipx install .
+
+Acceptance:
+
+    fresh clone installs
+    aictx --help works after install
+    package metadata correct
+    README installation docs correct
+    no signing or complex release automation yet
 
 ## Version roadmap
 
-### v0.2.0: Local context generation
+### v0.1.x: Local foundation and dry-run context generation
 
-Includes context planning, fact extraction, context scaffold writer, and `AGENTS.md` generation. The dry-run model provider exists. The OCI model provider is stubbed. Context generation modules are stubbed.
+Current line.
 
-### v0.3.0: Full verification and lockfile expansion
+Includes:
 
-Includes full `context.lock.json`, strict verifier completion, generated file hash checks, source hash checks, and stale section reports. The current verifier is only the hash-only MVP.
+    scanner
+    init
+    hash-only verify
+    dry_run run pipeline
+    context scaffold writer
+    AGENTS.md generation
+    baseline lockfile
+    docs structure
+    tests
 
-### v0.4.0: Change impact and cheap refresh
+Remaining v0.1.x hardening:
 
-Includes `change-impact-map.md`, changed-scope regeneration, public docs impact detection, and targeted stale reports. Impact mapping is stubbed.
+    ruff exclude .venv
+    lockfile staging path fix
+    root context.lock.json prevention
+    secret suppression for intentional examples
+    run artifact completeness
+    deterministic fact stability
 
-### v0.5.0: Public docs updater
+### v0.2.0: Stable local setup-context workflow
 
-Includes changed-scope and full-scope public-docs update mode, patch output, public docs map refresh, and verifier integration. All public-docs modules are stubbed.
+Includes:
 
-### v0.6.0: OCI-backed local and remote execution
+    robust local dry-run setup-context generation
+    complete staged artifacts
+    correct patch/apply behavior
+    source-traced deterministic facts
+    generated context scaffold
+    generated AGENTS.md
+    verifier passes after apply
+    AICtx dogfoods itself
 
-Includes OCI local provider, sanitized snapshots, Object Storage exchange, remote worker, result bundles, cleanup, and remote public-docs refresh. OCI modules remain stubbed.
+No real OCI required.
+
+### v0.3.0: Strict verification and changed-scope refresh
+
+Includes:
+
+    expanded context.lock.json
+    generated file hash verification
+    source section verification
+    change-impact-map
+    changed-scope refresh
+    targeted stale reports
+
+No real OCI required.
+
+### v0.4.0: Public docs mapping and update mode
+
+Includes:
+
+    public-docs-map
+    public-docs update --scope changed
+    public-docs update --scope full
+    public-doc impact detection
+    optional semantic verification interface
+
+OCI still optional and not required.
+
+### v0.5.0: OCI local provider
+
+Includes:
+
+    optional OCI dependency
+    oci_genai provider
+    token/cost caps
+    auth/config doctor
+    no remote worker yet
+
+### v0.6.0: OCI remote execution
+
+Includes:
+
+    sanitized snapshots
+    Object Storage exchange
+    result bundles
+    remote worker
+    cleanup
+    remote public-docs refresh
 
 ### v0.7.0: CI and packaging hardening
 
-Includes CI workflow generation, PR-safe verifier, expanded validation, and install/build workflow hardening.
+Includes:
+
+    GitHub Actions workflow generation
+    PR-safe verifier
+    package build/install validation
+    expanded fixtures
+    real repo validation
 
 ### v1.0.0: Stable personal workflow
 
-Includes safe defaults, tests, documentation, cost caps, OCI setup docs, stable generated scaffold, and successful runs on at least two real repositories.
+Includes:
 
-## Remaining implementation order summary
+    safe defaults
+    local-first context generation
+    strict verifier
+    docs impact mapping
+    optional public-doc updates
+    optional OCI acceleration
+    successful runs on AICtx and StorageMaster
+    no automatic commits or pushes
+    documented failure modes
 
-1. Implement config loading and finish local `run` execution.
-2. Add planning, fact extraction, and contradiction checking.
-3. Generate AI context scaffold and strict `AGENTS.md` updates.
-4. Add patch/apply mode and expand lockfile structure.
-5. Complete strict verifier and change impact mapping.
-6. Add changed-scope refresh.
-7. Add public docs map and public-docs update mode.
-8. Add optional semantic verification.
-9. Implement OCI local provider.
-10. Add OCI bootstrap, snapshot, storage exchange, cleanup, and remote worker.
-11. Add cost/runtime guardrails.
-12. Expand tests, fixtures, and real-repo validation.
-13. Add CI verification workflow and packaging/release workflow.
+## Remaining implementation order
 
-## Definition of done for the whole system
+1. Fix Ruff excludes and formatting.
+2. Fix run pipeline context.lock.json placement.
+3. Add tests preventing root context.lock.json.
+4. Add intentional secret suppression.
+5. Complete run artifact writing.
+6. Improve deterministic source-traced facts.
+7. Dogfood AICtx with local dry_run patch/apply.
+8. Expand strict verifier over generated context files and sections.
+9. Add change-impact-map and changed-scope refresh.
+10. Add public-docs-map.
+11. Implement public-docs update mode locally.
+12. Add optional semantic verification.
+13. Add OCI GenAI provider only after local safety gates exist.
+14. Add OCI snapshot/Object Storage/remote worker.
+15. Add CI workflow generation.
+16. Harden packaging and release workflow.
 
-The project is not yet at the definition of done. The target end state is:
+## Definition of done
 
-```text
-aictx run --project <repo> --mode setup-context --scope full --execution local --write apply
-aictx verify --project <repo> --strict
-```
+AICtx is done for v1 when this works reliably:
 
-Then, after a code change:
+    aictx run --project <repo> --mode setup-context --scope full --execution local --write apply
+    aictx verify --project <repo> --strict
 
-```text
-aictx verify --project <repo> --strict
-```
+Then, after a source change:
 
-must identify exactly which AI context and public docs are stale.
+    aictx verify --project <repo> --strict
+
+must identify stale AI context or affected docs.
 
 Then:
 
-```text
-aictx run --project <repo> --mode setup-context --scope changed --write apply
-aictx public-docs update --project <repo> --scope changed --write patch
-aictx verify --project <repo> --strict
-```
+    aictx run --project <repo> --mode setup-context --scope changed --write apply
+    aictx public-docs update --project <repo> --scope changed --write patch
+    aictx verify --project <repo> --strict
 
-must return the repository to a verified state without forcing the coding agent to read huge human-facing docs.
+must return the repository to a verified state without forcing normal coding agents to read huge public docs.
 
-Currently, `aictx run` and `aictx public-docs update` are still stubbed, and the verifier is only the hash-only MVP, so this workflow is not yet achievable.
-
-## Non-goals for v1
+## Non-goals before v1
 
 Do not build these before the core CLI is proven:
 
-1. Persistent hosted service.
-2. Web dashboard.
-3. Multi-user authentication.
-4. Automatic GitHub pushes.
-5. Automatic merge/commit behavior.
-6. Fully autonomous repo editing without patch review.
-7. Claiming mathematical certainty that docs are "100% correct".
+    persistent hosted service
+    web dashboard
+    multi-user authentication
+    automatic GitHub pushes
+    automatic merge behavior
+    fully autonomous repo editing without patch review
+    claims of mathematical 100 percent documentation correctness
 
-The correct promise is stricter and more honest: source-traced context, deterministic stale detection, targeted docs impact reporting, and fail-closed verification.
+The correct promise is:
+
+    source-traced context
+    deterministic stale detection
+    targeted docs impact reporting
+    fail-closed verification
+    optional high-token OCI acceleration

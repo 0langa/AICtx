@@ -65,13 +65,13 @@ This file maps the repository layout to help future agents and contributors navi
         patches.py             — Unified diff creation, patch application stub
 
     tests/
-      conftest.py              — pytest configuration (sys.path setup for fixtures)
+      conftest.py              — pytest bootstrap that injects the repo root into `sys.path` so `tests.fixtures` is importable
       fixtures/
         git_repos.py           — Dynamic git repo fixture helper
       unit/
         test_cli.py            — CLI version test
         test_scanner.py        — Scanner utility and secret-scan tests
-        test_scan_integration.py — Integration tests for scan hardening and git-status serialization
+        test_scan_integration.py — Integration-style tests for scan hardening and git-status serialization; currently housed under `tests/unit/`
         test_verify.py          — Init and verifier behavior tests
         test_run_phase1.py      — Phase 1 local context generation tests
 

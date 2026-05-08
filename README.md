@@ -10,7 +10,7 @@ AICtx is at an early alpha stage. The repository scanner, baseline lockfile boot
 
 - `aictx scan` — scans a Git repository, classifies files, detects secrets, and writes a deterministic inventory to `.aictx/runs/<run-id>/inventory.json`.
 - `aictx init` — creates or refreshes `docs/AIprojectcontext/context.lock.json`, preserves generated lock metadata when present, and creates `.aictxignore` if missing.
-- `aictx run --mode setup-context --execution local` — plans a local run, extracts deterministic fact packs, generates AI context markdown under `docs/AIprojectcontext/`, stages repo-relative outputs and a reviewable patch by default, and can copy those staged outputs into the repository.
+- `aictx run --mode setup-context --execution local` — plans a local run, extracts deterministic fact packs, generates AI context markdown under `docs/AIprojectcontext/`, writes a generated `AGENTS.md`, stages repo-relative outputs and a reviewable patch by default, and can copy those staged outputs plus the generated lockfile into the repository.
 - `aictx verify --strict` — performs deterministic hash-only validation against the committed baseline lockfile.
 - Git integration — branch, HEAD commit, dirty-state, and file-change detection.
 - Structured Git status inventory — tracked, untracked, modified, deleted, and renamed file lists are serialized into inventory output.
@@ -18,8 +18,8 @@ AICtx is at an early alpha stage. The repository scanner, baseline lockfile boot
 - Project classification — deterministic heuristics for Python, C#/.NET, Node, Rust, Go, and docs-heavy repos.
 - Secret scanning — regex-based high-confidence detection without printing secret values.
 - Secret-scan self-protection — skips detector source/examples in `src/aictx/scan/secrets.py` and test/fixture-style paths to avoid false positives.
-- Windows test temp hardening — repository-local `.pytest-tmp` is excluded from linting, scanning, and test discovery.
-- Linting, formatting, and tests pass.
+- Windows test temp hardening — `.pytest-tmp` is excluded from linting, scanning, and test discovery.
+- Repository tooling — Ruff, mypy, and pytest are configured for local validation.
 
 ### What is planned
 

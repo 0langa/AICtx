@@ -4,7 +4,7 @@
 
 ### Added
 
-- CLI skeleton with Typer (`init`, `scan`, `run`, `verify`, `clean`, `public-docs`).
+- CLI skeleton with Typer (`init`, `scan`, `run`, `verify`, `clean`, and `public-docs update`).
 - `aictx scan` — full repository scanner that produces a deterministic inventory.
 - `aictx init` MVP — creates `docs/AIprojectcontext/context.lock.json` baseline and `.aictxignore` if missing.
 - `aictx run` local Phase 1 — deterministic planning, fact extraction, AI context scaffold generation, staged patch output, optional apply mode, and generated `AGENTS.md`.

@@ -4,7 +4,7 @@ This document describes the current and planned architecture of AICtx. The codeb
 
 ## Local-First Design
 
-AICtx is designed to run locally against a Git repository. It never auto-commits, auto-pushes, or silently overwrites user content. Generated changes are produced as reviewable patches by default. OCI usage is optional and per-command.
+AICtx is designed to run locally against a Git repository. It never auto-commits, auto-pushes, or silently overwrites user content. Generated changes are produced as reviewable patches by default. OCI-backed execution is planned as an optional future mode; the currently implemented run behavior is local-only.
 
 The committed baseline file is `docs/AIprojectcontext/context.lock.json`. Runtime scan artifacts under `.aictx/` are local-only and ignored.
 
@@ -79,7 +79,7 @@ Safety measures implemented in the scanner:
 - Symlinks are skipped.
 - Secret findings are reported by path and detector name, not by printing the secret value.
 - The local run pipeline blocks generation when scanner secret findings are present.
-- Dirty-worktree blocking and contradiction/coverage failure gates are not implemented yet.
+- Dirty-worktree blocking and contradiction/coverage failure gates are not implemented yet, even though configuration fields exist for future enforcement.
 
 ### Lockfile Refresh Behavior
 
