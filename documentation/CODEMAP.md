@@ -7,7 +7,7 @@ This file maps the repository layout to help future agents and contributors navi
     src/aictx/                 — Main Python package
       __init__.py              — Package version (0.1.0)
       cli.py                   — Typer CLI entry point (all commands)
-      config.py                — Pydantic configuration models (stubbed loading)
+      config.py                — Pydantic configuration models and `.aictx/config.toml` loading
       errors.py                — Exception hierarchy
       logging.py               — Rich-based logging setup
 
@@ -33,11 +33,12 @@ This file maps the repository layout to help future agents and contributors navi
         dry_run.py             — Local test provider (implemented)
         oci_genai.py           — OCI Generative AI provider (stubbed)
 
-      context/                 — Context generation pipeline (mostly stubbed)
+      context/                 — Context generation pipeline
         agents_md.py           — AGENTS.md template generator
-        planner.py             — Context planning (stubbed)
-        fact_extractor.py      — Structured fact extraction (stubbed)
-        writer.py              — AI context scaffold writer (stubbed)
+        pipeline.py            — Local Phase 1 run orchestration
+        planner.py             — Deterministic context planning
+        fact_extractor.py      — Deterministic structured fact extraction
+        writer.py              — AI context scaffold writer and generated lock builder
         compressor.py          — Text compression (stubbed)
         lockfile.py            — baseline context.lock.json builder and I/O helpers
 
@@ -72,16 +73,16 @@ This file maps the repository layout to help future agents and contributors navi
         test_scanner.py        — Scanner utility and secret-scan tests
         test_scan_integration.py — Integration tests for scan hardening and git-status serialization
         test_verify.py          — Init and verifier behavior tests
+        test_run_phase1.py      — Phase 1 local context generation tests
 
 ## Generated / Runtime Directories
 
     .aictx/                  — Runtime directory (excluded from inventory)
-      runs/<run-id>/         — Per-run outputs (inventory.json)
+      runs/<run-id>/         — Per-run outputs (inventory.json, staged context, patch files)
       cache/                 — Runtime cache (ignored)
-      runs/<run-id>/         — Per-run outputs (inventory.json, ignored)
       tmp/                   — Runtime temp files (ignored)
     .aictxignore             — Custom ignore patterns
-    docs/AIprojectcontext/   — Versioned baseline lockfile output (`context.lock.json`); AI context shards planned later
+    docs/AIprojectcontext/   — Generated AI context shards plus committed `context.lock.json`
 
 ## Config Files
 

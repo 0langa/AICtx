@@ -4,12 +4,13 @@ A local-first CLI tool that prepares Git repositories for low-token AI-agent wor
 
 ## Current Status (v0.1.0)
 
-AICtx is at an early alpha stage. The repository scanner, baseline lockfile bootstrap, and hash-only verifier MVP are implemented and tested. Context generation, semantic verification, and public-docs update remain planned.
+AICtx is at an early alpha stage. The repository scanner, baseline lockfile bootstrap, hash-only verifier MVP, and a local Phase 1 context generation pipeline are implemented and tested. Semantic verification, contradiction/coverage enforcement, and public-docs update remain planned.
 
 ### What works today
 
 - `aictx scan` — scans a Git repository, classifies files, detects secrets, and writes a deterministic inventory to `.aictx/runs/<run-id>/inventory.json`.
 - `aictx init` — creates `docs/AIprojectcontext/context.lock.json` as a baseline verification lockfile and creates `.aictxignore` if missing.
+- `aictx run --mode setup-context --execution local` — plans a local run, extracts deterministic fact packs, generates AI context markdown under `docs/AIprojectcontext/`, stages a patch by default, and can apply generated files.
 - `aictx verify --strict` — performs deterministic hash-only validation against the committed baseline lockfile.
 - Git integration — branch, HEAD commit, dirty-state, and file-change detection.
 - Structured Git status inventory — tracked, untracked, modified, deleted, and renamed file lists are serialized into inventory output.
@@ -20,7 +21,6 @@ AICtx is at an early alpha stage. The repository scanner, baseline lockfile boot
 
 ### What is planned
 
-- Context generation pipeline (`aictx run`) — planned for v0.2.0.
 - Semantic freshness verification beyond file hashes — planned for a later milestone.
 - Change-impact mapping and cheap refresh — planned for v0.4.0.
 - Public-docs updater — planned for v0.5.0.
@@ -55,8 +55,11 @@ uv run aictx init --project .
 # Verify the repository against the committed baseline
 uv run aictx verify --project . --strict
 
-# Other commands remain stubbed
-uv run aictx run --project . --mode setup-context --execution local --write patch
+# Generate AI context as a reviewable patch
+uv run aictx run --project . --mode setup-context --execution local --scope full --write patch
+
+# Apply generated AI context into the repository
+uv run aictx run --project . --mode setup-context --execution local --scope full --write apply
 ```
 
 ## CLI Commands
@@ -65,7 +68,7 @@ uv run aictx run --project . --mode setup-context --execution local --write patc
 | --- | --- | --- |
 | `scan` | **Implemented** | Walks the repo, builds inventory, detects secrets, writes JSON. |
 | `init` | **Implemented (MVP)** | Creates `docs/AIprojectcontext/context.lock.json` and `.aictxignore` if missing. |
-| `run` | Stubbed | Will run the context generation pipeline. |
+| `run` | **Implemented (local Phase 1)** | Runs local planning, fact extraction, scaffold generation, and lockfile output for `setup-context` in local mode. |
 | `verify` | **Implemented (hash-only MVP)** | Verifies locked source and generated file hashes. No semantic validation yet. |
 | `clean` | Stubbed | Will clean generated or remote artifacts. |
 | `public-docs update` | Stubbed | Will update human-facing public docs. Note: subcommand under `aictx public-docs`. |
@@ -100,7 +103,8 @@ uv run mypy src
 - The tool does not auto-commit, auto-push, or silently overwrite files.
 - `docs/AIprojectcontext/context.lock.json` is generated but versioned; `.aictx/runs/`, `.aictx/cache/`, and `.aictx/tmp/` are runtime-only and should not be committed.
 - `verify --strict` is currently deterministic file-state validation only; semantic freshness and public-docs impact checks are planned later.
-- The `run` and `public-docs update` commands accept a `--write` flag (patch/apply), but these commands are currently stubbed and produce no output.
+- `aictx run` currently supports only `--mode setup-context --execution local` and generates deterministic scaffold files. Contradiction reports, coverage reports, semantic freshness, and provider-backed OCI generation are not implemented yet.
+- `aictx public-docs update` remains stubbed.
 
 ## License
 

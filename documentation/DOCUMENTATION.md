@@ -46,6 +46,46 @@ This will:
 
 The serialized inventory now includes `dirty_state` plus `git_status` with deterministic tracked, untracked, modified, deleted, and renamed file lists.
 
+### Generating AI Context
+
+`run` is now partially implemented for the local Phase 1 pipeline.
+
+```bash
+uv run aictx run --project <path-to-repo> --mode setup-context --execution local --scope full --write patch
+```
+
+Supported values today:
+
+- `--mode setup-context`
+- `--execution local`
+- `--scope full|changed`
+- `--write patch|apply`
+
+Current behavior:
+
+1. Validate supported mode/execution/scope/write values.
+2. Load `.aictx/config.toml` when present.
+3. Scan the repository and stop if secrets are detected.
+4. Build a deterministic selection plan.
+5. Extract deterministic fact packs using the dry-run provider.
+6. Generate AI context files and `AGENTS.md` into `.aictx/runs/<timestamp>-run/out/`.
+7. Write `.aictx/runs/<timestamp>-run/aictx.patch`.
+8. If `--write apply` is used, copy generated files into the repository and write `docs/AIprojectcontext/context.lock.json`.
+
+Current generated repository files on `--write apply`:
+
+- `docs/AIprojectcontext/ai-index.md`
+- `docs/AIprojectcontext/project-state.md`
+- `docs/AIprojectcontext/code-map.md`
+- `docs/AIprojectcontext/architecture.md`
+- `docs/AIprojectcontext/workflows.md`
+- `docs/AIprojectcontext/public-docs-map.md`
+- `docs/AIprojectcontext/change-impact-map.md`
+- `docs/AIprojectcontext/schema.md`
+- `docs/AIprojectcontext/validation-report.md`
+- `docs/AIprojectcontext/context.lock.json`
+- `AGENTS.md`
+
 ### Initializing Baseline Lockfile
 
 `init` is now minimally implemented.
@@ -93,9 +133,8 @@ Typical workflow:
 
 ### Other Commands
 
-The following commands exist in the CLI but are currently stubbed:
+The following commands remain stubbed:
 
-- `aictx run --project <path> --mode <mode> --execution <target> --write <mode>`
 - `aictx clean --oci --run-id <id>`
 - `aictx public-docs update --project <path> --scope <scope> --write <mode>`
 
@@ -133,6 +172,7 @@ The test suite includes:
 - Scanner utility tests (binary detection, language detection, manifest/test/doc classification, SHA-256, secret scanning).
 - Integration tests ensuring `.aictx/` runtime artifacts and hard-excluded directories are not included in inventory.
 - Verifier tests covering missing lockfiles, successful verification after init, source changes, deleted files, and unsupported schema.
+- Phase 1 run tests covering config loading, staged patch output, applied scaffold output, and generated lockfile/source linkage.
 
 ## Lint, Format, and Typecheck
 
@@ -160,13 +200,15 @@ Ensure the target path is inside a Git repository with at least one commit.
 
 The scanner uses regex-based detection. Test fixtures containing fake secrets will be reported. This is expected and safe because the scanner only reports findings; it does not block or modify anything.
 
-### `aictx run` does nothing useful yet
+### `aictx run` does not support the mode I passed
 
-This command is currently stubbed. It will print a "not yet implemented" message. Context generation remains a planned feature.
+Only local `setup-context` is implemented. Any other mode or execution target currently exits with an error.
 
 ### `aictx verify --strict` fails immediately in a fresh clone
 
 This is expected if `docs/AIprojectcontext/context.lock.json` has not been created or committed yet. Run `uv run aictx init --project .`, then commit the resulting lockfile.
+
+If you want the generated AI context scaffold instead of a baseline lock only, run `uv run aictx run --project . --mode setup-context --execution local --write apply`.
 
 ## Repository Layout
 

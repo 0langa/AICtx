@@ -1,6 +1,6 @@
 # AI Context Agent Development Plan
 
-> **Current status:** The scanner milestone plus the committed baseline `docs/AIprojectcontext/context.lock.json` and the hash-only verifier MVP are implemented. The remaining work below is intentionally limited to not-yet-completed capabilities and is reorganized into five large implementation phases.
+> **Current status:** The scanner milestone, committed baseline `docs/AIprojectcontext/context.lock.json`, hash-only verifier MVP, and local Phase 1 context generation pipeline are implemented. The remaining work below is intentionally limited to not-yet-completed capabilities and is reorganized into five large implementation phases.
 
 ## Overall goal
 
@@ -126,9 +126,11 @@ Use this multi-file scaffold instead of one giant context file. A single giant f
 
 ## Phase 1: Local context generation pipeline
 
+Status: implemented in local deterministic form.
+
 Goal: move from scanner-plus-lockfile MVP to actual source-traced AI context generation in local mode.
 
-This phase consolidates all remaining work needed to turn `aictx run` from a stub into a useful local pipeline.
+This phase turned `aictx run` from a stub into a useful local pipeline for `setup-context` in local execution mode. Remaining improvements listed in this phase should now be treated as hardening or expansion work, not as unstarted core functionality.
 
 ### Scope
 

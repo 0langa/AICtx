@@ -7,6 +7,7 @@
 - CLI skeleton with Typer (`init`, `scan`, `run`, `verify`, `clean`, `public-docs`).
 - `aictx scan` — full repository scanner that produces a deterministic inventory.
 - `aictx init` MVP — creates `docs/AIprojectcontext/context.lock.json` baseline and `.aictxignore` if missing.
+- `aictx run` local Phase 1 — deterministic planning, fact extraction, AI context scaffold generation, staged patch output, optional apply mode, and generated `AGENTS.md`.
 - `aictx verify --strict` MVP — deterministic hash-only verifier for baseline file-state validation.
 - Git integration — root detection, branch/head/dirty status, tracked/untracked/modified/deleted/renamed file lists.
 - Structured Git status snapshot serialized in scanner inventory.
@@ -21,19 +22,20 @@
 - Baseline lockfile bootstrap from scanner inventory.
 - Versioned baseline `docs/AIprojectcontext/context.lock.json` for cross-clone verification.
 - `AGENTS.md` template generator.
+- `.aictx/config.toml` loading.
 - File I/O helpers (`safe_write`, `read_text`), JSONL helpers, and unified diff helper.
 - Exception hierarchy (`AictxError`, `SafetyError`, `ConfigError`, `ScanError`, `SecretScanError`, `TokenBudgetExceededError`, `VerificationError`, `RemoteJobError`).
 - Unit and integration tests covering CLI version, scanner utilities, secret scanning, and scan hardening.
 
 ### Known Limitations
 
-- `run`, `clean`, and `public-docs update` commands are stubbed and do not perform meaningful work.
-- `init` creates only a baseline file-state lockfile; it does not generate AI context shards or `AGENTS.md`.
+- `clean` and `public-docs update` commands are stubbed and do not perform meaningful work.
+- `run` currently supports only local `setup-context`; contradiction reports, coverage reports, semantic verification, and OCI execution are not implemented.
+- `init` creates only a baseline file-state lockfile; it does not generate AI context shards.
 - `verify` is hash-only and deterministic; it does not perform semantic freshness or public-docs impact validation yet.
 - `.aictx/runs/`, `.aictx/cache/`, and `.aictx/tmp/` remain local runtime artifacts and are not part of the committed verification baseline.
 - OCI Generative AI provider is not yet implemented.
-- Context planning, fact extraction, scaffold writing, and compression are stubbed.
+- Context compression is stubbed.
 - Public docs mapper, updater, and patcher are stubbed.
 - OCI Object Storage, remote jobs, and cleanup are stubbed.
-- Configuration TOML parsing is not implemented; defaults are always used.
 - Patch application is not implemented.

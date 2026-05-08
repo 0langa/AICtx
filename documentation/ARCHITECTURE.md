@@ -17,7 +17,7 @@ Typer-based command surface. Commands:
 - `aictx --version` — prints version.
 - `aictx scan --project <path>` — scans repository, prints summary, writes inventory JSON.
 - `aictx init --project <path>` — creates `docs/AIprojectcontext/context.lock.json` baseline and `.aictxignore` if missing.
-- `aictx run --project <path> --mode <mode> --execution <target> --write <mode>` — **stubbed**.
+- `aictx run --project <path> --mode setup-context --execution local --scope <scope> --write <mode>` — implemented local Phase 1 pipeline.
 - `aictx verify --project <path> --strict` — hash-only verifier MVP for baseline lockfile validation.
 - `aictx clean --oci --run-id <id>` — **stubbed**.
 - `aictx public-docs update --project <path> --scope <scope> --write <mode>` — **stubbed**; exits with code 1.
@@ -42,6 +42,34 @@ Fully implemented deterministic pipeline:
 - `status.py` — `WorktreeStatus` class parsing `git branch`, `rev-parse HEAD`, `status --short`, `ls-files`.
 - `diff.py` — `get_git_diff()` returning unified diff against a base ref.
 
+### Context Generation Pipeline (`src/aictx/context/`)
+
+Implemented local Phase 1 flow:
+
+1. Rescan repository and stop on detected secrets.
+2. Load `.aictx/config.toml` if present.
+3. Build a deterministic file-selection plan.
+4. Estimate token cost and fail if over configured input budget.
+5. Use the dry-run provider to build deterministic fact-pack summaries.
+6. Generate AI context markdown shards plus a generated `AGENTS.md`.
+7. Build `context.lock.json` with source and generated file linkage.
+8. Write staged outputs under `.aictx/runs/<run-id>/out/` and create `aictx.patch`.
+9. Optionally apply staged outputs into the repository when `--write apply` is used.
+
+Current generated files:
+
+- `docs/AIprojectcontext/ai-index.md`
+- `docs/AIprojectcontext/project-state.md`
+- `docs/AIprojectcontext/code-map.md`
+- `docs/AIprojectcontext/architecture.md`
+- `docs/AIprojectcontext/workflows.md`
+- `docs/AIprojectcontext/public-docs-map.md`
+- `docs/AIprojectcontext/change-impact-map.md`
+- `docs/AIprojectcontext/schema.md`
+- `docs/AIprojectcontext/validation-report.md`
+- `docs/AIprojectcontext/context.lock.json`
+- `AGENTS.md`
+
 ### Safety Model
 
 Safety measures implemented in the scanner:
@@ -49,15 +77,16 @@ Safety measures implemented in the scanner:
 - Hard excludes prevent `.aictx/`, `.git/`, build outputs, and credential files from entering inventory.
 - Symlinks are skipped.
 - Secret findings are reported by path and detector name, not by printing the secret value.
-- Higher-level safety gating (blocking model calls on secret detection, blocking apply on dirty worktree) is planned for the `run` and `verify` commands.
+- The local run pipeline blocks generation when scanner secret findings are present.
+- Dirty-worktree blocking and contradiction/coverage failure gates are not implemented yet.
 
 ## Stubbed / Planned Architecture
 
-### Context Generation Pipeline (`src/aictx/context/`)
+### Remaining Stubbed / Planned Context Work
 
 - `agents_md.py` — generates a static `AGENTS.md` template.
-- `planner.py`, `fact_extractor.py`, `writer.py`, `compressor.py` — all stubbed.
-- Planned flow: inventory -> plan -> facts -> scaffold -> `AGENTS.md`.
+- `compressor.py` — stubbed.
+- Planned additions: contradiction reports, coverage reports, richer source spans, refresh prioritization, and semantic compression.
 
 ### Verification (`src/aictx/verify/`)
 
@@ -89,7 +118,7 @@ All modules stubbed. Planned for optional remote execution, Object Storage excha
 
 ### Configuration (`src/aictx/config.py`)
 
-Pydantic models exist for all config sections. `load_config()` returns defaults; TOML parsing is not yet implemented.
+Pydantic models exist for all config sections. `load_config()` reads `.aictx/config.toml` when present and falls back to defaults when missing.
 
 ## Data Models
 
@@ -102,12 +131,11 @@ Pydantic v2 models live in `src/aictx/models/`:
 
 ## Current Limitations
 
-- `aictx run` does not generate context.
+- `aictx run` only supports local `setup-context`; other modes and OCI execution are not implemented.
 - `aictx verify` only verifies deterministic file hashes; it does not perform semantic freshness checks yet.
-- `aictx init` does not generate AI context markdown shards or AGENTS output yet.
+- `aictx init` only creates the baseline lockfile; it does not generate AI context markdown shards.
 - `aictx public-docs update` is a placeholder.
 - OCI model provider is not wired to a real endpoint.
-- Config TOML parsing is not implemented.
 - Patch application (`apply_patch`) is stubbed.
 - No CI workflow generation yet.
-- No higher-level command gating (e.g., blocking model calls on secret detection) is implemented yet.
+- No contradiction/coverage JSON reports or semantic freshness checks are implemented yet.

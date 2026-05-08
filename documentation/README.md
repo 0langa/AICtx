@@ -7,7 +7,8 @@ Current implemented status:
 - `aictx scan` is implemented.
 - `aictx init` creates `docs/AIprojectcontext/context.lock.json` as a baseline lockfile.
 - `aictx verify --strict` performs deterministic hash-only verification against that lockfile.
-- `aictx run` and `aictx public-docs update` remain stubbed.
+- `aictx run --mode setup-context --execution local` generates deterministic AI context scaffolding and can stage or apply it.
+- `aictx public-docs update` remains stubbed.
 
 The main documentation lives in the repository root and this directory:
 
