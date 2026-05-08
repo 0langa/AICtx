@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from datetime import UTC
-from datetime import datetime
+from datetime import UTC, datetime
+from pathlib import Path
 
 import typer
 from rich.console import Console
@@ -19,9 +19,7 @@ app = typer.Typer(
 console = Console()
 
 
-def _resolve_repo_root(project: str):
-    from pathlib import Path
-
+def _resolve_repo_root(project: str) -> Path:
     from aictx.errors import AictxError
     from aictx.git.repo import find_git_root
 
@@ -152,8 +150,8 @@ def run(
             repo_root=repo_root,
             run_id=run_id,
             config=config,
-            scope=scope,
-            write_mode=write,
+            scope=scope,  # type: ignore[arg-type]
+            write_mode=write,  # type: ignore[arg-type]
         )
     except Exception as exc:
         console.print(f"[bold red]run failed:[/bold red] {exc}")

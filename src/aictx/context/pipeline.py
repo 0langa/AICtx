@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any, Literal, cast
 
 from aictx.config import AictxConfig
 from aictx.context.fact_extractor import extract_facts
@@ -22,8 +23,8 @@ def run_local_context_pipeline(
     repo_root: Path,
     run_id: str,
     config: AictxConfig,
-    scope: str,
-    write_mode: str,
+    scope: Literal["full", "changed"],
+    write_mode: Literal["patch", "apply"],
 ) -> RunReport:
     """Run the local Phase 1 context generation pipeline."""
     inventory = scan_repository(repo_root)
@@ -40,13 +41,15 @@ def run_local_context_pipeline(
         scope=scope,
         config=config,
     )
-    if plan["estimated_token_cost"] > config.limits.max_input_tokens_per_run:
+    estimated_token_cost = cast(int, plan["estimated_token_cost"])
+    if estimated_token_cost > config.limits.max_input_tokens_per_run:
         raise TokenBudgetExceededError(
             "Planned context exceeds configured max_input_tokens_per_run."
         )
 
     provider = DryRunProvider()
-    fact_packs = extract_facts(repo_root=repo_root, plan=plan, provider=provider, run_id=run_id)
+    typed_plan = cast(dict[str, Any], plan)
+    fact_packs = extract_facts(repo_root=repo_root, plan=typed_plan, provider=provider, run_id=run_id)
 
     runs_dir = repo_root / ".aictx" / "runs" / run_id
     out_dir = runs_dir / "out"
@@ -56,19 +59,21 @@ def run_local_context_pipeline(
         repo_root=repo_root,
         out_dir=out_dir,
         inventory=inventory,
-        plan=plan,
+        plan=typed_plan,
         fact_packs=fact_packs,
     )
     lock = build_context_lock(
         repo_root=repo_root,
+        out_dir=out_dir,
         inventory=inventory,
-        plan=plan,
+        plan=typed_plan,
         fact_packs=fact_packs,
         generated_paths=generated_paths,
         model_provider="dry_run",
         model_name="dry_run",
     )
     write_lockfile(out_dir, lock)
+    generated_paths = [*generated_paths, out_dir / "context.lock.json"]
 
     patch_text = _build_patch(repo_root=repo_root, out_dir=out_dir)
     patch_path = runs_dir / "aictx.patch"
@@ -76,6 +81,7 @@ def run_local_context_pipeline(
 
     if write_mode == "apply":
         _apply_out_dir(repo_root=repo_root, out_dir=out_dir)
+        write_lockfile(repo_root / config.project.context_dir, lock)
 
     return RunReport(
         run_id=run_id,
@@ -87,13 +93,15 @@ def run_local_context_pipeline(
         completed_at=datetime.now(UTC),
         status="success",
         files_scanned=len([f for f in inventory.files if not f.is_ignored]),
-        files_selected=len(plan["selected_files"]),
-        tokens_estimated_input=plan["estimated_token_cost"],
-        tokens_estimated_output=sum(pack.get("estimated_output_tokens", 0) for pack in fact_packs),
+        files_selected=len(cast(list[str], typed_plan["selected_files"])),
+        tokens_estimated_input=estimated_token_cost,
+        tokens_estimated_output=sum(
+            cast(int, pack.get("estimated_output_tokens", 0)) for pack in fact_packs
+        ),
         model_calls=len(fact_packs),
-        generated_files=[path.relative_to(out_dir).as_posix() for path in generated_paths] + ["context.lock.json"],
-        selected_files=plan["selected_files"],
-        warnings=plan.get("warnings", []),
+        generated_files=[path.relative_to(out_dir).as_posix() for path in generated_paths],
+        selected_files=cast(list[str], typed_plan["selected_files"]),
+        warnings=cast(list[str], typed_plan.get("warnings", [])),
         output_dir=str(out_dir),
         patch_path=str(patch_path),
     )

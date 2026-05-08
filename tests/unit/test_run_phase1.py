@@ -1,0 +1,186 @@
+"""Unit tests for Phase 1 local context generation."""
+
+from __future__ import annotations
+
+from typer.testing import CliRunner
+
+from aictx.cli import app
+from aictx.config import load_config
+from aictx.context.lockfile import load_lockfile
+from tests.fixtures.git_repos import create_git_repo
+
+runner = CliRunner()
+
+
+def test_load_config_reads_toml_values() -> None:
+    repo = create_git_repo({"README.md": "# Test"})
+    config_dir = repo / ".aictx"
+    config_dir.mkdir(parents=True, exist_ok=True)
+    (config_dir / "config.toml").write_text(
+        """
+[project]
+context_dir = "docs/AIprojectcontext"
+agents_file = "AGENTS.md"
+public_docs_dirs = ["docs", "."]
+
+[execution]
+default_execution = "local"
+write_mode = "apply"
+allow_dirty = true
+
+[limits]
+max_input_tokens_per_run = 1234
+max_output_tokens_per_run = 4321
+max_files_per_run = 42
+max_file_bytes = 98765
+max_remote_runtime_minutes = 11
+
+[llm]
+provider = "dry_run"
+model = "demo"
+temperature = 0.0
+""".strip(),
+        encoding="utf-8",
+    )
+
+    config = load_config(repo)
+
+    assert config.execution.write_mode == "apply"
+    assert config.execution.allow_dirty is True
+    assert config.limits.max_input_tokens_per_run == 1234
+    assert config.llm.provider == "dry_run"
+    assert config.llm.model == "demo"
+
+
+def test_run_phase1_patch_writes_staged_outputs_only() -> None:
+    repo = create_git_repo(
+        {
+            "README.md": "# Test repo",
+            "src/main.py": "print('ok')\n",
+            "tests/test_main.py": "def test_ok():\n    assert True\n",
+        }
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "run",
+            "--project",
+            str(repo),
+            "--mode",
+            "setup-context",
+            "--execution",
+            "local",
+            "--scope",
+            "full",
+            "--write",
+            "patch",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "AICtx run complete" in result.output
+
+    runs_dir = repo / ".aictx" / "runs"
+    run_dirs = sorted([path for path in runs_dir.iterdir() if path.is_dir()])
+    assert run_dirs
+    latest = run_dirs[-1]
+
+    assert (latest / "aictx.patch").exists()
+    assert (latest / "out" / "docs" / "AIprojectcontext" / "ai-index.md").exists()
+    assert (latest / "out" / "docs" / "AIprojectcontext" / "project-state.md").exists()
+    assert (latest / "out" / "context.lock.json").exists()
+    assert (latest / "out" / "AGENTS.md").exists()
+
+    assert not (repo / "docs" / "AIprojectcontext" / "ai-index.md").exists()
+    assert not (repo / "AGENTS.md").exists()
+
+
+def test_run_phase1_apply_writes_repo_outputs_and_lockfile() -> None:
+    repo = create_git_repo(
+        {
+            "README.md": "# Test repo",
+            "src/main.py": "print('ok')\n",
+            "tests/test_main.py": "def test_ok():\n    assert True\n",
+        }
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "run",
+            "--project",
+            str(repo),
+            "--mode",
+            "setup-context",
+            "--execution",
+            "local",
+            "--scope",
+            "full",
+            "--write",
+            "apply",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    context_dir = repo / "docs" / "AIprojectcontext"
+    assert (context_dir / "ai-index.md").exists()
+    assert (context_dir / "project-state.md").exists()
+    assert (context_dir / "code-map.md").exists()
+    assert (context_dir / "architecture.md").exists()
+    assert (context_dir / "workflows.md").exists()
+    assert (context_dir / "public-docs-map.md").exists()
+    assert (context_dir / "change-impact-map.md").exists()
+    assert (context_dir / "schema.md").exists()
+    assert (context_dir / "validation-report.md").exists()
+    assert (context_dir / "context.lock.json").exists()
+    assert (repo / "AGENTS.md").exists()
+
+    lock = load_lockfile(context_dir)
+    assert lock is not None
+    assert lock.model_provider == "dry_run"
+    assert lock.model_name == "dry_run"
+    assert any(entry.path == "docs/AIprojectcontext/project-state.md" for entry in lock.generated_files)
+    assert any(section.generated_file == "docs/AIprojectcontext/architecture.md" for section in lock.sections)
+
+    ai_index = (context_dir / "ai-index.md").read_text(encoding="utf-8")
+    assert "project-state.md" in ai_index
+    assert "validation-report.md" in ai_index
+
+    agents_md = (repo / "AGENTS.md").read_text(encoding="utf-8")
+    assert "docs/AIprojectcontext/ai-index.md" in agents_md
+
+
+def test_run_phase1_generated_context_records_verifiable_outputs_after_apply() -> None:
+    repo = create_git_repo(
+        {
+            "README.md": "# Test repo",
+            "src/main.py": "print('ok')\n",
+            "tests/test_main.py": "def test_ok():\n    assert True\n",
+        }
+    )
+
+    run_result = runner.invoke(
+        app,
+        [
+            "run",
+            "--project",
+            str(repo),
+            "--mode",
+            "setup-context",
+            "--execution",
+            "local",
+            "--scope",
+            "full",
+            "--write",
+            "apply",
+        ],
+    )
+    assert run_result.exit_code == 0, run_result.output
+
+    lock = load_lockfile(repo / "docs" / "AIprojectcontext")
+    assert lock is not None
+    generated_paths = {entry.path for entry in lock.generated_files}
+    assert "docs/AIprojectcontext/ai-index.md" in generated_paths
+    assert "docs/AIprojectcontext/architecture.md" in generated_paths
+    assert any(section.source_paths for section in lock.sections)
