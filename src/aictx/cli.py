@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import UTC
+from datetime import datetime
 
 import typer
 from rich.console import Console
@@ -16,6 +17,23 @@ app = typer.Typer(
     invoke_without_command=True,
 )
 console = Console()
+
+
+def _resolve_repo_root(project: str):
+    from pathlib import Path
+
+    from aictx.errors import AictxError
+    from aictx.git.repo import find_git_root
+
+    project_path = Path(project).resolve()
+    if not project_path.exists():
+        raise typer.BadParameter(f"Project path does not exist: {project}")
+
+    try:
+        return find_git_root(project_path)
+    except AictxError as exc:
+        console.print(f"[bold red]Error:[/bold red] {exc}")
+        raise typer.Exit(code=1) from exc
 
 
 @app.callback()
@@ -33,22 +51,10 @@ def init(
     project: str = typer.Option(".", "--project", "-p", help="Path to the target repository."),
 ) -> None:
     """Initialize a repository for aictx processing."""
-    from pathlib import Path
-
     from aictx.context.lockfile import build_lockfile_from_inventory, write_lockfile
-    from aictx.errors import AictxError
-    from aictx.git.repo import find_git_root
     from aictx.scan.scanner import scan_repository
 
-    project_path = Path(project).resolve()
-    if not project_path.exists():
-        raise typer.BadParameter(f"Project path does not exist: {project}")
-
-    try:
-        repo_root = find_git_root(project_path)
-    except AictxError as exc:
-        console.print(f"[bold red]Error:[/bold red] {exc}")
-        raise typer.Exit(code=1) from exc
+    repo_root = _resolve_repo_root(project)
 
     inventory = scan_repository(repo_root)
     context_dir = repo_root / "docs" / "AIprojectcontext"
@@ -74,22 +80,9 @@ def scan(
     project: str = typer.Option(".", "--project", "-p", help="Path to the target repository."),
 ) -> None:
     """Scan a repository and print/write an inventory."""
-    from datetime import datetime
-    from pathlib import Path
-
-    from aictx.errors import AictxError
-    from aictx.git.repo import find_git_root
     from aictx.scan.scanner import scan_repository
 
-    project_path = Path(project).resolve()
-    if not project_path.exists():
-        raise typer.BadParameter(f"Project path does not exist: {project}")
-
-    try:
-        repo_root = find_git_root(project_path)
-    except AictxError as exc:
-        console.print(f"[bold red]Error:[/bold red] {exc}")
-        raise typer.Exit(code=1) from exc
+    repo_root = _resolve_repo_root(project)
 
     inventory = scan_repository(repo_root)
 
@@ -130,13 +123,58 @@ def run(
     project: str = typer.Option(".", "--project", "-p", help="Path to the target repository."),
     mode: str = typer.Option("setup-context", "--mode", help="Run mode."),
     execution: str = typer.Option("local", "--execution", "-e", help="Execution target."),
+    scope: str = typer.Option("full", "--scope", help="Run scope: full or changed."),
     write: str = typer.Option("patch", "--write", "-w", help="Write mode: patch or apply."),
 ) -> None:
     """Run the aictx pipeline."""
-    console.print(
-        f"[bold green]run[/bold green] not yet implemented "
-        f"(project={project}, mode={mode}, execution={execution}, write={write})"
-    )
+    from aictx.config import load_config
+    from aictx.context.pipeline import run_local_context_pipeline
+
+    if mode != "setup-context":
+        console.print(f"[bold red]Unsupported mode:[/bold red] {mode}")
+        raise typer.Exit(code=1)
+    if execution != "local":
+        console.print(f"[bold red]Unsupported execution:[/bold red] {execution}")
+        raise typer.Exit(code=1)
+    if scope not in {"full", "changed"}:
+        console.print(f"[bold red]Unsupported scope:[/bold red] {scope}")
+        raise typer.Exit(code=1)
+    if write not in {"patch", "apply"}:
+        console.print(f"[bold red]Unsupported write mode:[/bold red] {write}")
+        raise typer.Exit(code=1)
+
+    repo_root = _resolve_repo_root(project)
+    config = load_config(repo_root)
+    run_id = datetime.now(UTC).strftime("%Y-%m-%dT%H%M%SZ-run")
+
+    try:
+        report = run_local_context_pipeline(
+            repo_root=repo_root,
+            run_id=run_id,
+            config=config,
+            scope=scope,
+            write_mode=write,
+        )
+    except Exception as exc:
+        console.print(f"[bold red]run failed:[/bold red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    console.print("[bold green]AICtx run complete[/bold green]")
+    console.print(f"repo: {repo_root}")
+    console.print(f"run id: {report.run_id}")
+    console.print(f"status: {report.status}")
+    console.print(f"files scanned: {report.files_scanned}")
+    console.print(f"files selected: {report.files_selected}")
+    console.print(f"estimated input tokens: {report.tokens_estimated_input}")
+    console.print(f"generated files: {len(report.generated_files)}")
+    if report.output_dir:
+        console.print(f"output dir: {report.output_dir}")
+    if report.patch_path:
+        console.print(f"patch: {report.patch_path}")
+    for warning in report.warnings:
+        console.print(f"[yellow]warning:[/yellow] {warning}")
+
+    raise typer.Exit(code=0 if report.status == "success" else 1)
 
 
 @app.command()
@@ -145,21 +183,9 @@ def verify(
     strict: bool = typer.Option(False, "--strict", help="Enable strict verification."),
 ) -> None:
     """Verify generated AI context freshness."""
-    from pathlib import Path
-
-    from aictx.errors import AictxError
-    from aictx.git.repo import find_git_root
     from aictx.verify.verifier import verify as run_verify
 
-    project_path = Path(project).resolve()
-    if not project_path.exists():
-        raise typer.BadParameter(f"Project path does not exist: {project}")
-
-    try:
-        repo_root = find_git_root(project_path)
-    except AictxError as exc:
-        console.print(f"[bold red]Error:[/bold red] {exc}")
-        raise typer.Exit(code=1) from exc
+    repo_root = _resolve_repo_root(project)
 
     result = run_verify(repo_root, strict=strict)
     if result == "PASS":

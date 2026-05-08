@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 from pathlib import Path
+import tomllib
 from typing import Literal
 
 from pydantic import BaseModel, Field
+
+from aictx.errors import ConfigError
 
 
 class ProjectConfig(BaseModel):
@@ -56,5 +59,18 @@ CONFIG_FILENAME = ".aictx/config.toml"
 
 def load_config(repo_root: Path) -> AictxConfig:
     """Load configuration from repository or defaults."""
-    # TODO: implement TOML config parsing
-    return AictxConfig()
+    config_path = repo_root / CONFIG_FILENAME
+    if not config_path.exists():
+        return AictxConfig()
+
+    try:
+        data = tomllib.loads(config_path.read_text(encoding="utf-8"))
+    except tomllib.TOMLDecodeError as exc:
+        raise ConfigError(f"Invalid TOML in {config_path}: {exc}") from exc
+    except OSError as exc:
+        raise ConfigError(f"Could not read config file {config_path}: {exc}") from exc
+
+    try:
+        return AictxConfig(**data)
+    except Exception as exc:
+        raise ConfigError(f"Invalid configuration in {config_path}: {exc}") from exc
