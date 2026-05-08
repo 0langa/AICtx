@@ -14,9 +14,11 @@ def create_git_repo(files: dict[str, str]) -> Path:
     (e.g. branch detection) work.  Returns the repo root path.
     """
     tmpdir = Path(tempfile.mkdtemp(prefix="aictx-git-fix-"))
+
     # default branch name varies by git version; init then rename
     def _run(cmd: list[str]) -> subprocess.CompletedProcess[bytes]:
         return subprocess.run(cmd, cwd=tmpdir, check=True, capture_output=True)
+
     _run(["git", "init"])
     _run(["git", "checkout", "-b", "main"])
     for rel_path, content in files.items():
@@ -24,5 +26,7 @@ def create_git_repo(files: dict[str, str]) -> Path:
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(content, encoding="utf-8")
     _run(["git", "add", "."])
-    _run(["git", "-c", "user.email=test@test.com", "-c", "user.name=Test", "commit", "-m", "initial"])
+    _run(
+        ["git", "-c", "user.email=test@test.com", "-c", "user.name=Test", "commit", "-m", "initial"]
+    )
     return tmpdir

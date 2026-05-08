@@ -114,8 +114,12 @@ def scan_repository(repo_root: Path) -> RepositoryInventory:
     entrypoints: list[str] = []
     test_projects: list[str] = []
 
-    for root, _dirs, filenames in os.walk(repo_root):
+    for root, dirs, filenames in os.walk(repo_root):
         rel_root = Path(root).relative_to(repo_root)
+        # Prune ignored directories before descending
+        dirs[:] = [
+            d for d in dirs if not matcher.is_ignored((rel_root / d).as_posix(), is_dir=True)
+        ]
         for fname in filenames:
             full = Path(root) / fname
             rel_posix = (rel_root / fname).as_posix()

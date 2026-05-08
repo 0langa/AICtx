@@ -23,16 +23,12 @@ PATTERNS: list[tuple[str, re.Pattern[str], str]] = [
     ),
     (
         "generic_api_key",
-        re.compile(
-            r"(?i)(api[_-]?key|apikey|secret[_-]?key|auth[_-]?token)\s*[:=]\s*[\"']?\S+"
-        ),
+        re.compile(r"(?i)(api[_-]?key|apikey|secret[_-]?key|auth[_-]?token)\s*[:=]\s*[\"']?\S+"),
         "medium",
     ),
     (
         "connection_string",
-        re.compile(
-            r"(?i)(mongodb(\+srv)?://|postgres(ql)?://|mysql://|sqlserver://)\S+"
-        ),
+        re.compile(r"(?i)(mongodb(\+srv)?://|postgres(ql)?://|mysql://|sqlserver://)\S+"),
         "medium",
     ),
     (

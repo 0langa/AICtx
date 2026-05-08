@@ -12,9 +12,7 @@ class WorktreeStatus:
     def __init__(self, repo_root: Path) -> None:
         self.repo_root = repo_root
         self.branch = self._run(["git", "-C", str(repo_root), "branch", "--show-current"]).strip()
-        self.head_commit = self._run(
-            ["git", "-C", str(repo_root), "rev-parse", "HEAD"]
-        ).strip()
+        self.head_commit = self._run(["git", "-C", str(repo_root), "rev-parse", "HEAD"]).strip()
         self.dirty = bool(self._run(["git", "-C", str(repo_root), "status", "--short"]).strip())
         self.untracked_files: list[str] = []
         self.modified_files: list[str] = []
@@ -30,15 +28,11 @@ class WorktreeStatus:
         return result.stdout
 
     def _get_tracked_files(self) -> list[str]:
-        output = self._run(
-            ["git", "-C", str(self.repo_root), "ls-files", "--exclude-standard"]
-        )
+        output = self._run(["git", "-C", str(self.repo_root), "ls-files", "--exclude-standard"])
         return [line for line in output.splitlines() if line]
 
     def _parse_status(self) -> None:
-        output = self._run(
-            ["git", "-C", str(self.repo_root), "status", "--short"]
-        )
+        output = self._run(["git", "-C", str(self.repo_root), "status", "--short"])
         for line in output.splitlines():
             if len(line) < 3:
                 continue

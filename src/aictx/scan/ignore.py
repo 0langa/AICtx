@@ -8,9 +8,7 @@ import pathspec
 
 BUILTIN_HARD_EXCLUDES = [
     ".git",
-    ".aictx/cache",
-    ".aictx/runs",
-    ".aictx/tmp",
+    ".aictx",
     "bin",
     "obj",
     "node_modules",
@@ -50,10 +48,15 @@ class IgnoreMatcher:
         self.gitignore = _load_spec(repo_root / ".gitignore")
         self.aictxignore = _load_spec(repo_root / ".aictxignore")
 
-    def is_ignored(self, relative_path: str) -> bool:
-        """Return True if *relative_path* (POSIX, repo-relative) should be ignored."""
-        if self.builtin.match_file(relative_path):
+    def is_ignored(self, relative_path: str, is_dir: bool = False) -> bool:
+        """Return True if *relative_path* (POSIX, repo-relative) should be ignored.
+
+        When *is_dir* is True a trailing slash is appended so that
+        directory-only patterns (e.g. ``node_modules/``) match correctly.
+        """
+        check = relative_path if not is_dir else relative_path + "/"
+        if self.builtin.match_file(check):
             return True
-        if self.gitignore is not None and self.gitignore.match_file(relative_path):
+        if self.gitignore is not None and self.gitignore.match_file(check):
             return True
-        return self.aictxignore is not None and self.aictxignore.match_file(relative_path)
+        return self.aictxignore is not None and self.aictxignore.match_file(check)

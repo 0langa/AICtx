@@ -13,6 +13,7 @@ app = typer.Typer(
     name="aictx",
     help="Prepare Git repositories for low-token AI-agent work.",
     no_args_is_help=True,
+    invoke_without_command=True,
 )
 console = Console()
 
@@ -80,9 +81,7 @@ def scan(
     console.print(f"secrets: {len(secrets)}")
     if secrets:
         for s in secrets:
-            console.print(
-                f"  [yellow]{s.path}[/yellow] ({s.detector_name}, severity={s.severity})"
-            )
+            console.print(f"  [yellow]{s.path}[/yellow] ({s.detector_name}, severity={s.severity})")
 
     # Write inventory JSON
     run_id = datetime.now(UTC).strftime("%Y-%m-%dT%H%M%SZ-scan")
