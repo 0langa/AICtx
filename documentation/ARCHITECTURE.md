@@ -6,6 +6,8 @@ This document describes the current and planned architecture of AICtx. The codeb
 
 AICtx is designed to run locally against a Git repository. It never auto-commits, auto-pushes, or silently overwrites user content. Generated changes are produced as reviewable patches by default. OCI usage is optional and per-command.
 
+The committed baseline file is `docs/AIprojectcontext/context.lock.json`. Runtime scan artifacts under `.aictx/` are local-only and ignored.
+
 ## Implemented Layers
 
 ### CLI Layer (`src/aictx/cli.py`)
@@ -63,6 +65,14 @@ Safety measures implemented in the scanner:
 - `impact.py`, `reports.py` — stubbed.
 - Current scope: hash-only file-state verification.
 - Planned: source-to-context impact mapping, semantic stale detection, and public-docs impact checks.
+
+Current failure mappings:
+
+- missing lockfile → `FAIL_LOCK_MISMATCH`
+- unsupported schema → `FAIL_UNSUPPORTED_SCHEMA`
+- missing locked source path → `FAIL_MISSING_SOURCE`
+- source hash mismatch → `FAIL_STALE_AI_CONTEXT`
+- generated file mismatch → `FAIL_LOCK_MISMATCH`
 
 ### Public Docs Management (`src/aictx/public_docs/`)
 

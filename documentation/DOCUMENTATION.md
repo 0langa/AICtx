@@ -30,8 +30,6 @@ uv run aictx --help
 
 ### Scanning a Repository
 
-The only fully implemented command is `scan`.
-
 ```bash
 uv run aictx scan --project <path-to-repo>
 ```
@@ -45,6 +43,8 @@ This will:
 5. Scan non-binary files for high-confidence secrets.
 6. Print a summary to the terminal.
 7. Write the full inventory to `.aictx/runs/<timestamp>-scan/inventory.json`.
+
+The serialized inventory now includes `dirty_state` plus `git_status` with deterministic tracked, untracked, modified, deleted, and renamed file lists.
 
 ### Initializing Baseline Lockfile
 
@@ -64,6 +64,8 @@ This will:
 
 This command does not call any model provider, does not generate AI context markdown, and does not auto-commit anything.
 
+The generated `docs/AIprojectcontext/context.lock.json` is intended to be committed. Runtime artifacts under `.aictx/` are local-only.
+
 ### Verifying Baseline State
 
 `verify --strict` is now a hash-only verifier MVP.
@@ -81,6 +83,13 @@ It currently checks:
 - generated file hashes if generated files are present in the lockfile
 
 It does not yet perform semantic AI validation or public-docs impact verification.
+
+Typical workflow:
+
+1. change code or docs
+2. run `uv run aictx verify --project . --strict`
+3. if verification fails, refresh baseline with `uv run aictx init --project .`
+4. commit the code/doc changes together with the updated `docs/AIprojectcontext/context.lock.json`
 
 ### Other Commands
 
@@ -123,6 +132,7 @@ The test suite includes:
 - CLI version output test.
 - Scanner utility tests (binary detection, language detection, manifest/test/doc classification, SHA-256, secret scanning).
 - Integration tests ensuring `.aictx/` runtime artifacts and hard-excluded directories are not included in inventory.
+- Verifier tests covering missing lockfiles, successful verification after init, source changes, deleted files, and unsupported schema.
 
 ## Lint, Format, and Typecheck
 
@@ -153,6 +163,10 @@ The scanner uses regex-based detection. Test fixtures containing fake secrets wi
 ### `aictx run` does nothing useful yet
 
 This command is currently stubbed. It will print a "not yet implemented" message. Context generation remains a planned feature.
+
+### `aictx verify --strict` fails immediately in a fresh clone
+
+This is expected if `docs/AIprojectcontext/context.lock.json` has not been created or committed yet. Run `uv run aictx init --project .`, then commit the resulting lockfile.
 
 ## Repository Layout
 

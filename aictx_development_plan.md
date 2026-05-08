@@ -1,12 +1,12 @@
 # AI Context Agent Development Plan
 
-> **Current status:** The scanner milestone is implemented, and a baseline `context.lock.json` plus hash-only verifier MVP are now implemented. Context generation, semantic verification, public-docs update, and OCI integration remain planned.
+> **Current status:** The scanner milestone plus the committed baseline `docs/AIprojectcontext/context.lock.json` and the hash-only verifier MVP are implemented. The remaining work below is intentionally limited to not-yet-completed capabilities and is reorganized into five large implementation phases.
 
 ## Overall goal
 
-Build a local-first CLI tool named `aictx` that prepares Git repositories for low-token AI-agent work. The tool scans a selected local project, builds a source-traced understanding of its code and documentation, generates a compact AI-facing context system under `docs/AIprojectcontext/`, creates or updates a strict root `AGENTS.md`, verifies that generated context is not stale, and optionally updates human-facing public docs through a high-token mode.
+Build a local-first CLI tool named `aictx` that prepares Git repositories for low-token AI-agent work. The tool should scan a selected local project, build a source-traced understanding of its code and documentation, generate a compact AI-facing context system under `docs/AIprojectcontext/`, create or update a strict root `AGENTS.md`, verify that generated context is not stale, and optionally update human-facing public docs through a high-token mode.
 
-The first working product should not be a cloud-hosted app. It should be a safe local CLI that can call OCI Generative AI as the model provider and later offload heavy jobs to ephemeral OCI compute. The repository remains local, generated changes are written as reviewable Git diffs, and OCI resources are used only when a command explicitly needs them.
+The product should remain a safe local CLI first. OCI usage stays optional per command. Generated changes should remain reviewable as patches before apply.
 
 ## Product principles
 
@@ -124,36 +124,28 @@ docs/AIprojectcontext/
 
 Use this multi-file scaffold instead of one giant context file. A single giant file saves file count but wastes tokens because every future agent has to load irrelevant sections. A routed scaffold lets agents read only the context shard needed for the current task.
 
-## Step 1: Create the CLI skeleton
+## Phase 1: Local context generation pipeline
 
-Goal: establish the project foundation, command structure, config loading, and safe execution conventions.
+Goal: move from scanner-plus-lockfile MVP to actual source-traced AI context generation in local mode.
 
-Implement commands:
+This phase consolidates all remaining work needed to turn `aictx run` from a stub into a useful local pipeline.
+
+### Scope
+
+#### CLI and config completion
+
+Implement or complete:
 
 ```text
-aictx init
-aictx scan --project <path>
 aictx run --project <path> --mode setup-context --execution local
-aictx verify --project <path> --strict
-aictx public-docs update --project <path> --scope changed
-aictx clean --oci
 ```
 
-Initial behavior:
+Expected behavior:
 
-- `aictx init` currently creates `docs/AIprojectcontext/context.lock.json` and `.aictxignore` if missing. Config initialization is deferred.
-- `aictx scan` prints and writes a repository inventory.
-- `aictx run` initially calls the dry-run model provider and writes placeholder context only behind `--apply`.
-- `aictx verify` currently performs deterministic hash-only validation against the baseline lockfile.
-- `aictx public-docs update` can exist as a stub that exits with a clear "not implemented yet" status.
-- `aictx clean --oci` can exist as a stub until OCI remote mode exists.
-
-Create config files:
-
-```text
-.aictx/config.toml
-.aictxignore
-```
+- `aictx run` should stop being a stub.
+- Initial execution can use the dry-run provider during development.
+- Placeholder context generation should be replaced by real planned pipeline stages.
+- Config loading from `.aictx/config.toml` should be implemented.
 
 Example `.aictx/config.toml`:
 
@@ -181,191 +173,9 @@ model = "default"
 temperature = 0
 ```
 
-Acceptance criteria:
+#### Model provider interface completion
 
-```text
-aictx --help
-aictx init --project <repo>
-aictx scan --project <repo>
-```
-
-all run successfully on a small test repository.
-
-## Step 2: Implement repository safety checks
-
-Goal: prevent the tool from damaging work or leaking sensitive files.
-
-Implement:
-
-- Git root detection.
-- Dirty worktree detection.
-- Current branch and commit SHA detection.
-- Tracked, untracked, modified, deleted, renamed file detection.
-- `.gitignore` parsing.
-- `.aictxignore` parsing.
-- Default hard excludes.
-- Binary file detection.
-- Large file exclusion.
-- Secret scan before any model call or cloud upload.
-
-Default hard excludes:
-
-```text
-.git/**
-.aictx/cache/**
-.aictx/runs/**
-bin/**
-obj/**
-node_modules/**
-dist/**
-build/**
-.vs/**
-.idea/**
-*.pfx
-*.snk
-*.key
-*.pem
-.env
-.env.*
-*.sqlite
-*.db
-```
-
-Dirty-state rule:
-
-- Refuse to apply generated changes if unrelated dirty files exist.
-- Allow scanning dirty trees.
-- Allow writing only with `--allow-dirty`, but still show a strong warning and write a patch first.
-
-Secret-scan rule:
-
-- If high-confidence secrets are found, do not upload or send affected content to any model.
-- Report file paths and secret type, not the secret value.
-
-Acceptance criteria:
-
-- Running on a dirty repo reports the dirty files.
-- Files ignored by `.gitignore` and `.aictxignore` are absent from the inventory.
-- A fixture containing a fake API key is blocked from model/cloud transfer.
-
-## Step 3: Build the repository inventory model
-
-Goal: produce a deterministic, machine-readable project inventory that later steps can use without rescanning everything.
-
-Create `RepositoryInventory` with:
-
-```text
-repo_root
-branch
-head_commit
-dirty_state
-files[]
-docs[]
-manifests[]
-build_systems[]
-detected_languages[]
-entrypoints[]
-test_projects[]
-generated_at
-scanner_version
-```
-
-For each file:
-
-```text
-path
-kind
-language
-size_bytes
-sha256
-is_doc
-is_source
-is_test
-is_generated
-is_binary
-is_ignored
-include_reason
-exclude_reason
-```
-
-Detect at least:
-
-- `.sln`, `.csproj`, `.fsproj`
-- `package.json`
-- `pyproject.toml`
-- `Cargo.toml`
-- `go.mod`
-- `README.md`
-- `CHANGELOG.md`
-- `ROADMAP.md`
-- `docs/**/*.md`
-- `.github/workflows/*.yml`
-
-Write inventory to:
-
-```text
-.aictx/runs/<run-id>/inventory.json
-```
-
-Acceptance criteria:
-
-- The inventory is stable across repeated scans when files do not change.
-- The inventory clearly separates source docs, public docs, generated AI context, tests, build files, and ignored files.
-
-## Step 4: Add project classification
-
-Goal: let the setup agent understand what kind of repository it is before any expensive model call.
-
-Implement deterministic classification first.
-
-For each repo, infer:
-
-```text
-primary_language
-project_type
-build_system
-test_system
-package_system
-app_type
-docs_layout
-ci_layout
-```
-
-Examples:
-
-```text
-C# WinUI desktop app
-Python CLI tool
-Node web app
-.NET library
-mixed repository
-unknown
-```
-
-For StorageMaster-style projects, detect:
-
-```text
-solution_file
-main_app_project
-test_projects
-XAML/UI files
-services
-models
-viewmodels
-packaging/release workflows
-```
-
-Acceptance criteria:
-
-- A C#/.NET desktop repo is classified without LLM calls.
-- A Python CLI repo is classified without LLM calls.
-- Unknown repos still produce a useful inventory instead of failing.
-
-## Step 5: Implement the model provider interface
-
-Goal: isolate the rest of the app from OCI-specific details.
-
-Define:
+Define and complete:
 
 ```python
 class ModelProvider:
@@ -380,20 +190,6 @@ dry_run
 oci_genai
 ```
 
-The dry-run provider must be good enough for tests and local pipeline development.
-
-Model request fields:
-
-```text
-system_prompt
-messages
-temperature
-max_output_tokens
-json_schema optional
-run_id
-purpose
-```
-
 Provider requirements:
 
 - Temperature defaults to `0`.
@@ -402,15 +198,7 @@ Provider requirements:
 - Token/cost counters are estimated before sending.
 - Requests fail if they exceed configured caps.
 
-Acceptance criteria:
-
-- The scanner and verifier can run without OCI credentials.
-- A simple OCI model smoke test can be run with one command.
-- Exceeding token limits blocks the request before sending.
-
-## Step 6: Build the context planning stage
-
-Goal: decide what the agent needs to read deeply instead of dumping the whole repository into the model.
+#### Context planning stage
 
 Input:
 
@@ -450,15 +238,7 @@ Selection strategy:
 6. Exclude generated files, binary files, build outputs, and oversized docs unless specifically requested.
 7. Prefer changed files and impacted files on refresh runs.
 
-Acceptance criteria:
-
-- The plan chooses a useful subset on a medium repository.
-- The plan explains why each selected file is selected.
-- The plan stays below configured token limits or fails with a clear "scope too large" report.
-
-## Step 7: Implement fact extraction
-
-Goal: convert selected files into source-traced structured facts before generating final context docs.
+#### Fact extraction
 
 Create fact packs such as:
 
@@ -483,8 +263,6 @@ derived_from
 needs_source boolean
 ```
 
-Do not generate final markdown directly from raw repo chunks. First generate structured facts. This makes validation, deduplication, and regeneration much easier.
-
 Fact extraction passes:
 
 1. Project identity pass.
@@ -494,15 +272,7 @@ Fact extraction passes:
 5. Public docs map pass.
 6. Known risks/limitations pass.
 
-Acceptance criteria:
-
-- Generated facts include source paths.
-- Facts without source support are marked `needs_source`.
-- Duplicate or conflicting facts are detectable before writing context files.
-
-## Step 8: Implement contradiction and coverage checks
-
-Goal: catch wrong or incomplete model output before writing generated docs.
+#### Contradiction and coverage checks
 
 Checks:
 
@@ -527,15 +297,7 @@ Fail the run if:
 - Contradictions affect project identity, build/test commands, release process, storage model, or public docs mapping.
 - Referenced files are missing.
 
-Acceptance criteria:
-
-- A deliberately conflicting fixture causes the run to fail.
-- Missing source references are reported with exact fact IDs.
-- Non-critical uncertainty is preserved as `unknown` instead of invented.
-
-## Step 9: Generate the AI context scaffold
-
-Goal: write compact AI-facing context files optimized for future coding agents.
+#### AI context scaffold generation
 
 Generated files:
 
@@ -575,15 +337,7 @@ public-docs-map.md <= 1500 tokens
 change-impact-map.md <= 1500 tokens
 ```
 
-Acceptance criteria:
-
-- Future agents can understand which file to read from `ai-index.md`.
-- The context docs are much smaller than the original public docs.
-- Context files reference source paths and avoid unsupported claims.
-
-## Step 10: Generate or update `AGENTS.md`
-
-Goal: direct all future agents to the compact context system and enforce freshness expectations.
+#### `AGENTS.md` generation/update
 
 `AGENTS.md` must include:
 
@@ -604,16 +358,22 @@ Important rule:
 
 Normal agents should not read human docs for general project context. They may read public docs only if the task is documentation-related or `aictx verify --strict` reports a public-docs impact.
 
-Acceptance criteria:
+### Acceptance criteria
 
-- `AGENTS.md` exists at repo root.
-- It points to `docs/AIprojectcontext/ai-index.md`.
-- It tells future agents to run `aictx verify --strict` before public commits.
-- It tells future agents how to update impacted docs without reading everything.
+- `aictx run --project <repo> --mode setup-context --execution local --write patch` produces the AI context scaffold.
+- Generated facts include source paths and mark unsupported claims as `needs_source`.
+- `AGENTS.md` points future agents to `docs/AIprojectcontext/ai-index.md`.
+- The generated context is smaller and more task-routed than the full public docs.
 
-## Step 11: Implement safe writing and patch mode
+## Phase 2: Safe writing, freshness gating, and targeted refresh
 
-Goal: prevent silent destructive edits.
+Goal: make generated context safely writable, strictly verifiable, and cheap to refresh after changes.
+
+This phase extends the existing lockfile/verifier foundation into a complete freshness system.
+
+### Scope
+
+#### Safe writing and patch/apply mode
 
 Write flow:
 
@@ -635,15 +395,7 @@ Default must be patch.
 
 Never auto-delete user-authored docs unless the generated scaffold explicitly owns the file. For the MVP, avoid deletion entirely.
 
-Acceptance criteria:
-
-- Running without `--apply` does not modify the repo.
-- Running with `--apply` modifies only expected files.
-- Dirty unrelated files block apply unless explicitly allowed.
-
-## Step 12: Implement `context.lock.json`
-
-Goal: make freshness verification possible without asking an LLM every time.
+#### Full `context.lock.json` expansion
 
 The lockfile should contain:
 
@@ -692,15 +444,7 @@ fact_ids
 status
 ```
 
-Acceptance criteria:
-
-- Changing a source file causes the relevant sections to be reported stale.
-- Changing a generated context file manually causes hash mismatch detection.
-- The verifier can run without LLM calls.
-
-## Step 13: Implement strict verifier
-
-Goal: make `aictx verify --strict` the main freshness gate for humans, agents, and CI.
+#### Strict verifier completion
 
 Checks:
 
@@ -727,16 +471,7 @@ FAIL_MISSING_SOURCE
 FAIL_UNSUPPORTED_SCHEMA
 ```
 
-Acceptance criteria:
-
-- The verifier succeeds after generation.
-- Editing a mapped source file makes verification fail.
-- Updating the mapped context makes verification pass again.
-- CI can consume the exit code.
-
-## Step 14: Implement change impact mapping
-
-Goal: avoid forcing agents to read or update every doc after every code change.
+#### Change impact mapping
 
 Generate both markdown and machine-readable mappings.
 
@@ -761,15 +496,7 @@ Add optional local marker file later:
 .aictx/no-doc-impact.toml
 ```
 
-Acceptance criteria:
-
-- A source change produces targeted stale reports.
-- Public docs impact is specific, not generic.
-- The verifier does not require reading all public docs.
-
-## Step 15: Implement changed-scope context refresh
-
-Goal: make normal refreshes cheap.
+#### Changed-scope refresh
 
 Command:
 
@@ -796,15 +523,20 @@ Options:
 --scope changed
 ```
 
-Acceptance criteria:
+### Acceptance criteria
 
-- Small code changes produce small context diffs.
-- Full regeneration is still available.
-- Changed-scope mode refuses to run if no valid lockfile exists.
+- Running without `--apply` does not modify the repo.
+- Running with `--apply` modifies only expected files.
+- Editing a mapped source file makes verification fail until impacted context is refreshed.
+- Changed-scope refresh produces targeted context diffs instead of full regeneration.
 
-## Step 16: Implement public docs map
+## Phase 3: Public documentation mapping and update mode
 
-Goal: know which human-facing docs describe which code areas.
+Goal: maintain human-facing docs accurately without forcing every coding task to load them.
+
+### Scope
+
+#### Public docs map
 
 Generate:
 
@@ -828,15 +560,7 @@ stale_risk
 
 Do not duplicate full human docs into AI context. Only map them.
 
-Acceptance criteria:
-
-- The tool can say which public docs are impacted by a source change.
-- The map is compact.
-- Large public docs are not used as default agent context.
-
-## Step 17: Implement public docs update mode
-
-Goal: offload high-token documentation maintenance to a dedicated command instead of making every coding agent do it.
+#### Public docs update mode
 
 Commands:
 
@@ -864,15 +588,7 @@ Full-scope behavior:
 5. Preserve user-facing clarity.
 6. Update maps and lockfile.
 
-Acceptance criteria:
-
-- Changed-scope updates only impacted docs.
-- Full-scope can refresh all public docs when explicitly requested.
-- Normal coding-agent context flow still avoids public docs.
-
-## Step 18: Add optional LLM-based semantic verification
-
-Goal: catch stale claims that hash checks cannot catch.
+#### Optional LLM-based semantic verification
 
 Command:
 
@@ -890,50 +606,26 @@ Semantic checks:
 
 This mode may cost more and should not be required for every local commit.
 
-Acceptance criteria:
+### Acceptance criteria
 
-- Hash-only verifier remains fast.
-- LLM verifier gives targeted findings with source references.
-- LLM verifier never silently edits files.
+- The tool can say which public docs are impacted by a source change.
+- Changed-scope docs update patches only impacted docs.
+- Full-scope docs update can refresh public docs when explicitly requested.
+- Hash-only verification remains fast, and semantic verification remains optional.
 
-## Step 19: Add GitHub Actions integration
+## Phase 4: OCI-backed execution and guardrails
 
-Goal: enforce freshness before public merges.
+Goal: add optional OCI-powered model calls and remote heavy execution without changing the local-first safety model.
 
-Generate workflow:
+### Scope
+
+#### OCI local model provider
+
+Command:
 
 ```text
-.github/workflows/aictx-verify.yml
+aictx run --project <repo> --mode setup-context --execution local --provider oci_genai --write patch
 ```
-
-Workflow:
-
-```text
-checkout
-install aictx
-run aictx verify --strict --base origin/main
-upload validation-report.md as artifact
-fail PR on stale AI context or public docs impact
-```
-
-Optional PR output:
-
-- `ai-context-impact`
-- `public-docs-impact`
-- `no-doc-impact-required`
-- `aictx-verification-failed`
-
-Do not require OCI credentials for the basic verifier. CI should run hash and impact checks without model calls.
-
-Acceptance criteria:
-
-- A PR that changes source but not impacted context fails.
-- A PR that updates source and mapped context passes.
-- No OCI model call is needed in basic CI.
-
-## Step 20: Add OCI local model provider
-
-Goal: use OCI Generative AI for local setup and refresh runs.
 
 Implementation:
 
@@ -945,21 +637,7 @@ Implementation:
 - Add structured-output mode where possible.
 - Add clear error messages for auth, region, quota, and model access failures.
 
-Command:
-
-```text
-aictx run --project <repo> --mode setup-context --execution local --provider oci_genai --write patch
-```
-
-Acceptance criteria:
-
-- The CLI can call OCI Generative AI from local mode.
-- Failure to authenticate does not corrupt local output.
-- Token caps are enforced before calls are sent.
-
-## Step 21: Add OCI resource bootstrap
-
-Goal: make OCI setup repeatable.
+#### OCI resource bootstrap
 
 Add:
 
@@ -993,14 +671,7 @@ Checks:
 - Required policies appear sufficient.
 - Budget warning is configured manually or documented.
 
-Acceptance criteria:
-
-- A new OCI trial account can be prepared from documented steps.
-- `aictx oci doctor` reports missing setup clearly.
-
-## Step 22: Add remote execution package format
-
-Goal: prepare for high-token offloading without changing the local pipeline.
+#### Remote execution package format
 
 Create snapshot format:
 
@@ -1029,15 +700,7 @@ aictx-result.zip
   generated/
 ```
 
-Acceptance criteria:
-
-- Local pack/unpack roundtrip works.
-- Result bundle can be applied locally as a patch.
-- Snapshot refuses to build when secret scan fails.
-
-## Step 23: Add OCI Object Storage exchange
-
-Goal: upload sanitized snapshots and download result bundles for remote workers.
+#### OCI Object Storage exchange
 
 Implement:
 
@@ -1061,15 +724,7 @@ Retention rule:
 - Keep result bundles only briefly.
 - Keep minimal logs.
 
-Acceptance criteria:
-
-- Upload and download work against the configured bucket.
-- Cleanup removes all objects for a run.
-- Failed runs are still cleanable.
-
-## Step 24: Add OCI remote worker
-
-Goal: run heavy context generation or public-docs refresh in OCI without maintaining a server.
+#### OCI remote worker
 
 Prefer OCI Data Science Jobs first. Use Container Instances if packaging as a simple container is easier.
 
@@ -1084,22 +739,14 @@ Remote worker behavior:
 7. Exit.
 8. Never push to GitHub directly in MVP.
 
-Command:
+Commands:
 
 ```text
 aictx run --project <repo> --mode setup-context --execution oci-job --write patch
 aictx public-docs update --project <repo> --scope full --execution oci-job --write patch
 ```
 
-Acceptance criteria:
-
-- Remote worker starts, processes a tiny repo, uploads result, and exits.
-- Local CLI can download and apply the patch.
-- No persistent compute remains running after the job.
-
-## Step 25: Add cost and runtime guardrails
-
-Goal: keep the 30-day OCI trial safe.
+#### Cost and runtime guardrails
 
 Implement local limits:
 
@@ -1123,15 +770,20 @@ fail on repeated model errors
 no infinite loops
 ```
 
-Acceptance criteria:
+### Acceptance criteria
 
-- A too-large repo fails before making expensive calls.
-- Retry storms are impossible.
-- Remote jobs have a hard timeout.
+- The CLI can call OCI Generative AI safely from local mode.
+- Snapshot packaging excludes ignored files and blocks secret-bearing content.
+- Remote worker can process a tiny repo and return a patch bundle.
+- Cost and runtime caps fail closed before expensive work proceeds.
 
-## Step 26: Add tests
+## Phase 5: Validation, CI, packaging, and release hardening
 
-Goal: make the tool safe enough to run on real repositories repeatedly.
+Goal: prove the workflow on real repositories, enforce it in CI, and make the tool installable and repeatable.
+
+### Scope
+
+#### Expanded test coverage
 
 Minimum tests:
 
@@ -1161,19 +813,7 @@ fixtures/dirty_repo
 fixtures/secret_repo
 ```
 
-Acceptance criteria:
-
-```text
-uv run pytest
-uv run ruff check .
-uv run mypy src
-```
-
-pass locally.
-
-## Step 27: Test on a tiny repo first
-
-Goal: validate the end-to-end lifecycle before using a real project.
+#### Tiny repo end-to-end validation
 
 Create a tiny test repository:
 
@@ -1196,15 +836,7 @@ aictx verify --project <tiny-repo> --strict
 
 Then modify `src/app.py` and verify stale detection.
 
-Acceptance criteria:
-
-- Initial generation passes.
-- Source change causes stale-context failure.
-- Refresh fixes the failure.
-
-## Step 28: Test on StorageMaster or another real repo
-
-Goal: prove usefulness on a docs-heavy real codebase.
+#### Real-repo validation
 
 Run first in patch mode only:
 
@@ -1229,15 +861,34 @@ aictx run --project <StorageMaster> --mode setup-context --scope full --executio
 aictx verify --project <StorageMaster> --strict
 ```
 
-Acceptance criteria:
+#### GitHub Actions integration
 
-- Generated context is meaningfully smaller than existing docs.
-- Future agents can use the generated context without reading all human docs.
-- The verifier catches stale state after source changes.
+Generate workflow:
 
-## Step 29: Build the first public release workflow for `aictx`
+```text
+.github/workflows/aictx-verify.yml
+```
 
-Goal: make the tool installable and reproducible.
+Workflow:
+
+```text
+checkout
+install aictx
+run aictx verify --strict --base origin/main
+upload validation-report.md as artifact
+fail PR on stale AI context or public docs impact
+```
+
+Optional PR output:
+
+- `ai-context-impact`
+- `public-docs-impact`
+- `no-doc-impact-required`
+- `aictx-verification-failed`
+
+Do not require OCI credentials for the basic verifier. CI should run hash and impact checks without model calls.
+
+#### Packaging and release workflow
 
 Implement:
 
@@ -1257,120 +908,58 @@ build package
 
 Do not add signing or complex release automation yet.
 
-Acceptance criteria:
+### Acceptance criteria
 
-- Fresh clone can install the CLI.
-- CI passes.
-- Basic usage is documented.
+- `uv run pytest`, `uv run ruff check .`, and `uv run mypy src` pass with expanded coverage.
+- Tiny-repo workflow succeeds end to end, including stale detection after source changes.
+- At least one real repo run demonstrates useful routed context and verifier behavior.
+- Fresh clone install and package build work reproducibly.
 
-## Step 30: Version roadmap
+## Version roadmap
 
-Progress as of the current codebase:
-
-### v0.1.0: Local scanner — COMPLETED
-
-Includes CLI skeleton, config models, ignore handling, Git state, inventory, docs detection, project classification, secret scanning, and safe scan reports. All acceptance criteria are met and tests pass.
-
-### v0.2.0: Local context generation — PLANNED
+### v0.2.0: Local context generation
 
 Includes context planning, fact extraction, context scaffold writer, and `AGENTS.md` generation. The dry-run model provider exists. The OCI model provider is stubbed. Context generation modules are stubbed.
 
-### v0.3.0: Verification and lockfile — PLANNED
+### v0.3.0: Full verification and lockfile expansion
 
-Includes `context.lock.json`, strict verifier, generated file hash checks, source hash checks, and stale section reports. The lockfile model and I/O helpers exist. The verifier always returns `PASS`.
+Includes full `context.lock.json`, strict verifier completion, generated file hash checks, source hash checks, and stale section reports. The current verifier is only the hash-only MVP.
 
-### v0.4.0: Change impact and cheap refresh — PLANNED
+### v0.4.0: Change impact and cheap refresh
 
 Includes `change-impact-map.md`, changed-scope regeneration, public docs impact detection, and targeted stale reports. Impact mapping is stubbed.
 
-### v0.5.0: Public docs updater — PLANNED
+### v0.5.0: Public docs updater
 
 Includes changed-scope and full-scope public-docs update mode, patch output, public docs map refresh, and verifier integration. All public-docs modules are stubbed.
 
-### v0.6.0: GitHub Actions verifier — PLANNED
+### v0.6.0: OCI-backed local and remote execution
 
-Includes CI workflow generation, PR-safe verifier, and no-model validation in CI.
+Includes OCI local provider, sanitized snapshots, Object Storage exchange, remote worker, result bundles, cleanup, and remote public-docs refresh. OCI modules remain stubbed.
 
-### v0.7.0: OCI remote heavy mode — PLANNED
+### v0.7.0: CI and packaging hardening
 
-Includes sanitized snapshots, Object Storage exchange, remote worker, result bundles, cleanup, and remote public-docs refresh. All OCI modules are stubbed.
+Includes CI workflow generation, PR-safe verifier, expanded validation, and install/build workflow hardening.
 
-### v1.0.0: Stable personal workflow — PLANNED
+### v1.0.0: Stable personal workflow
 
 Includes safe defaults, tests, documentation, cost caps, OCI setup docs, stable generated scaffold, and successful runs on at least two real repositories.
 
-## Initial MVP cut
+## Remaining implementation order summary
 
-Build only this first:
-
-```text
-aictx init
-aictx scan
-aictx run --mode setup-context --execution local --write patch/apply
-aictx verify --strict
-```
-
-The MVP must generate:
-
-```text
-AGENTS.md
-docs/AIprojectcontext/ai-index.md
-docs/AIprojectcontext/project-state.md
-docs/AIprojectcontext/code-map.md
-docs/AIprojectcontext/architecture.md
-docs/AIprojectcontext/workflows.md
-docs/AIprojectcontext/context.lock.json
-docs/AIprojectcontext/validation-report.md
-```
-
-Delay these until after the MVP works:
-
-```text
-remote OCI jobs
-public docs full rewrite
-GitHub PR automation
-web UI
-multi-user support
-automatic commits
-```
-
-## Implementation order summary
-
-Completed:
-
-1. CLI skeleton.
-2. Config models (TOML loading not yet implemented).
-3. Repository scanner.
-4. Inventory model.
-5. Project classifier.
-6. Dry-run model provider.
-7. Secret scanning.
-8. File I/O helpers and JSONL utilities.
-9. `AGENTS.md` template generator.
-10. Context lockfile model and I/O helpers.
-11. Basic test suite (scanner, CLI, integration).
-
-Planned / stubbed:
-
-12. OCI model provider.
-13. Context planning.
-14. Fact extraction.
-15. Coverage and contradiction checks.
-16. Context scaffold writer.
-17. Patch/apply writer.
-18. Strict verifier.
-19. Change impact map.
-20. Changed-scope refresh.
-21. Public docs map.
-22. Public docs updater.
-23. GitHub Actions verifier.
-24. OCI setup doctor.
-25. Snapshot/result bundle format.
-26. Object Storage exchange.
-27. Remote worker.
-28. Cost/runtime guardrails.
-29. Real-repo validation.
-30. Package/release workflow.
+1. Implement config loading and finish local `run` execution.
+2. Add planning, fact extraction, and contradiction checking.
+3. Generate AI context scaffold and strict `AGENTS.md` updates.
+4. Add patch/apply mode and expand lockfile structure.
+5. Complete strict verifier and change impact mapping.
+6. Add changed-scope refresh.
+7. Add public docs map and public-docs update mode.
+8. Add optional semantic verification.
+9. Implement OCI local provider.
+10. Add OCI bootstrap, snapshot, storage exchange, cleanup, and remote worker.
+11. Add cost/runtime guardrails.
+12. Expand tests, fixtures, and real-repo validation.
+13. Add CI verification workflow and packaging/release workflow.
 
 ## Definition of done for the whole system
 
@@ -1399,7 +988,7 @@ aictx verify --project <repo> --strict
 
 must return the repository to a verified state without forcing the coding agent to read huge human-facing docs.
 
-Currently, `aictx run` and `aictx verify` are stubbed, so this workflow is not yet achievable.
+Currently, `aictx run` and `aictx public-docs update` are still stubbed, and the verifier is only the hash-only MVP, so this workflow is not yet achievable.
 
 ## Non-goals for v1
 

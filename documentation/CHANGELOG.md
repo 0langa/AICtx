@@ -19,6 +19,7 @@
 - Pydantic configuration models (`AictxConfig`, `ProjectConfig`, `ExecutionConfig`, `LimitsConfig`, `LLMConfig`).
 - Context lockfile model (`ContextLock`) and I/O helpers.
 - Baseline lockfile bootstrap from scanner inventory.
+- Versioned baseline `docs/AIprojectcontext/context.lock.json` for cross-clone verification.
 - `AGENTS.md` template generator.
 - File I/O helpers (`safe_write`, `read_text`), JSONL helpers, and unified diff helper.
 - Exception hierarchy (`AictxError`, `SafetyError`, `ConfigError`, `ScanError`, `SecretScanError`, `TokenBudgetExceededError`, `VerificationError`, `RemoteJobError`).
@@ -29,6 +30,7 @@
 - `run`, `clean`, and `public-docs update` commands are stubbed and do not perform meaningful work.
 - `init` creates only a baseline file-state lockfile; it does not generate AI context shards or `AGENTS.md`.
 - `verify` is hash-only and deterministic; it does not perform semantic freshness or public-docs impact validation yet.
+- `.aictx/runs/`, `.aictx/cache/`, and `.aictx/tmp/` remain local runtime artifacts and are not part of the committed verification baseline.
 - OCI Generative AI provider is not yet implemented.
 - Context planning, fact extraction, scaffold writing, and compression are stubbed.
 - Public docs mapper, updater, and patcher are stubbed.

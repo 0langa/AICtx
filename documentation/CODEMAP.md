@@ -70,15 +70,18 @@ This file maps the repository layout to help future agents and contributors navi
       unit/
         test_cli.py            — CLI version test
         test_scanner.py        — Scanner utility and secret-scan tests
-        test_scan_integration.py — Integration tests for scan hardening
+        test_scan_integration.py — Integration tests for scan hardening and git-status serialization
+        test_verify.py          — Init and verifier behavior tests
 
 ## Generated / Runtime Directories
 
     .aictx/                  — Runtime directory (excluded from inventory)
       runs/<run-id>/         — Per-run outputs (inventory.json)
-      config.toml            — Planned config file (not yet parsed)
+      cache/                 — Runtime cache (ignored)
+      runs/<run-id>/         — Per-run outputs (inventory.json, ignored)
+      tmp/                   — Runtime temp files (ignored)
     .aictxignore             — Custom ignore patterns
-    docs/AIprojectcontext/   — Baseline lockfile output (`context.lock.json`); AI context shards planned later
+    docs/AIprojectcontext/   — Versioned baseline lockfile output (`context.lock.json`); AI context shards planned later
 
 ## Config Files
 
