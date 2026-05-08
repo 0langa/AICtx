@@ -115,3 +115,8 @@ python_classes = ["Test*"]
 python_functions = ["test_*"]
 addopts = "-v --tb=short"
 norecursedirs = [".pytest-tmp"]
+
+[dependency-groups]
+dev = [
+    "openai>=2.36.0",
+]

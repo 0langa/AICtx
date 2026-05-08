@@ -28,6 +28,12 @@ site/
 .eggs/
 pip-wheel-metadata/
 
+# Local AI provider credentials (never commit)
+.aictx/config.toml
+
+# Local AI provider credentials (never commit)
+.aictx/config.toml
+
 # uv
 .uv/
 uv.lock
