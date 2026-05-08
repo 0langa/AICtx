@@ -60,6 +60,13 @@ temp/
 .aictx/runs/
 .aictx/tmp/
 
+# Local AI customization overlays
+.github/agents/
+.github/commands/
+.github/prompts/
+.github/chatmodes/
+.github/instructions/
+
 # Generated runtime artifacts
 *.patch
 *.diff

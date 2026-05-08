@@ -9,6 +9,11 @@ dist/**
 build/**
 .vs/**
 .idea/**
+.github/agents/**
+.github/commands/**
+.github/prompts/**
+.github/chatmodes/**
+.github/instructions/**
 *.pfx
 *.snk
 *.key
