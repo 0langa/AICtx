@@ -2,9 +2,22 @@
 
 from __future__ import annotations
 
+import atexit
+import shutil
 import subprocess
 import tempfile
 from pathlib import Path
+
+_TEMP_GIT_REPOS: set[Path] = set()
+
+
+def _cleanup_temp_git_repos() -> None:
+    for repo_path in list(_TEMP_GIT_REPOS):
+        shutil.rmtree(repo_path, ignore_errors=True)
+        _TEMP_GIT_REPOS.discard(repo_path)
+
+
+atexit.register(_cleanup_temp_git_repos)
 
 
 def create_git_repo(files: dict[str, str]) -> Path:
@@ -14,6 +27,7 @@ def create_git_repo(files: dict[str, str]) -> Path:
     (e.g. branch detection) work.  Returns the repo root path.
     """
     tmpdir = Path(tempfile.mkdtemp(prefix="aictx-git-fix-"))
+    _TEMP_GIT_REPOS.add(tmpdir)
 
     # default branch name varies by git version; init then rename
     def _run(cmd: list[str]) -> subprocess.CompletedProcess[bytes]:
