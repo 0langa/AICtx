@@ -5,6 +5,8 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+SELF_MATCH_EXCLUDED_PARTS = {"tests", "unit", "fixtures"}
+
 PATTERNS: list[tuple[str, re.Pattern[str], str]] = [
     (
         "private_key_header",
@@ -47,6 +49,9 @@ def scan_for_secrets(content: str, file_path: Path) -> list[dict[str, str | int 
     Returns a list of findings with ``detector_name``, ``severity``, and
     ``line_number`` keys. Does **not** return the secret value itself.
     """
+    if _should_skip_secret_scan(file_path):
+        return []
+
     findings: list[dict[str, str | int | None]] = []
     lines = content.splitlines()
     for detector_name, pattern, severity in PATTERNS:
@@ -76,3 +81,12 @@ def scan_for_secrets(content: str, file_path: Path) -> list[dict[str, str | int 
                     }
                 )
     return findings
+
+
+def _should_skip_secret_scan(file_path: Path) -> bool:
+    """Skip files that intentionally embed detector examples or fixtures."""
+    normalized_parts = {part.casefold() for part in file_path.parts}
+    return (
+        file_path.name == "secrets.py"
+        and {"src", "aictx", "scan"}.issubset(normalized_parts)
+    ) or bool(normalized_parts & SELF_MATCH_EXCLUDED_PARTS)

@@ -49,7 +49,11 @@ def init(
     project: str = typer.Option(".", "--project", "-p", help="Path to the target repository."),
 ) -> None:
     """Initialize a repository for aictx processing."""
-    from aictx.context.lockfile import build_lockfile_from_inventory, write_lockfile
+    from aictx.context.lockfile import (
+        build_lockfile_from_inventory,
+        load_lockfile,
+        write_lockfile,
+    )
     from aictx.scan.scanner import scan_repository
 
     repo_root = _resolve_repo_root(project)
@@ -57,13 +61,32 @@ def init(
     inventory = scan_repository(repo_root)
     context_dir = repo_root / "docs" / "AIprojectcontext"
     context_dir.mkdir(parents=True, exist_ok=True)
-    write_lockfile(context_dir, build_lockfile_from_inventory(inventory))
+    existing_lock = load_lockfile(context_dir)
+    lock = build_lockfile_from_inventory(inventory)
+    if existing_lock is not None and existing_lock.generated_files:
+        lock = existing_lock.model_copy(
+            update={
+                "tool_version": lock.tool_version,
+                "repo_head_commit": lock.repo_head_commit,
+                "generated_at": lock.generated_at,
+                "scanner_config_hash": lock.scanner_config_hash,
+                "source_files": lock.source_files,
+                "generated_files": existing_lock.generated_files,
+                "sections": existing_lock.sections,
+                "public_docs_map": existing_lock.public_docs_map,
+                "change_impact_map": existing_lock.change_impact_map,
+                "model_provider": existing_lock.model_provider,
+                "model_name": existing_lock.model_name,
+                "last_validation": existing_lock.last_validation,
+            }
+        )
+    write_lockfile(context_dir, lock)
 
     ignore_path = repo_root / ".aictxignore"
     if not ignore_path.exists():
         ignore_path.write_text("# AICtx custom ignore patterns\n", encoding="utf-8")
 
-    tracked_files = len(build_lockfile_from_inventory(inventory).source_files)
+    tracked_files = len(lock.source_files)
     console.print("[bold green]AICtx initialized[/bold green]")
     console.print(f"repo: {repo_root}")
     console.print(f"context dir: {context_dir.relative_to(repo_root).as_posix()}")

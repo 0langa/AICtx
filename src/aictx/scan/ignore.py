@@ -9,6 +9,7 @@ import pathspec
 BUILTIN_HARD_EXCLUDES = [
     ".git",
     ".aictx",
+    ".pytest-tmp",
     "bin",
     "obj",
     "node_modules",

@@ -9,7 +9,7 @@ AICtx is at an early alpha stage. The repository scanner, baseline lockfile boot
 ### What works today
 
 - `aictx scan` — scans a Git repository, classifies files, detects secrets, and writes a deterministic inventory to `.aictx/runs/<run-id>/inventory.json`.
-- `aictx init` — creates `docs/AIprojectcontext/context.lock.json` as a baseline verification lockfile and creates `.aictxignore` if missing.
+- `aictx init` — creates or refreshes `docs/AIprojectcontext/context.lock.json`, preserves generated lock metadata when present, and creates `.aictxignore` if missing.
 - `aictx run --mode setup-context --execution local` — plans a local run, extracts deterministic fact packs, generates AI context markdown under `docs/AIprojectcontext/`, stages a patch by default, and can apply generated files.
 - `aictx verify --strict` — performs deterministic hash-only validation against the committed baseline lockfile.
 - Git integration — branch, HEAD commit, dirty-state, and file-change detection.
@@ -17,6 +17,8 @@ AICtx is at an early alpha stage. The repository scanner, baseline lockfile boot
 - Ignore matching — built-in hard excludes, `.gitignore`, and `.aictxignore`.
 - Project classification — deterministic heuristics for Python, C#/.NET, Node, Rust, Go, and docs-heavy repos.
 - Secret scanning — regex-based high-confidence detection without printing secret values.
+- Secret-scan self-protection — skips detector source/examples in `src/aictx/scan/secrets.py` and test/fixture-style paths to avoid false positives.
+- Windows test temp hardening — repository-local `.pytest-tmp` is excluded from linting, scanning, and test discovery.
 - Linting, formatting, and tests pass.
 
 ### What is planned
@@ -67,7 +69,7 @@ uv run aictx run --project . --mode setup-context --execution local --scope full
 | Command | Status | Description |
 | --- | --- | --- |
 | `scan` | **Implemented** | Walks the repo, builds inventory, detects secrets, writes JSON. |
-| `init` | **Implemented (MVP)** | Creates `docs/AIprojectcontext/context.lock.json` and `.aictxignore` if missing. |
+| `init` | **Implemented (MVP)** | Creates or refreshes `docs/AIprojectcontext/context.lock.json`, preserving generated lock metadata when present, and creates `.aictxignore` if missing. |
 | `run` | **Implemented (local Phase 1)** | Runs local planning, fact extraction, scaffold generation, and lockfile output for `setup-context` in local mode. |
 | `verify` | **Implemented (hash-only MVP)** | Verifies locked source and generated file hashes. No semantic validation yet. |
 | `clean` | Stubbed | Will clean generated or remote artifacts. |

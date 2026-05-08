@@ -27,7 +27,10 @@ def build_lockfile_from_inventory(inventory: RepositoryInventory) -> ContextLock
             included_in_generation=False,
         )
         for file in inventory.files
-        if not file.is_ignored and not file.is_binary and file.sha256 != "skipped"
+        if not file.is_ignored
+        and not file.is_binary
+        and file.sha256 != "skipped"
+        and file.path != f"docs/AIprojectcontext/{LOCK_FILENAME}"
     ]
     source_files.sort(key=lambda entry: entry.path)
     scanner_config_hash = sha256_text(

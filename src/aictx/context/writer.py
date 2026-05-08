@@ -15,7 +15,7 @@ from aictx.models.context_lock import (
     SourceFileEntry,
 )
 from aictx.models.inventory import RepositoryInventory
-from aictx.verify.hashes import sha256_text
+from aictx.verify.hashes import sha256_file, sha256_text
 
 
 def write_context_scaffold(
@@ -71,7 +71,10 @@ def build_context_lock(
             included_in_generation=file.path in selected_set,
         )
         for file in inventory.files
-        if not file.is_ignored and not file.is_binary and file.sha256 != "skipped"
+        if not file.is_ignored
+        and not file.is_binary
+        and file.sha256 != "skipped"
+        and file.path != "docs/AIprojectcontext/context.lock.json"
     ]
     source_files.sort(key=lambda entry: entry.path)
 
@@ -97,7 +100,7 @@ def build_context_lock(
     generated_files = [
         GeneratedFileEntry(
             path=path.relative_to(out_dir).as_posix(),
-            sha256=sha256_text(path.read_text(encoding="utf-8")),
+            sha256=sha256_file(path),
             generated_from_sections=[
                 section.section_id
                 for section in sections
@@ -105,7 +108,6 @@ def build_context_lock(
             ],
         )
         for path in sorted(generated_paths, key=lambda item: item.name)
-        if path.relative_to(out_dir).as_posix() != "AGENTS.md"
     ]
 
     return ContextLock(

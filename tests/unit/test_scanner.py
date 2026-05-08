@@ -138,3 +138,23 @@ def test_scan_for_secrets_connection_string(tmp_path: Path) -> None:
     f.write_text("uri = 'postgresql://user:pass@host/db'")
     findings = scan_for_secrets(f.read_text(), f)
     assert any(f["detector_name"] == "connection_string" for f in findings)
+
+
+def test_scan_for_secrets_skips_detector_source_file(tmp_path: Path) -> None:
+    f = tmp_path / "src" / "aictx" / "scan" / "secrets.py"
+    f.parent.mkdir(parents=True)
+    f.write_text('pattern = "OCI_API_KEY"\nuri = "postgresql://user:pass@host/db"')
+
+    findings = scan_for_secrets(f.read_text(), f)
+
+    assert findings == []
+
+
+def test_scan_for_secrets_skips_test_fixture_examples(tmp_path: Path) -> None:
+    f = tmp_path / "tests" / "unit" / "sample.py"
+    f.parent.mkdir(parents=True)
+    f.write_text("-----BEGIN PRIVATE KEY-----\nabc\n-----END PRIVATE KEY-----")
+
+    findings = scan_for_secrets(f.read_text(), f)
+
+    assert findings == []

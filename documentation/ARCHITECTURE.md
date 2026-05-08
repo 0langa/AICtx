@@ -16,7 +16,7 @@ Typer-based command surface. Commands:
 
 - `aictx --version` — prints version.
 - `aictx scan --project <path>` — scans repository, prints summary, writes inventory JSON.
-- `aictx init --project <path>` — creates `docs/AIprojectcontext/context.lock.json` baseline and `.aictxignore` if missing.
+- `aictx init --project <path>` — creates or refreshes `docs/AIprojectcontext/context.lock.json`, preserving generated lock metadata when present, and creates `.aictxignore` if missing.
 - `aictx run --project <path> --mode setup-context --execution local --scope <scope> --write <mode>` — implemented local Phase 1 pipeline.
 - `aictx verify --project <path> --strict` — hash-only verifier MVP for baseline lockfile validation.
 - `aictx clean --oci --run-id <id>` — **stubbed**.
@@ -28,11 +28,12 @@ Fully implemented deterministic pipeline:
 
 1. **Git root detection** — `git rev-parse --show-toplevel`.
 2. **Worktree status** — branch, HEAD commit, dirty flag, tracked/untracked/modified/deleted/renamed files serialized into inventory.
-3. **Ignore matching** — built-in hard excludes (`.git`, `.aictx`, `node_modules`, build artifacts), `.gitignore`, and `.aictxignore`.
+3. **Ignore matching** — built-in hard excludes (`.git`, `.aictx`, `.pytest-tmp`, `node_modules`, build artifacts), `.gitignore`, and `.aictxignore`.
 4. **Directory pruning** — ignored directories are skipped before descending.
 5. **File classification** — binary check, language detection by extension, manifest detection, test detection, doc detection.
 6. **SHA-256 hashing** — skipped for binaries and files over 250KB.
 7. **Secret scanning** — regex-based high-confidence detectors (private keys, OCI API keys, GitHub tokens, generic API keys, connection strings, `.env` secrets).
+	Detector source/examples under `src/aictx/scan/secrets.py` and test/fixture-style paths are skipped to avoid self-matching false positives.
 8. **Project classification** — deterministic heuristics for Python, C#, Node, Rust, Go, and docs-heavy repos.
 9. **Inventory model** — Pydantic `RepositoryInventory` written to `.aictx/runs/<run-id>/inventory.json`.
 
@@ -79,6 +80,10 @@ Safety measures implemented in the scanner:
 - Secret findings are reported by path and detector name, not by printing the secret value.
 - The local run pipeline blocks generation when scanner secret findings are present.
 - Dirty-worktree blocking and contradiction/coverage failure gates are not implemented yet.
+
+### Lockfile Refresh Behavior
+
+`aictx init` rebuilds tracked source hashes from the current repository scan. If the existing lockfile already contains generated-file metadata from `aictx run --write apply`, `init` preserves that generated metadata while refreshing source-side verification state.
 
 ## Stubbed / Planned Architecture
 
@@ -133,7 +138,7 @@ Pydantic v2 models live in `src/aictx/models/`:
 
 - `aictx run` only supports local `setup-context`; other modes and OCI execution are not implemented.
 - `aictx verify` only verifies deterministic file hashes; it does not perform semantic freshness checks yet.
-- `aictx init` only creates the baseline lockfile; it does not generate AI context markdown shards.
+- `aictx init` refreshes the verification lockfile only; it does not generate AI context markdown shards.
 - `aictx public-docs update` is a placeholder.
 - OCI model provider is not wired to a real endpoint.
 - Patch application (`apply_patch`) is stubbed.

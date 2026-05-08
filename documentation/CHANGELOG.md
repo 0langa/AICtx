@@ -26,6 +26,9 @@
 - File I/O helpers (`safe_write`, `read_text`), JSONL helpers, and unified diff helper.
 - Exception hierarchy (`AictxError`, `SafetyError`, `ConfigError`, `ScanError`, `SecretScanError`, `TokenBudgetExceededError`, `VerificationError`, `RemoteJobError`).
 - Unit and integration tests covering CLI version, scanner utilities, secret scanning, and scan hardening.
+- Lockfile refresh behavior in `init` that preserves generated metadata while updating source verification state.
+- Secret scan false-positive hardening for detector source/examples and test/fixture-style paths.
+- Repository-local pytest temp directory hardening via `.pytest-tmp` exclusions for pytest, Ruff, and scanner inventory.
 
 ### Known Limitations
 

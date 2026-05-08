@@ -1,11 +1,11 @@
 {
   "schema_version": "1.0",
   "tool_version": "0.1.0",
-  "repo_head_commit": "40f6f650dfa80b0036efb96fc34491e4041bac2b",
-  "generated_at": "2026-05-08T04:17:14.978905Z",
+  "repo_head_commit": "4c567efff99a6dea48fddbe7650d75fe8937dc33",
+  "generated_at": "2026-05-08T05:32:34.980467Z",
   "model_provider": "none",
   "model_name": "none",
-  "scanner_config_hash": "4cead6d146e6049e47eadf4a9807b629b7ffeb749dc919918d14242dcd27b673",
+  "scanner_config_hash": "a315e410b6979f0cacbd298a2327e9076cf563fac4fd6cfebdab1eb04af09a4b",
   "generated_files": [],
   "source_files": [
     {
@@ -22,7 +22,7 @@
     },
     {
       "path": "AGENTS.md",
-      "sha256": "122efe063816938c51a6100d94c1d4c753c0e632041f3dbe390ce96bf975b797",
+      "sha256": "567989ad9d52831578aa7d520d6696a36c8a12938aef738082ae2c5706a7bbb4",
       "kind": "doc",
       "included_in_generation": false
     },
@@ -34,49 +34,49 @@
     },
     {
       "path": "README.md",
-      "sha256": "b55ecc16cca971bc881010229ff44ab6081f3f2c9ebf509646114efd3b745c58",
+      "sha256": "3a2a6fd4dfb234a177ecbb773649fc624ead9dcdda5b217d7f8fded145cbd853",
       "kind": "doc",
       "included_in_generation": false
     },
     {
       "path": "aictx_development_plan.md",
-      "sha256": "bd307019bd3d9c2d85313454c1b2d1f1164a2c289d01fe5f37a84540b30fa1af",
+      "sha256": "dcf4d58e1fe12492c09612711d9a8438a0f89d824f00cee7497b38c84cb2272f",
       "kind": "doc",
       "included_in_generation": false
     },
     {
       "path": "documentation/ARCHITECTURE.md",
-      "sha256": "ad88ef6bf35090ca106da0ed910204aa7a3dab7f1756964677035e0dc8f52b9d",
+      "sha256": "6d98b89c28f3ae78eaf2d8b7f6eeb73e7f13385d781e9caa3620110728170553",
       "kind": "doc",
       "included_in_generation": false
     },
     {
       "path": "documentation/CHANGELOG.md",
-      "sha256": "316f1301800651b7901b47d1b7c8176e0f6297b75c4eae8e71a24fef9279da97",
+      "sha256": "66a69bfae813f3ef01fcd4154eb5b5cd67bfd1e08ea98e15a2c8af787010bc6f",
       "kind": "doc",
       "included_in_generation": false
     },
     {
       "path": "documentation/CODEMAP.md",
-      "sha256": "aec23f7d857afdafb84351c56c5442acadd5d4967ce5b6f3edab08507fb9a542",
+      "sha256": "db6274664a5dfaf781463f3875e513507c0aada8f4dee2423b3049bb94c7bf42",
       "kind": "doc",
       "included_in_generation": false
     },
     {
       "path": "documentation/DOCUMENTATION.md",
-      "sha256": "5d9bbed3eae0c48fd71f16acf272601458899c79d5e2f99cec7f1b42ae63dbe0",
+      "sha256": "93183164ed0e952fe1a602715b4cde46999adb371417806f30a3049c719899f6",
       "kind": "doc",
       "included_in_generation": false
     },
     {
       "path": "documentation/README.md",
-      "sha256": "05a2da26942bc2328760e9ba6cc531af798fb330f3ba2e53685bdb49911b344c",
+      "sha256": "869fe290490fcba78e53411aecd19c2b93566c5aa456739bede4207e8ea92bb0",
       "kind": "doc",
       "included_in_generation": false
     },
     {
       "path": "pyproject.toml",
-      "sha256": "2f8188a1587f29d8516a89cd436a43d93f0955eaeccbf8217786716c795c1ea9",
+      "sha256": "6e4aaf6e38286ae90f9749f879fbf7ae61f5fe4812d669074b75f8767ed17b15",
       "kind": "manifest",
       "included_in_generation": false
     },
@@ -88,13 +88,13 @@
     },
     {
       "path": "src/aictx/cli.py",
-      "sha256": "2582305b0d189cbe2521facf22db53e6f63b4a46feca9e9f14219b4a2ad3d3ad",
+      "sha256": "d24145c5b495cdd88c6f868df762c327cff1ee16f13b9e3eb1b4440c6d4d5f0f",
       "kind": "source",
       "included_in_generation": false
     },
     {
       "path": "src/aictx/config.py",
-      "sha256": "c546e30e5b19317773f1481f831d95854b59c52f7664ce9fc780600bce049a89",
+      "sha256": "1c08d632fb8de4836d3eb3194d63b308466e1608bc34bde6b0660fb9e9008e25",
       "kind": "source",
       "included_in_generation": false
     },
@@ -118,25 +118,31 @@
     },
     {
       "path": "src/aictx/context/fact_extractor.py",
-      "sha256": "3537145e041f149ba6d1b12cf6230c31da007de02c99b6c90a705a1489672d30",
+      "sha256": "43b9bb03d8498c3bb63f5f464e6c5ce345e25b9d6f5f53a589b8d055d8fbb6a5",
       "kind": "source",
       "included_in_generation": false
     },
     {
       "path": "src/aictx/context/lockfile.py",
-      "sha256": "da107134616f7253171939f397c0e69dd1fe98883a56387781dc62954de36aef",
+      "sha256": "47072501e55b2c4377df74cc9919b34cadccfddad5b66554fa4531affd323ef7",
+      "kind": "source",
+      "included_in_generation": false
+    },
+    {
+      "path": "src/aictx/context/pipeline.py",
+      "sha256": "56e9a621e9a1bf922263cdb8116a41f374becd8c50593dea450b0df5a8d37d7f",
       "kind": "source",
       "included_in_generation": false
     },
     {
       "path": "src/aictx/context/planner.py",
-      "sha256": "4d9ba8e8d78ad8872a390fb42ad31fb1f3fc510529438113448afc0f24466612",
+      "sha256": "3334ea2ef04e3574f789101a4a9944bfc503055ff93582497b5c0b527130be09",
       "kind": "source",
       "included_in_generation": false
     },
     {
       "path": "src/aictx/context/writer.py",
-      "sha256": "283d3539f5d5b908516031e77b1af0858d9281ee8383822876a89fef113cdce9",
+      "sha256": "fa2b3bfd73080b5419e912bb849fd626df171ec9623d496790b8d73b1a373410",
       "kind": "source",
       "included_in_generation": false
     },
@@ -250,7 +256,7 @@
     },
     {
       "path": "src/aictx/models/run_report.py",
-      "sha256": "137266b50cc16560c560c6bf13600fb2ee2be825023813dfc15f90f0bde882ab",
+      "sha256": "cf0fa602f57d7aa87c0380aa6fa3768a3d9a685287f90213278717c09cc45652",
       "kind": "source",
       "included_in_generation": false
     },
@@ -322,7 +328,7 @@
     },
     {
       "path": "src/aictx/scan/ignore.py",
-      "sha256": "5a0a35897cce3fcdb09e13ffcc87ea6fe9af455805aa7a7b25c0dd8399f0fe9f",
+      "sha256": "6d83a527be49a44cffb53a91936550964fa536c7b48c47fa8abf0fac09145fae",
       "kind": "source",
       "included_in_generation": false
     },
@@ -334,7 +340,7 @@
     },
     {
       "path": "src/aictx/scan/secrets.py",
-      "sha256": "3d31ec6db8cf04a3aa4d83515148a4f39b4f768e155558a2fed3135b01fc7290",
+      "sha256": "73c1093be69937da184af3aeeb12e38be4ccee7e71f64a454e754b74c28fc8e4",
       "kind": "source",
       "included_in_generation": false
     },
@@ -399,6 +405,12 @@
       "included_in_generation": false
     },
     {
+      "path": "tests/unit/test_run_phase1.py",
+      "sha256": "703c62990de897df87dfa6bf80e1200c021bc75f33c12a8ca524e356b21113aa",
+      "kind": "test",
+      "included_in_generation": false
+    },
+    {
       "path": "tests/unit/test_scan_integration.py",
       "sha256": "c23ff6e7fcb34167e4ccdfec0c8d63f10a0072f9e668b522aa6f3519bab08ca9",
       "kind": "test",
@@ -406,13 +418,13 @@
     },
     {
       "path": "tests/unit/test_scanner.py",
-      "sha256": "e64173b19146fb58f2cf2c1f811274c27d8ccb210c5e0fdfdbcfeb80fd4895ae",
+      "sha256": "4ee59ce9800f67b349a696f5e4f875a8544b4421dccd786260ebf35e0f0b912f",
       "kind": "test",
       "included_in_generation": false
     },
     {
       "path": "tests/unit/test_verify.py",
-      "sha256": "3d125147cca39cc51a92ddcd8eac653a7c608041792e24dd4dfcccea65182133",
+      "sha256": "c9b9806c744dc37d18edd6bdd494d83524d8ce5e46d57fed5bcd5f433e218a5e",
       "kind": "test",
       "included_in_generation": false
     }

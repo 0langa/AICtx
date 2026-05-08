@@ -100,9 +100,10 @@ This will:
 2. Run the scanner.
 3. Create `docs/AIprojectcontext/` if missing.
 4. Write `docs/AIprojectcontext/context.lock.json` as a baseline file-state lockfile.
+	If the lockfile already contains generated context metadata from a prior apply run, that generated metadata is preserved while source hashes are refreshed.
 5. Create `.aictxignore` if missing.
 
-This command does not call any model provider, does not generate AI context markdown, and does not auto-commit anything.
+This command does not call any model provider, does not generate new AI context markdown, and does not auto-commit anything.
 
 The generated `docs/AIprojectcontext/context.lock.json` is intended to be committed. Runtime artifacts under `.aictx/` are local-only.
 
@@ -196,9 +197,13 @@ uv run mypy src
 
 Ensure the target path is inside a Git repository with at least one commit.
 
-### Secrets are detected in test fixtures
+### Secrets are detected in real files but not in test fixtures
 
-The scanner uses regex-based detection. Test fixtures containing fake secrets will be reported. This is expected and safe because the scanner only reports findings; it does not block or modify anything.
+The scanner uses regex-based detection, but it skips detector source/examples in `src/aictx/scan/secrets.py` and test/fixture-style paths to avoid false positives. If findings appear, they should now be treated as more likely to be actionable project files rather than intentional test examples.
+
+### Why is `.pytest-tmp` ignored?
+
+Pytest is configured to use a repository-local `.pytest-tmp` directory on Windows to avoid temp cleanup issues. That directory is excluded from test discovery, linting, and repository scanning so transient test artifacts do not create drift or false positives.
 
 ### `aictx run` does not support the mode I passed
 
