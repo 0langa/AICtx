@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import importlib.util
 import json
 from pathlib import Path
+from typing import Any
 
 import pytest
 from typer.testing import CliRunner
@@ -14,13 +16,35 @@ from aictx.errors import ConfigError, PatchApplyError
 from aictx.io.patches import apply_patch, make_unified_diff
 from aictx.llm.base import ChatRequest
 from aictx.llm.dry_run import DryRunProvider
-from aictx.llm.oci_genai import OCIGenAIProvider
 from aictx.llm.providers import create_model_provider
 from aictx.oci.doctor import run_oci_doctor
 from aictx.verify.verifier import verify_detailed
 from tests.fixtures.git_repos import create_git_repo
 
 runner = CliRunner()
+
+
+def _mock_oci_sdk(monkeypatch: pytest.MonkeyPatch) -> Any:
+    """Make importlib.util.find_spec('oci') return a dummy spec, and stub _require_oci_sdk."""
+    from unittest.mock import MagicMock
+
+    fake_spec = importlib.util.spec_from_loader("oci", loader=None)
+    monkeypatch.setattr(
+        importlib.util, "find_spec", lambda name: fake_spec if name == "oci" else None
+    )
+    fake_oci = MagicMock()
+    fake_oci.config.from_file.return_value = {}
+    fake_oci.generative_ai_inference.GenerativeAiInferenceClient.return_value = MagicMock()
+    fake_oci.generative_ai_inference.models.GenericChatRequest.return_value = MagicMock()
+    fake_oci.generative_ai_inference.models.OnDemandServingMode.return_value = MagicMock()
+    fake_oci.generative_ai_inference.models.ChatDetails.return_value = MagicMock()
+    fake_oci.generative_ai_inference.models.SystemMessage.return_value = MagicMock()
+    fake_oci.generative_ai_inference.models.UserMessage.return_value = MagicMock()
+    fake_oci.generative_ai_inference.models.AssistantMessage.return_value = MagicMock()
+    fake_oci.exceptions.ServiceError = Exception
+    fake_oci.exceptions.ClientError = Exception
+    monkeypatch.setattr("aictx.llm.oci_genai._require_oci_sdk", lambda: fake_oci)
+    return fake_oci
 
 
 def test_model_provider_defaults_to_dry_run_and_blocks_oci_without_opt_in() -> None:
@@ -57,20 +81,23 @@ def test_provider_dry_run_behavior_is_deterministic() -> None:
     assert provider.metadata()["provider"] == "dry_run"
 
 
-def test_provider_creation_allows_guarded_oci_stub_with_config() -> None:
-    provider = create_model_provider(
-        LLMConfig(provider="oci_genai", model="cohere.command", compartment_id="ocid1.compartment"),
-        allow_ai=True,
-    )
-
-    assert isinstance(provider, OCIGenAIProvider)
-    with pytest.raises(NotImplementedError, match="not implemented"):
-        provider.chat(ChatRequest(run_id="run-1", purpose="unit"))
+def test_provider_missing_oci_sdk_fails_before_runtime(monkeypatch: pytest.MonkeyPatch) -> None:
+    with pytest.raises(ConfigError, match="OCI SDK not installed"):
+        create_model_provider(LLMConfig(provider="oci_genai", model="test"), allow_ai=True)
 
 
-def test_provider_missing_oci_compartment_fails_before_runtime() -> None:
+def test_provider_creation_validates_model_id_before_sdk(monkeypatch: pytest.MonkeyPatch) -> None:
+    _mock_oci_sdk(monkeypatch)
+    with pytest.raises(ConfigError, match="model"):
+        create_model_provider(
+            LLMConfig(provider="oci_genai", compartment_id="ocid1.comp"), allow_ai=True
+        )
+
+
+def test_provider_creation_validates_compartment_id(monkeypatch: pytest.MonkeyPatch) -> None:
+    _mock_oci_sdk(monkeypatch)
     with pytest.raises(ConfigError, match="compartment_id"):
-        create_model_provider(LLMConfig(provider="oci_genai"), allow_ai=True)
+        create_model_provider(LLMConfig(provider="oci_genai", model="test"), allow_ai=True)
 
 
 def test_provider_unsupported_name_fails_clearly() -> None:
@@ -84,6 +111,35 @@ def test_oci_doctor_reports_missing_local_prerequisites(tmp_path: Path) -> None:
     assert report.config_file_exists is False
     assert report.ready is False
     assert str(tmp_path / "missing-config") in report.missing
+
+
+def test_oci_doctor_reports_ready_when_all_present(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    fake_spec = importlib.util.spec_from_loader("oci", loader=None)
+    monkeypatch.setattr(
+        importlib.util, "find_spec", lambda name: fake_spec if name == "oci" else None
+    )
+    config_path = tmp_path / "oci_config"
+    config_path.write_text("[DEFAULT]\ncompartment_id=ocid1.compartment\n", encoding="utf-8")
+    report = run_oci_doctor(
+        config_file=config_path,
+        model_id="cohere.command",
+        compartment_id="ocid1.compartment",
+    )
+    assert report.sdk_available is True
+    assert report.config_file_exists is True
+    assert report.profile_exists is True
+    assert report.compartment_id_present is True
+    assert report.model_id_present is True
+    assert report.ready is True
+    assert not report.missing
+
+
+def test_oci_doctor_reports_missing_model_id(tmp_path: Path) -> None:
+    report = run_oci_doctor(config_file=tmp_path / "missing-config")
+    assert report.model_id_present is False
+    assert "model_id" in report.missing
 
 
 def test_apply_patch_validates_then_applies_git_patch() -> None:
@@ -364,3 +420,70 @@ def test_clean_keep_runs_is_dry_run_until_confirmed() -> None:
     assert apply_result.exit_code == 0, apply_result.output
     assert not (runs_dir / "001").exists()
     assert (runs_dir / "002").exists()
+
+
+def test_run_with_oci_provider_blocks_without_allow_ai() -> None:
+    repo = create_git_repo(
+        {
+            "README.md": "# Test repo\n",
+            "src/main.py": "print('ok')\n",
+        }
+    )
+    config_dir = repo / ".aictx"
+    config_dir.mkdir(parents=True, exist_ok=True)
+    (config_dir / "config.toml").write_text(
+        """
+[llm]
+provider = "oci_genai"
+model = "cohere.command"
+compartment_id = "ocid1.compartment"
+""",
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "run",
+            "--project",
+            str(repo),
+            "--mode",
+            "setup-context",
+            "--execution",
+            "local",
+            "--scope",
+            "full",
+            "--write",
+            "patch",
+        ],
+    )
+    assert result.exit_code != 0
+    assert "--allow-ai" in result.output
+
+
+def test_run_dry_run_ignores_oci_config() -> None:
+    repo = create_git_repo(
+        {
+            "README.md": "# Test repo\n",
+            "src/main.py": "print('ok')\n",
+        }
+    )
+    result = runner.invoke(
+        app,
+        [
+            "run",
+            "--project",
+            str(repo),
+            "--mode",
+            "setup-context",
+            "--execution",
+            "local",
+            "--scope",
+            "full",
+            "--write",
+            "patch",
+            "--provider",
+            "dry_run",
+        ],
+    )
+    assert result.exit_code == 0, result.output

@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from aictx.config import LLMConfig
 from aictx.errors import ConfigError
 from aictx.llm.base import ModelProvider
 from aictx.llm.dry_run import DryRunProvider
-from aictx.llm.oci_genai import OCIGenAIProvider
 
 
 def create_model_provider(config: LLMConfig, allow_ai: bool = False) -> ModelProvider:
@@ -22,8 +23,14 @@ def create_model_provider(config: LLMConfig, allow_ai: bool = False) -> ModelPro
         raise ConfigError(f"Provider '{config.provider}' requires explicit --allow-ai.")
 
     if config.provider == "oci_genai":
-        if not config.compartment_id:
-            raise ConfigError("OCI GenAI provider requires llm.compartment_id.")
-        return OCIGenAIProvider(compartment_id=config.compartment_id, model_id=config.model)
+        from aictx.llm.oci_genai import OCIGenAIProvider
+
+        return OCIGenAIProvider(
+            compartment_id=config.compartment_id,
+            model_id=config.model,
+            profile=config.profile or "DEFAULT",
+            config_file=Path(config.config_file) if config.config_file else None,
+            temperature=config.temperature,
+        )
 
     raise ConfigError(f"Unsupported provider: {config.provider}")

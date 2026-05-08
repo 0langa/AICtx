@@ -19,6 +19,7 @@ class OCIReadinessReport(BaseModel):
     config_file_exists: bool
     profile_exists: bool
     compartment_id_present: bool
+    model_id_present: bool
     ready: bool
     missing: list[str] = Field(default_factory=list)
 
@@ -26,13 +27,16 @@ class OCIReadinessReport(BaseModel):
 def run_oci_doctor(
     profile: str = "DEFAULT",
     config_file: Path | None = None,
+    model_id: str | None = None,
+    compartment_id: str | None = None,
 ) -> OCIReadinessReport:
     """Check local OCI SDK/config readiness without network calls."""
     resolved_config = config_file or (Path.home() / ".oci" / "config")
     sdk_available = importlib.util.find_spec("oci") is not None
     config_exists = resolved_config.exists()
     profile_exists = False
-    compartment_id_present = bool(os.getenv("OCI_COMPARTMENT_ID"))
+    compartment_id_present = bool(compartment_id) or bool(os.getenv("OCI_COMPARTMENT_ID"))
+    model_id_present = bool(model_id) and model_id != "dry_run"
 
     if config_exists:
         parser = configparser.ConfigParser()
@@ -52,6 +56,8 @@ def run_oci_doctor(
         missing.append(f"OCI profile {profile}")
     if not compartment_id_present:
         missing.append("OCI_COMPARTMENT_ID or compartment_id")
+    if not model_id_present:
+        missing.append("model_id")
 
     return OCIReadinessReport(
         profile=profile,
@@ -60,6 +66,7 @@ def run_oci_doctor(
         config_file_exists=config_exists,
         profile_exists=profile_exists,
         compartment_id_present=compartment_id_present,
+        model_id_present=model_id_present,
         ready=not missing,
         missing=missing,
     )

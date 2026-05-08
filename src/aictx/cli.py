@@ -333,6 +333,7 @@ app.add_typer(oci_app, name="oci")
 
 @oci_app.command("doctor")
 def oci_doctor(
+    project: str = typer.Option(".", "--project", "-p", help="Path to the target repository."),
     profile: str = typer.Option("DEFAULT", "--profile", help="OCI profile name."),
     config_file: Annotated[
         Path | None, typer.Option("--config-file", help="OCI config path.")
@@ -340,9 +341,18 @@ def oci_doctor(
     json_output: bool = typer.Option(False, "--json", help="Emit structured JSON."),
 ) -> None:
     """Check local OCI readiness without network calls."""
+    from aictx.config import load_config
     from aictx.oci.doctor import run_oci_doctor
 
-    report = run_oci_doctor(profile=profile, config_file=config_file)
+    repo_root = _resolve_repo_root(project)
+    config = load_config(repo_root)
+
+    report = run_oci_doctor(
+        profile=profile,
+        config_file=config_file,
+        model_id=config.llm.model,
+        compartment_id=config.llm.compartment_id,
+    )
     if json_output:
         console.print_json(report.model_dump_json())
     else:
@@ -351,6 +361,7 @@ def oci_doctor(
         console.print(f"config: {report.config_file_exists} ({report.config_file})")
         console.print(f"profile: {report.profile_exists} ({report.profile})")
         console.print(f"compartment: {report.compartment_id_present}")
+        console.print(f"model: {report.model_id_present}")
         console.print(f"ready: {report.ready}")
         if report.missing:
             console.print("missing:")

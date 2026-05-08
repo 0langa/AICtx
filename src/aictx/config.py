@@ -44,6 +44,8 @@ class LLMConfig(BaseModel):
     model: str = Field(default="dry_run")
     temperature: float = Field(default=0.0)
     compartment_id: str | None = Field(default=None)
+    profile: str | None = Field(default=None)
+    config_file: str | None = Field(default=None)
 
 
 class AictxConfig(BaseModel):

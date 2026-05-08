@@ -82,7 +82,7 @@ Trust code over docs. Read `docs/AIprojectcontext/ai-index.md` first. Do not exp
 2. Improve deterministic fact quality/source tracing.
 3. Improve deterministic fact quality/source tracing.
 4. Convert public-doc review into source-grounded doc patching.
-5. Implement minimal optional OCI GenAI local provider smoke test behind current opt-in seam.
+5. ~~Implement minimal optional OCI GenAI local provider~~ DONE — local OCI provider behind `--allow-ai` with lazy imports, config validation, and clear error messages.
 6. Add CI/release hardening after local contracts stay stable.
 
 ## Immediate tasks

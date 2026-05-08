@@ -40,7 +40,6 @@ Implemented:
 
 Still stubbed/not implemented:
 
-- `oci_genai` provider runtime
 - semantic freshness verification
 - remote OCI execution
 - Object Storage / remote workers / Terraform / hosted services
@@ -83,7 +82,7 @@ uv run aictx oci doctor --json
 | `status` | implemented | scan + verify summary for automation |
 | `clean` | implemented | safe local run cleanup; dry-run until `--yes`; OCI cleanup still unsupported |
 | `public-docs update` | implemented | deterministic review/patch for mapped doc impacts; manual prose edits still required |
-| `oci doctor` | implemented | local SDK/config/compartment readiness check; no network calls |
+| `oci doctor` | implemented | local SDK/config/compartment/model readiness check; loads repo config; no network calls |
 
 ## What `run --write apply` writes
 
@@ -130,7 +129,9 @@ uv run mypy src
 - model-transfer preflight excludes ignored, binary, generated, `.git`, `.aictx/runs`, cache/build, oversize, and secret-bearing files
 - configured token/file budgets fail before provider creation or calls
 - contradiction/coverage outputs are deterministic placeholders only
-- default provider: `dry_run`; `oci_genai` requires `--allow-ai` and `llm.compartment_id`, but runtime remains stubbed and makes no network calls
+- default provider: `dry_run`; `oci_genai` requires `--allow-ai`, SDK, config, `llm.compartment_id`, and `llm.model`
+- remote OCI execution NOT implemented; Object Storage NOT implemented
+- OCI provider is local only; no autonomous apply behavior
 
 ## License
 

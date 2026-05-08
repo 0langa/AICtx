@@ -73,6 +73,7 @@ def run_local_context_pipeline(
         selected_files=cast(list[str], typed_plan["selected_files"]),
     )
 
+    _print_transfer_summary(transfer_plan)
     provider = create_model_provider(config.llm, allow_ai=allow_ai)
     runs_dir = repo_root / ".aictx" / "runs" / run_id
     out_dir = runs_dir / "out"
@@ -325,3 +326,16 @@ def _json_dump(payload: Any) -> str:
     import json
 
     return json.dumps(payload, indent=2, sort_keys=True) + "\n"
+
+
+def _print_transfer_summary(transfer_plan: Any) -> None:
+    from rich.console import Console
+
+    console = Console()
+    console.print("[bold blue]transfer plan[/bold blue]")
+    console.print(f"provider: {transfer_plan.provider}, model: {transfer_plan.model}")
+    console.print(f"files: {len(transfer_plan.selected_files)}")
+    console.print(f"estimated input tokens: {transfer_plan.estimated_input_tokens}")
+    console.print(f"estimated output tokens: {transfer_plan.estimated_output_tokens}")
+    console.print(f"max input: {transfer_plan.max_input_tokens_per_run}")
+    console.print(f"max output: {transfer_plan.max_output_tokens_per_run}")
