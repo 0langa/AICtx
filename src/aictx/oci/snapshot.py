@@ -238,10 +238,7 @@ def verify_snapshot(snapshot_path: Path) -> dict[str, object]:
 
 def _has_forbidden_path(rel_path: str, forbidden: set[str]) -> bool:
     path_lower = rel_path.lower()
-    for substr in forbidden:
-        if substr in path_lower:
-            return True
-    return False
+    return any(substr in path_lower for substr in forbidden)
 
 
 def _scan_snapshot_secrets(repo_root: Path, included_files: list[tuple[str, Path]]) -> None:
@@ -260,7 +257,7 @@ def _scan_snapshot_secrets(repo_root: Path, included_files: list[tuple[str, Path
 
     if offending:
         raise SecretScanError(
-            f"Secret scan blocked snapshot creation. Offending files:\n"
+            "Secret scan blocked snapshot creation. Offending files:\n"
             + "\n".join(f"  - {p}" for p in offending)
             + "\nReview and remove secrets, then retry. "
             "Use --skip-secret-scan to override (not recommended)."

@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class OCIConfig(BaseModel):
@@ -66,7 +66,7 @@ class OCIConfig(BaseModel):
         "us-sanjose-1",
     )
 
-    def validate(self) -> list[str]:
+    def validate_settings(self) -> list[str]:
         """Return list of validation errors.  Empty means valid."""
         errors: list[str] = []
         if self.enabled:
@@ -102,9 +102,11 @@ class OCIConfig(BaseModel):
         import oci
         config_path = self.config_file if self.config_file else str(Path.home() / ".oci" / "config")
         try:
-            return oci.config.from_file(
+            return dict(
+                oci.config.from_file(
                 file_location=config_path,
                 profile_name=self.profile,
+                )
             )
         except Exception as exc:
             raise RuntimeError(f"Failed to load OCI config from {config_path}: {exc}") from exc

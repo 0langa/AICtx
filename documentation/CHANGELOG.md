@@ -41,6 +41,9 @@
 - repo-relative fact source paths with known lock section source hashes
 - strict generated-context structure checks in `verify --strict`
 - preservation of unmanaged second-level sections in generated `AGENTS.md`
+- deterministic OCI snapshot/bundle creation, verification, upload/download, cleanup, and remote job orchestration
+- optional hook scripts plus verifier/release GitHub workflows
+- run-report timing/entropy instrumentation and hostile-repo fixtures
 
 ### Current limitations
 
@@ -48,9 +51,7 @@
 - `verify` remains deterministic and does not perform semantic freshness checks
 - `init` does not generate context shards
 - contradiction/coverage reports are placeholder JSON
-- `compressor.py` pass-through stub
-- `verify/reports.py` one-line placeholder
+- `compressor.py` deterministic de-dup/truncate only; not semantic compression
 - public-doc updates are review artifacts only; manual content edits required
-- OCI object storage / remote job / cleanup stubs
 - `llm/oci_genai.py` runtime stub; only `dry_run` calls succeed
-- no real OCI/AI calls, Object Storage, remote workers, Terraform, or hosted services
+- no live OCI tenancy proof in CI and no full cross-platform install matrix proof yet

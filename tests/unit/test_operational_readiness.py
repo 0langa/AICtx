@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import zipfile
 from pathlib import Path
 from typing import Any
-import zipfile
 
 import pytest
 from typer.testing import CliRunner
@@ -18,15 +18,18 @@ from aictx.io.patches import apply_patch, make_unified_diff
 from aictx.llm.base import ChatRequest
 from aictx.llm.dry_run import DryRunProvider
 from aictx.llm.providers import create_model_provider
-from aictx.oci.doctor import run_oci_doctor
 from aictx.oci.bundle import create_result_bundle, verify_bundle
+from aictx.oci.doctor import run_oci_doctor
 from aictx.oci.snapshot import create_snapshot, verify_snapshot
 from aictx.scan.scanner import scan_repository
 from aictx.verify.verifier import verify_detailed
 from tests.fixtures.git_repos import (
     create_binary_heavy_fixture,
+    create_broken_docs_fixture,
     create_docs_heavy_fixture,
+    create_generated_output_heavy_fixture,
     create_git_repo,
+    create_large_dependency_fixture,
     create_monorepo_fixture,
     create_secret_heavy_fixture,
 )
@@ -295,6 +298,7 @@ def test_public_docs_update_generates_review_patch_for_changed_sources() -> None
             "full",
             "--write",
             "apply",
+            "--allow-dirty",
         ],
     )
     assert run_result.exit_code == 0, run_result.output
@@ -351,6 +355,7 @@ def test_public_docs_update_full_scope_generates_review_for_mapped_docs() -> Non
             "full",
             "--write",
             "apply",
+            "--allow-dirty",
         ],
     )
     assert run_result.exit_code == 0, run_result.output
@@ -644,6 +649,9 @@ def test_run_report_includes_performance_and_entropy_metrics() -> None:
         create_docs_heavy_fixture,
         create_binary_heavy_fixture,
         create_secret_heavy_fixture,
+        create_broken_docs_fixture,
+        create_generated_output_heavy_fixture,
+        create_large_dependency_fixture,
     ],
 )
 def test_integration_style_fixtures_support_full_run(factory: Any) -> None:
@@ -673,11 +681,21 @@ def test_verify_json_output_schema_is_machine_readable() -> None:
     assert result.exit_code == 1
     payload = json.loads(result.stdout)
     assert set(payload) >= {
-        "result",
+        "status",
+        "stale_sections",
+        "docs_impacts",
         "missing_sources",
-        "stale_sources",
-        "missing_generated",
-        "generated_mismatches",
-        "section_errors",
-        "public_docs_impacts",
+        "warnings",
+        "errors",
     }
+
+
+def test_verify_json_reports_pass_status_for_initialized_repo() -> None:
+    repo = create_git_repo({"README.md": "# Test\n", "src/main.py": "print('ok')\n"})
+    init_result = runner.invoke(app, ["init", "--project", str(repo)])
+    assert init_result.exit_code == 0, init_result.output
+    verify_result = runner.invoke(app, ["verify", "--project", str(repo), "--strict", "--json"])
+    assert verify_result.exit_code == 0, verify_result.output
+    payload = json.loads(verify_result.stdout)
+    assert payload["status"] == "PASS"
+    assert payload["errors"] == []

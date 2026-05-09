@@ -49,6 +49,25 @@ class VerificationReport(BaseModel):
     public_docs_impacts: dict[str, list[str]] = Field(default_factory=dict)
     next_command: str | None = None
 
+    def to_machine_dict(self) -> dict[str, object]:
+        """Return stable machine-readable schema for CLI automation."""
+        errors: list[str] = []
+        errors.extend(f"missing source: {path}" for path in self.missing_sources)
+        errors.extend(f"stale source: {path}" for path in self.stale_sources)
+        errors.extend(f"missing generated: {path}" for path in self.missing_generated)
+        errors.extend(f"generated mismatch: {path}" for path in self.generated_mismatches)
+        errors.extend(self.section_errors)
+        warnings = ["public docs impacted"] if self.public_docs_impacts else []
+        return {
+            "status": self.result,
+            "stale_sections": self.section_errors,
+            "docs_impacts": self.public_docs_impacts,
+            "missing_sources": self.missing_sources,
+            "warnings": warnings,
+            "errors": errors,
+            "next_command": self.next_command,
+        }
+
 
 def verify(repo_root: Path, strict: bool = False) -> VerificationResult:
     """Run verification against the repository."""

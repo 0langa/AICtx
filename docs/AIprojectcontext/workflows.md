@@ -1,8 +1,10 @@
 # Workflows
 
 ## Build and Test Signals
-- build_systems: pyproject.toml
+- build_systems: aictx-verify.yml, pyproject.toml, release-validation.yml
 - test_system: pytest
+- Configuration or workflow manifest selected: .github/workflows/aictx-verify.yml [source: .github/workflows/aictx-verify.yml]
+- Configuration or workflow manifest selected: .github/workflows/release-validation.yml [source: .github/workflows/release-validation.yml]
 - Configuration or workflow manifest selected: pyproject.toml [source: pyproject.toml]
 - Test coverage artifact present: tests/conftest.py [source: tests/conftest.py]
 - Test coverage artifact present: tests/fixtures/git_repos.py [source: tests/fixtures/git_repos.py]

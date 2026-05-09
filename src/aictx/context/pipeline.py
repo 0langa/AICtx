@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import time
 from datetime import UTC, datetime
 from pathlib import Path
@@ -24,8 +23,7 @@ from aictx.io.patches import make_unified_diff
 from aictx.llm.providers import create_model_provider
 from aictx.llm.transfer import prepare_model_transfer
 from aictx.models.inventory import RepositoryInventory
-from aictx.models.run_report import ContextEntropyMetrics
-from aictx.models.run_report import RunReport
+from aictx.models.run_report import ContextEntropyMetrics, RunReport, TimingMetrics
 from aictx.scan.scanner import scan_repository
 from aictx.verify.verifier import determine_changed_source_paths
 
@@ -184,13 +182,13 @@ def run_local_context_pipeline(
         output_dir=str(out_dir),
         patch_path=str(patch_path),
         patch_size_bytes=patch_size_bytes,
-        timing={
-            "scan_duration_ms": scan_duration_ms,
-            "plan_duration_ms": plan_duration_ms,
-            "generation_duration_ms": generation_duration_ms,
-            "verify_duration_ms": verify_duration_ms,
-            "total_duration_ms": (time.perf_counter() - total_started) * 1000,
-        },
+        timing=TimingMetrics(
+            scan_duration_ms=scan_duration_ms,
+            plan_duration_ms=plan_duration_ms,
+            generation_duration_ms=generation_duration_ms,
+            verify_duration_ms=verify_duration_ms,
+            total_duration_ms=(time.perf_counter() - total_started) * 1000,
+        ),
         entropy=entropy,
     )
     safe_write(runs_dir / "run-report.json", report.model_dump_json(indent=2) + "\n")

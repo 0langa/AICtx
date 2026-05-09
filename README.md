@@ -4,7 +4,7 @@ Local-first CLI for low-token AI-agent repo context.
 
 ## Status
 
-Early alpha.
+Production-hardening in progress.
 
 Implemented:
 
@@ -18,6 +18,10 @@ Implemented:
 - `public-docs update --scope changed|full --write patch|apply`
 - `clean --run-id <id>` / `clean --keep-runs <n> --yes`
 - `oci doctor --json`
+- `snapshot create` / `snapshot verify`
+- `oci capabilities`
+- `oci upload-snapshot` / `oci download-result`
+- `oci estimate`
 - deterministic scanner
 - baseline lockfile bootstrap
 - deterministic verifier MVP
@@ -38,12 +42,12 @@ Implemented:
 - dirty-worktree apply gate for unplanned paths; context-source/output paths are allowed
 - tests + Ruff + mypy + pytest setup
 
-Still stubbed/not implemented:
+Still partial/not implemented:
 
 - semantic freshness verification
-- remote OCI execution
-- Object Storage / remote workers / Terraform / hosted services
-- CI workflow generation
+- fully proven live OCI execution in automation
+- automated public-doc prose rewriting
+- full install matrix proof artifacts
 
 ## Install
 
@@ -69,6 +73,17 @@ uv run aictx run --project . --mode setup-context --execution local --scope full
 uv run aictx run --project . --mode setup-context --execution local --scope full --write apply
 uv run aictx public-docs update --project . --scope changed --write patch
 uv run aictx oci doctor --json
+uv run aictx snapshot create --project .
+uv run aictx oci capabilities --project .
+uv run aictx oci estimate --project .
+```
+
+## Packaging
+
+```bash
+uv build
+pipx install .
+pip install -e ".[oci]"
 ```
 
 ## Command surface
@@ -80,9 +95,13 @@ uv run aictx oci doctor --json
 | `run` | implemented | local Phase 1 only; `setup-context`; `scope=full|changed`; patch/apply; budget + transfer preflight |
 | `verify` | implemented | hash verification plus strict generated-file/source-link checks; JSON report |
 | `status` | implemented | scan + verify summary for automation |
-| `clean` | implemented | safe local run cleanup; dry-run until `--yes`; OCI cleanup still unsupported |
+| `clean` | implemented | safe local/OCI cleanup; dry-run until `--yes` |
 | `public-docs update` | implemented | deterministic review/patch for mapped doc impacts; manual prose edits still required |
-| `oci doctor` | implemented | local SDK/config/compartment/model readiness check; loads repo config; no network calls |
+| `snapshot create` / `snapshot verify` | implemented | deterministic snapshot packaging + integrity verification |
+| `oci doctor` | implemented | local SDK/config/compartment/model readiness check |
+| `oci capabilities` | implemented | validates object storage/job prerequisites |
+| `oci upload-snapshot` / `oci download-result` | implemented | OCI artifact exchange + bundle verify/unpack |
+| `oci estimate` | implemented | remote runtime/cost estimate with budget gate |
 
 ## What `run --write apply` writes
 
@@ -128,10 +147,35 @@ uv run mypy src
 - generated `docs/AIprojectcontext/**` and generated `AGENTS.md` are not fed back into context selection
 - model-transfer preflight excludes ignored, binary, generated, `.git`, `.aictx/runs`, cache/build, oversize, and secret-bearing files
 - configured token/file budgets fail before provider creation or calls
+- snapshot generation is deterministic and bounded by hard caps
+- OCI runtime budgets gate snapshot size/runtime/tokens before submit
 - contradiction/coverage outputs are deterministic placeholders only
 - default provider: `dry_run`; `oci_genai` requires `--allow-ai`, SDK, config, `llm.compartment_id`, and `llm.model`
-- remote OCI execution NOT implemented; Object Storage NOT implemented
-- OCI provider is local only; no autonomous apply behavior
+- OCI remote execution remains patch-first; no autonomous apply/commit/push behavior
+
+## Verification philosophy
+
+- fail closed on uncertain correctness or safety
+- hash/source-trace verification is primary; LLM semantics are supplemental only
+- public-doc updates stay review-first
+- OCI wraps transport/runtime only; local pipeline remains canonical
+
+## OCI workflow
+
+1. `snapshot create`
+2. `oci upload-snapshot`
+3. `run --execution oci-job --write patch`
+4. `oci download-result`
+5. review `aictx.patch`
+6. optional local apply
+
+## Cost-control model
+
+- configured token caps
+- snapshot size caps before upload
+- remote runtime caps before submission
+- bounded retry counts
+- explicit cleanup confirmation gates
 
 ## License
 

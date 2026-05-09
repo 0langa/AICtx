@@ -142,7 +142,7 @@ def test_verify_cli_can_emit_json() -> None:
 
     assert result.exit_code != 0
     payload = json.loads(result.output)
-    assert payload["result"] == "FAIL_LOCK_MISMATCH"
+    assert payload["status"] == "FAIL_LOCK_MISMATCH"
     assert payload["next_command"] == "aictx init --project ."
 
 

@@ -26,12 +26,12 @@ logger = logging.getLogger("aictx.oci.worker")
 
 
 def run_remote_pipeline(
-    config: dict,
+    config: dict[str, object],
     run_id: str,
     snapshot_object: str | None = None,
     bucket: str | None = None,
     budget: RuntimeBudget | None = None,
-) -> dict:
+) -> dict[str, object]:
     """Execute the aictx pipeline in a remote OCI context.
 
     Flow:
@@ -112,12 +112,12 @@ def run_remote_pipeline(
     return result
 
 
-def _load_oci_sdk_config(config: dict) -> dict:
+def _load_oci_sdk_config(config: dict[str, object]) -> dict[str, object]:
     """Load OCI SDK config dict from environment or config."""
     import oci
     config_file = os.getenv("OCI_CONFIG_FILE", str(Path.home() / ".oci" / "config"))
     profile = os.getenv("OCI_CONFIG_PROFILE", "DEFAULT")
-    return oci.config.from_file(config_file, profile)
+    return dict(oci.config.from_file(config_file, profile))
 
 
 def _extract_snapshot(snapshot_path: Path, repo_root: Path) -> None:

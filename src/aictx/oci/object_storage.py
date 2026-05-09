@@ -55,7 +55,7 @@ def _retry_upload(client: Any, namespace: str, bucket: str, object_name: str, fi
     for attempt in range(1, max_retries + 1):
         try:
             with file_path.open("rb") as fh:
-                response = client.put_object(
+                client.put_object(
                     namespace,
                     bucket,
                     object_name,
@@ -245,7 +245,7 @@ def _multipart_upload(
     max_retries: int,
 ) -> str:
     """Upload a large file using OCI multipart upload."""
-    oci = _require_oci()
+    _require_oci()
     try:
         upload_id = _create_multipart_upload(client, namespace, bucket, object_name)
         parts: list[dict[str, Any]] = []

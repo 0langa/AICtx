@@ -89,3 +89,36 @@ def create_secret_heavy_fixture() -> Path:
             "docs/ops.md": "rotate credentials\n",
         }
     )
+
+
+def create_broken_docs_fixture() -> Path:
+    return create_git_repo(
+        {
+            "README.md": "# Broken Docs\n",
+            "documentation/README.md": "# Docs\n\nBroken link: [missing](missing.md)\n",
+            "src/app.py": "print('ok')\n",
+        }
+    )
+
+
+def create_generated_output_heavy_fixture() -> Path:
+    return create_git_repo(
+        {
+            "README.md": "# Generated Output Heavy\n",
+            "src/app.py": "print('ok')\n",
+            "dist/bundle.js": "console.log('bundle');\n",
+            "build/output.js": "console.log('build');\n",
+            ".aictx/runs/old/run-report.json": '{"status":"success"}\n',
+        }
+    )
+
+
+def create_large_dependency_fixture() -> Path:
+    files = {
+        "README.md": "# Large Dependency Fixture\n",
+        "src/app.py": "print('ok')\n",
+        "package.json": '{"name":"fixture"}\n',
+    }
+    for idx in range(20):
+        files[f"vendor/lib{idx}.txt"] = f"dependency-{idx}\n"
+    return create_git_repo(files)

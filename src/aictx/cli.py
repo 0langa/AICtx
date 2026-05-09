@@ -6,7 +6,7 @@ import json
 import shutil
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, cast
 
 import typer
 from rich.console import Console
@@ -234,7 +234,7 @@ def verify(
 
     report = verify_detailed(repo_root, strict=strict)
     if json_output:
-        console.print_json(report.model_dump_json())
+        console.print_json(json.dumps(report.to_machine_dict(), indent=2, sort_keys=True))
     elif report.result == "PASS":
         console.print("[bold green]PASS[/bold green]")
     else:
@@ -336,9 +336,9 @@ app.add_typer(snapshot_app, name="snapshot")
 
 @snapshot_app.command("create")
 def snapshot_create(
-    project: str = typer.Option(".", "--project", "-p", help="Path to the target repository."),
-    output_dir: Path | None = typer.Option(None, "--output", "-o", help="Output directory."),
-    skip_secret_scan: bool = typer.Option(False, "--skip-secret-scan", help="Skip secret scanning."),
+    project: Annotated[str, typer.Option("--project", "-p", help="Path to the target repository.")] = ".",
+    output_dir: Annotated[Path | None, typer.Option("--output", "-o", help="Output directory.")] = None,
+    skip_secret_scan: Annotated[bool, typer.Option("--skip-secret-scan", help="Skip secret scanning.")] = False,
 ) -> None:
     """Create a deterministic, sanitised snapshot of the repository."""
     from aictx.oci.snapshot import create_snapshot
@@ -363,7 +363,7 @@ def snapshot_create(
 
 @snapshot_app.command("verify")
 def snapshot_verify(
-    snapshot_path: Path = typer.Argument(..., help="Path to snapshot zip."),
+    snapshot_path: Annotated[Path, typer.Argument(help="Path to snapshot zip.")],
 ) -> None:
     """Verify a snapshot's integrity and safety."""
     from aictx.oci.snapshot import verify_snapshot
@@ -374,7 +374,7 @@ def snapshot_verify(
         console.print(f"files: {result.get('file_count', 0)}")
     else:
         console.print("[bold red]Snapshot invalid[/bold red]")
-        errors = result.get("errors", [result.get("error", "unknown")])
+        errors = cast(list[str], result.get("errors", [result.get("error", "unknown")]))
         for err in errors:
             console.print(f"  - {err}")
         raise typer.Exit(code=1)
@@ -456,7 +456,7 @@ def oci_capabilities(
             console.print(f"  - {item}")
         raise typer.Exit(code=1)
 
-    caps: dict[str, bool] = {
+    caps: dict[str, bool | str] = {
         "object_storage": doctor.auth_ok,
         "bucket_access": doctor.bucket_access,
         "job_execution": False,
@@ -506,19 +506,23 @@ def oci_capabilities(
                 continue
             icon = "[green]✓[/green]" if ok else "[red]✗[/red]"
             console.print(f"  {icon} {cap}")
-    raise typer.Exit(code=0 if all(v for k, v in caps.items() if k != "error") else 1)
+    raise typer.Exit(code=0 if all(bool(v) for k, v in caps.items() if k != "error") else 1)
 
 
 @oci_app.command("upload-snapshot")
 def oci_upload_snapshot(
-    project: str = typer.Option(".", "--project", "-p", help="Path to the target repository."),
-    run_id: str = typer.Option(..., "--run-id", help="Run ID for object path."),
-    snapshot_path: Path = typer.Option(..., "--snapshot-path", help="Path to snapshot zip."),
-    max_retries: int = typer.Option(3, "--max-retries", help="Upload retry count."),
+    project: Annotated[str, typer.Option("--project", "-p", help="Path to the target repository.")] = ".",
+    run_id: Annotated[str | None, typer.Option("--run-id", help="Run ID for object path.")] = None,
+    snapshot_path: Annotated[Path | None, typer.Option("--snapshot-path", help="Path to snapshot zip.")] = None,
+    max_retries: Annotated[int, typer.Option("--max-retries", help="Upload retry count.")] = 3,
 ) -> None:
     """Upload a snapshot zip to OCI Object Storage."""
     from aictx.config import load_config
     from aictx.oci.object_storage import upload_snapshot as _upload
+
+    if run_id is None or snapshot_path is None:
+        console.print("[bold red]--run-id and --snapshot-path are required[/bold red]")
+        raise typer.Exit(code=1)
 
     repo_root = _resolve_repo_root(project)
     config = load_config(repo_root)
@@ -533,15 +537,19 @@ def oci_upload_snapshot(
 
 @oci_app.command("download-result")
 def oci_download_result(
-    project: str = typer.Option(".", "--project", "-p", help="Path to the target repository."),
-    run_id: str = typer.Option(..., "--run-id", help="Run ID to download results for."),
-    dest: Path = typer.Option(".", "--dest", help="Destination directory."),
-    max_retries: int = typer.Option(3, "--max-retries", help="Download retry count."),
+    project: Annotated[str, typer.Option("--project", "-p", help="Path to the target repository.")] = ".",
+    run_id: Annotated[str | None, typer.Option("--run-id", help="Run ID to download results for.")] = None,
+    dest: Annotated[Path, typer.Option("--dest", help="Destination directory.")] = Path("."),
+    max_retries: Annotated[int, typer.Option("--max-retries", help="Download retry count.")] = 3,
 ) -> None:
     """Download a result bundle from OCI Object Storage."""
     from aictx.config import load_config
     from aictx.oci.bundle import unpack_result_bundle, verify_bundle
     from aictx.oci.object_storage import download_result as _download
+
+    if run_id is None:
+        console.print("[bold red]--run-id is required[/bold red]")
+        raise typer.Exit(code=1)
 
     repo_root = _resolve_repo_root(project)
     config = load_config(repo_root)
@@ -561,8 +569,8 @@ def oci_download_result(
 
 @oci_app.command("estimate")
 def oci_estimate(
-    project: str = typer.Option(".", "--project", "-p", help="Path to the target repository."),
-    snapshot_path: Path | None = typer.Option(None, "--snapshot-path", help="Existing snapshot to estimate."),
+    project: Annotated[str, typer.Option("--project", "-p", help="Path to the target repository.")] = ".",
+    snapshot_path: Annotated[Path | None, typer.Option("--snapshot-path", help="Existing snapshot to estimate.")] = None,
 ) -> None:
     """Estimate cost and resource usage for a remote OCI run."""
     from aictx.config import load_config
@@ -678,7 +686,7 @@ def _handle_oci_remote_run(
         raise typer.Exit(code=1)
 
     # Validate OCI config
-    errors = config.oci.validate() + config.oci.validate_runtime_access()
+    errors = config.oci.validate_settings() + config.oci.validate_runtime_access()
     if errors:
         for err in errors:
             console.print(f"[bold red]OCI config error:[/bold red] {err}")

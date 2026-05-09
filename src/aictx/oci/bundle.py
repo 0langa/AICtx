@@ -8,18 +8,12 @@ A result bundle is a zip file produced by the remote worker containing:
 - logs/
 """
 
-from __future__ import annotations
-
+import hashlib
 import json
 import zipfile
-import hashlib
-from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 from aictx.errors import RemoteJobError
-from aictx.io.files import safe_write
-from aictx.verify.hashes import sha256_file, sha256_text
 
 RESULT_BUNDLE_FILENAME = "aictx-result.zip"
 
@@ -43,6 +37,8 @@ def create_result_bundle(
         "created_at": "2024-01-01T00:00:00+00:00",
         "files": {},
     }
+    files_manifest = bundle_manifest["files"]
+    assert isinstance(files_manifest, dict)
 
     with zipfile.ZipFile(
         bundle_path, "w", zipfile.ZIP_DEFLATED, compresslevel=6
@@ -50,18 +46,18 @@ def create_result_bundle(
         if patch_path and patch_path.is_file():
             data = patch_path.read_bytes()
             _writestr_deterministic(zf, "aictx.patch", data)
-            bundle_manifest["files"]["aictx.patch"] = hashlib.sha256(data).hexdigest()
+            files_manifest["aictx.patch"] = hashlib.sha256(data).hexdigest()
 
         if validation_report:
             report_bytes = validation_report.encode("utf-8")
             _writestr_deterministic(zf, "validation-report.md", report_bytes)
-            bundle_manifest["files"]["validation-report.md"] = hashlib.sha256(report_bytes).hexdigest()
+            files_manifest["validation-report.md"] = hashlib.sha256(report_bytes).hexdigest()
 
         if run_report:
             dump = json.dumps(run_report, indent=2, sort_keys=True)
             dump_bytes = dump.encode("utf-8")
             _writestr_deterministic(zf, "run-report.json", dump_bytes)
-            bundle_manifest["files"]["run-report.json"] = hashlib.sha256(dump_bytes).hexdigest()
+            files_manifest["run-report.json"] = hashlib.sha256(dump_bytes).hexdigest()
 
         if generated_dir and generated_dir.is_dir():
             for path in sorted(generated_dir.rglob("*")):
@@ -70,7 +66,7 @@ def create_result_bundle(
                 rel = f"generated/{path.relative_to(generated_dir).as_posix()}"
                 data = path.read_bytes()
                 _writestr_deterministic(zf, rel, data)
-                bundle_manifest["files"][rel] = hashlib.sha256(data).hexdigest()
+                files_manifest[rel] = hashlib.sha256(data).hexdigest()
 
         if logs_dir and logs_dir.is_dir():
             for path in sorted(logs_dir.rglob("*")):
@@ -79,7 +75,7 @@ def create_result_bundle(
                 rel = f"logs/{path.relative_to(logs_dir).as_posix()}"
                 data = path.read_bytes()
                 _writestr_deterministic(zf, rel, data)
-                bundle_manifest["files"][rel] = hashlib.sha256(data).hexdigest()
+                files_manifest[rel] = hashlib.sha256(data).hexdigest()
 
         # Write bundle manifest
         _writestr_deterministic(

@@ -121,4 +121,4 @@ def _validate_runtime(
             bucket_access = True
         return auth_ok, region_matches, bucket_access
     except Exception:
-        return False, False if region else True, False
+        return False, not region, False
