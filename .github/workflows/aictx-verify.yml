@@ -47,6 +47,7 @@ jobs:
           path: |
             docs/AIprojectcontext/validation-report.md
             verify-result.json
+            .aictx/runs/**/run-report.json
           retention-days: 7
           if-no-files-found: warn
 

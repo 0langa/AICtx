@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+import time
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Literal, cast
@@ -22,6 +24,7 @@ from aictx.io.patches import make_unified_diff
 from aictx.llm.providers import create_model_provider
 from aictx.llm.transfer import prepare_model_transfer
 from aictx.models.inventory import RepositoryInventory
+from aictx.models.run_report import ContextEntropyMetrics
 from aictx.models.run_report import RunReport
 from aictx.scan.scanner import scan_repository
 from aictx.verify.verifier import determine_changed_source_paths
@@ -38,12 +41,16 @@ def run_local_context_pipeline(
 ) -> RunReport:
     """Run the local Phase 1 context generation pipeline."""
     started_at = datetime.now(UTC)
+    total_started = time.perf_counter()
+    scan_started = time.perf_counter()
     inventory = scan_repository(repo_root)
+    scan_duration_ms = (time.perf_counter() - scan_started) * 1000
     existing_context_dir = repo_root / config.project.context_dir
     existing_agents_md = repo_root / config.project.agents_file
     existing_lock = load_lockfile(existing_context_dir)
     changed_files = determine_changed_source_paths(inventory, existing_lock)
 
+    plan_started = time.perf_counter()
     plan = plan_context(
         inventory=inventory,
         existing_context_dir=existing_context_dir if existing_context_dir.exists() else None,
@@ -53,6 +60,7 @@ def run_local_context_pipeline(
         existing_lock=existing_lock,
         changed_files=changed_files,
     )
+    plan_duration_ms = (time.perf_counter() - plan_started) * 1000
     typed_plan = cast(dict[str, Any], plan)
     typed_plan["changed_files"] = changed_files if scope == "changed" else []
     transfer_plan = prepare_model_transfer(
@@ -88,9 +96,11 @@ def run_local_context_pipeline(
             }
         ),
     )
+    generation_started = time.perf_counter()
     fact_packs = extract_facts(
         repo_root=repo_root, plan=typed_plan, provider=provider, run_id=run_id
     )
+    generation_duration_ms = (time.perf_counter() - generation_started) * 1000
 
     _write_run_artifacts(
         runs_dir=runs_dir,
@@ -134,9 +144,16 @@ def run_local_context_pipeline(
     patch_text = _build_patch(repo_root=repo_root, out_dir=out_dir)
     patch_path = runs_dir / "aictx.patch"
     safe_write(patch_path, patch_text)
+    patch_size_bytes = len(patch_text.encode("utf-8"))
 
     if write_mode == "apply":
         _apply_out_dir(repo_root=repo_root, out_dir=out_dir)
+
+    verify_started = time.perf_counter()
+    generated_context_dir = out_dir / config.project.context_dir
+    entropy = _compute_context_entropy(generated_context_dir)
+    verify_duration_ms = (time.perf_counter() - verify_started) * 1000
+    completed_at = datetime.now(UTC)
 
     report = RunReport(
         run_id=run_id,
@@ -146,7 +163,7 @@ def run_local_context_pipeline(
         execution="local",
         write_mode=write_mode,
         started_at=started_at,
-        completed_at=datetime.now(UTC),
+        completed_at=completed_at,
         status="success",
         files_scanned=len([f for f in inventory.files if not f.is_ignored]),
         files_selected=len(cast(list[str], typed_plan["selected_files"])),
@@ -157,6 +174,7 @@ def run_local_context_pipeline(
         selected_files=cast(list[str], typed_plan["selected_files"]),
         warnings=[
             *cast(list[str], typed_plan.get("warnings", [])),
+            *([entropy.warning] if entropy.warning else []),
             *(
                 [f"changed scope detected {len(changed_files)} changed source files"]
                 if scope == "changed"
@@ -165,6 +183,15 @@ def run_local_context_pipeline(
         ],
         output_dir=str(out_dir),
         patch_path=str(patch_path),
+        patch_size_bytes=patch_size_bytes,
+        timing={
+            "scan_duration_ms": scan_duration_ms,
+            "plan_duration_ms": plan_duration_ms,
+            "generation_duration_ms": generation_duration_ms,
+            "verify_duration_ms": verify_duration_ms,
+            "total_duration_ms": (time.perf_counter() - total_started) * 1000,
+        },
+        entropy=entropy,
     )
     safe_write(runs_dir / "run-report.json", report.model_dump_json(indent=2) + "\n")
     return report
@@ -276,6 +303,54 @@ def _changed_scope_refresh_paths(
             continue
         refresh.add(target)
     return refresh
+
+
+def _compute_context_entropy(context_dir: Path) -> ContextEntropyMetrics:
+    if not context_dir.exists():
+        return ContextEntropyMetrics()
+
+    files = sorted(path for path in context_dir.rglob("*.md") if path.is_file())
+    total_bytes = 0
+    total_sections = 0
+    paragraph_counts: dict[str, int] = {}
+    redundant_sections = 0
+    unused_shards = 0
+
+    for path in files:
+        text = path.read_text(encoding="utf-8")
+        total_bytes += len(text.encode("utf-8"))
+        sections = [line.strip() for line in text.splitlines() if line.startswith("#")]
+        total_sections += len(sections)
+        if text.strip() == "":
+            unused_shards += 1
+        paragraphs = {
+            " ".join(chunk.split())
+            for chunk in text.split("\n\n")
+            if chunk.strip()
+        }
+        for paragraph in paragraphs:
+            paragraph_counts[paragraph] = paragraph_counts.get(paragraph, 0) + 1
+        redundant_sections += max(0, len(sections) - len(set(sections)))
+
+    duplicate_facts = sum(count - 1 for count in paragraph_counts.values() if count > 1)
+    denom = max(total_sections + len(paragraph_counts), 1)
+    redundancy_ratio = round((duplicate_facts + redundant_sections) / denom, 4)
+    warning = None
+    if redundancy_ratio >= 0.2 or unused_shards > 0:
+        warning = (
+            "context entropy elevated"
+            f" (redundancy_ratio={redundancy_ratio}, unused_shards={unused_shards})"
+        )
+
+    return ContextEntropyMetrics(
+        total_bytes=total_bytes,
+        total_sections=total_sections,
+        duplicate_facts=duplicate_facts,
+        redundant_sections=redundant_sections,
+        unused_shards=unused_shards,
+        estimated_redundancy_ratio=redundancy_ratio,
+        warning=warning,
+    )
 
 
 def _write_run_artifacts(

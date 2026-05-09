@@ -15,6 +15,7 @@ class TimingMetrics(BaseModel):
     plan_duration_ms: float = 0.0
     generation_duration_ms: float = 0.0
     verify_duration_ms: float = 0.0
+    remote_runtime_ms: float = 0.0
     total_duration_ms: float = 0.0
 
 
@@ -24,6 +25,8 @@ class ContextEntropyMetrics(BaseModel):
     total_bytes: int = 0
     total_sections: int = 0
     duplicate_facts: int = 0
+    redundant_sections: int = 0
+    unused_shards: int = 0
     estimated_redundancy_ratio: float = 0.0
     warning: str | None = None
 
@@ -51,6 +54,7 @@ class RunReport(BaseModel):
     output_dir: str | None = None
     patch_path: str | None = None
     patch_size_bytes: int | None = None
+    snapshot_size_bytes: int | None = None
     error_message: str | None = None
     timing: TimingMetrics = Field(default_factory=TimingMetrics)
     entropy: ContextEntropyMetrics = Field(default_factory=ContextEntropyMetrics)

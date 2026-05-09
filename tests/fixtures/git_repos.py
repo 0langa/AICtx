@@ -44,3 +44,48 @@ def create_git_repo(files: dict[str, str]) -> Path:
         ["git", "-c", "user.email=test@test.com", "-c", "user.name=Test", "commit", "-m", "initial"]
     )
     return tmpdir
+
+
+def create_monorepo_fixture() -> Path:
+    return create_git_repo(
+        {
+            "README.md": "# Monorepo\n",
+            "apps/web/package.json": '{"name":"web"}\n',
+            "apps/web/src/index.ts": "export const app = 1;\n",
+            "packages/core/src/lib.py": "def core():\n    return 1\n",
+            "docs/guide.md": "# Guide\n\nShared docs.\n",
+        }
+    )
+
+
+def create_docs_heavy_fixture() -> Path:
+    return create_git_repo(
+        {
+            "README.md": "# Docs Heavy\n",
+            "documentation/ARCHITECTURE.md": "# Architecture\n\nDetails\n",
+            "documentation/CODEMAP.md": "# Codemap\n\nDetails\n",
+            "src/app.py": "print('ok')\n",
+        }
+    )
+
+
+def create_binary_heavy_fixture() -> Path:
+    return create_git_repo(
+        {
+            "README.md": "# Binary Heavy\n",
+            "src/app.py": "print('ok')\n",
+            "assets/blob.bin": "\u0000\u0001\u0002\u0003",
+            "assets/image.png": "PNGDATA",
+        }
+    )
+
+
+def create_secret_heavy_fixture() -> Path:
+    return create_git_repo(
+        {
+            "README.md": "# Secret Heavy\n",
+            "src/app.py": "print('ok')\n",
+            ".env.example": "API_KEY=redacted\n",
+            "docs/ops.md": "rotate credentials\n",
+        }
+    )

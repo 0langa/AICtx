@@ -23,7 +23,13 @@ from aictx.oci.bundle import create_result_bundle, verify_bundle
 from aictx.oci.snapshot import create_snapshot, verify_snapshot
 from aictx.scan.scanner import scan_repository
 from aictx.verify.verifier import verify_detailed
-from tests.fixtures.git_repos import create_git_repo
+from tests.fixtures.git_repos import (
+    create_binary_heavy_fixture,
+    create_docs_heavy_fixture,
+    create_git_repo,
+    create_monorepo_fixture,
+    create_secret_heavy_fixture,
+)
 
 runner = CliRunner()
 
@@ -596,3 +602,82 @@ def test_run_dry_run_ignores_oci_config() -> None:
         ],
     )
     assert result.exit_code == 0, result.output
+
+
+def test_run_report_includes_performance_and_entropy_metrics() -> None:
+    repo = create_git_repo(
+        {
+            "README.md": "# Test repo\n\nIntro\n\nIntro\n",
+            "src/main.py": "print('ok')\n",
+        }
+    )
+    result = runner.invoke(
+        app,
+        [
+            "run",
+            "--project",
+            str(repo),
+            "--mode",
+            "setup-context",
+            "--execution",
+            "local",
+            "--scope",
+            "full",
+            "--write",
+            "patch",
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    latest = sorted((repo / ".aictx" / "runs").iterdir())[-1]
+    report = json.loads((latest / "run-report.json").read_text(encoding="utf-8"))
+    assert report["patch_size_bytes"] is not None
+    assert report["timing"]["scan_duration_ms"] >= 0
+    assert report["timing"]["generation_duration_ms"] >= 0
+    assert report["entropy"]["total_bytes"] >= 0
+    assert "unused_shards" in report["entropy"]
+
+
+@pytest.mark.parametrize(
+    "factory",
+    [
+        create_monorepo_fixture,
+        create_docs_heavy_fixture,
+        create_binary_heavy_fixture,
+        create_secret_heavy_fixture,
+    ],
+)
+def test_integration_style_fixtures_support_full_run(factory: Any) -> None:
+    repo = factory()
+    result = runner.invoke(
+        app,
+        [
+            "run",
+            "--project",
+            str(repo),
+            "--mode",
+            "setup-context",
+            "--execution",
+            "local",
+            "--scope",
+            "full",
+            "--write",
+            "patch",
+        ],
+    )
+    assert result.exit_code == 0, result.output
+
+
+def test_verify_json_output_schema_is_machine_readable() -> None:
+    repo = create_git_repo({"README.md": "# Test\n"})
+    result = runner.invoke(app, ["verify", "--project", str(repo), "--json"])
+    assert result.exit_code == 1
+    payload = json.loads(result.stdout)
+    assert set(payload) >= {
+        "result",
+        "missing_sources",
+        "stale_sources",
+        "missing_generated",
+        "generated_mismatches",
+        "section_errors",
+        "public_docs_impacts",
+    }
