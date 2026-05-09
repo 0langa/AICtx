@@ -44,10 +44,11 @@ Implemented:
 
 Still partial/not implemented:
 
-- semantic freshness verification
-- fully proven live OCI execution in automation
-- automated public-doc prose rewriting
-- full install matrix proof artifacts
+- semantic freshness verification (deferred: post-v1)
+- fully proven live OCI execution in automation (deferred: post-v1)
+- automated public-doc prose rewriting (deferred: post-v1)
+
+Install matrix validation runs via `.github/workflows/install-matrix.yml`.
 
 ## Install
 

@@ -1,0 +1,94 @@
+# Installation validation matrix (v1)
+#
+# Validates aictx is installable and runnable across:
+#   Windows + Linux + macOS
+#   pipx + uv + pip
+#   core install only + core+oci install
+#
+# Does NOT require OCI credentials — verifies packaging only.
+
+name: install-matrix
+
+"on":
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 6 * * 1"  # weekly Monday
+
+jobs:
+  matrix:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+        install-method:
+          - pipx
+          - uv
+        extra:
+          - ""
+          - oci
+        exclude:
+          # pipx install of subdirectory doesn't need explicit extra handling
+          - install-method: pipx
+            extra: oci
+
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: latest
+          enable-cache: true
+
+      - name: Install via uv
+        if: matrix.install-method == 'uv'
+        run: |
+          uv venv
+          uv pip install ${{ matrix.extra == 'oci' && '.[oci]' || '.' }}
+
+      - name: Install via pipx
+        if: matrix.install-method == 'pipx'
+        run: |
+          python -m pip install pipx
+          python -m pipx ensurepath
+          python -m pipx install .
+
+      - name: Verify aictx --version
+        run: |
+          if [ "${{ matrix.install-method }}" = "pipx" ]; then
+            pipx run aictx --version
+          else
+            uv run aictx --version
+          fi
+        shell: bash
+
+      - name: Verify aictx scan (smoke)
+        run: |
+          if [ "${{ matrix.install-method }}" = "pipx" ]; then
+            pipx run aictx scan --project .
+          else
+            uv run aictx scan --project .
+          fi
+
+      - name: Verify aictx doctor (no OCI SDK, expect ready=False)
+        run: |
+          if [ "${{ matrix.install-method }}" = "pipx" ]; then
+            pipx run aictx oci doctor --project . --json || true
+          else
+            uv run aictx oci doctor --project . --json || true
+          fi

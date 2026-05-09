@@ -56,13 +56,13 @@ jobs:
         if: always()
         run: |
           if [ -f verify-result.json ]; then
-            echo "result=$(jq -r '.result // "unknown"' verify-result.json)" >> "$GITHUB_OUTPUT"
+            echo "status=$(jq -r '.status // "unknown"' verify-result.json)" >> "$GITHUB_OUTPUT"
             echo "command=$(jq -r '.next_command // ""' verify-result.json)" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Fail on stale context
-        if: steps.read-result.outputs.result != 'PASS' && steps.read-result.outputs.result != ''
+        if: steps.read-result.outputs.status != 'PASS' && steps.read-result.outputs.status != ''
         run: |
-          echo "::error::AICtx verification failed: ${{ steps.read-result.outputs.result }}"
+          echo "::error::AICtx verification failed: ${{ steps.read-result.outputs.status }}"
           echo "::warning::Run: ${{ steps.read-result.outputs.command }}"
           exit 1

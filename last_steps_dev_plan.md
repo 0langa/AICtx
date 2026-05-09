@@ -1014,3 +1014,15 @@ Do NOT build before post-v1:
 AICtx is infrastructure for reliable AI-assisted repository workflows.
 
 It is NOT intended to become an autonomous coding platform.
+
+# Post-v1 deferrals (partial items explicitly excluded from v1 scope)
+
+The following items are intentionally deferred — they are recognized as incomplete
+but are NOT required for v1 completion. They will be revisited post-v1 when
+semantic reasoning, live OCI automation, or prose generation needs arise.
+
+    1. semantic freshness verification
+    2. fully proven live OCI execution in automation
+    3. automated public-doc prose rewriting
+
+Each is tracked in the repo's changelog / issue tracker for visibility.
