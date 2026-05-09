@@ -22,7 +22,9 @@ def list_stale_objects(
     client = _get_object_client(oci_config)
     namespace = _get_namespace(client)
     cutoff = datetime.now(UTC) - timedelta(days=max_age_days)
-    response = client.list_objects(namespace, bucket, prefix="aictx-runs/", fields="timeModified,size")
+    response = client.list_objects(
+        namespace, bucket, prefix="aictx-runs/", fields="timeModified,size"
+    )
     objects = response.data.objects or []
     stale: list[dict[str, object]] = []
     for obj in objects:
@@ -94,7 +96,9 @@ def cleanup_stale(
     scanned_runs = 0
 
     try:
-        response = client.list_objects(namespace, bucket, prefix="aictx-runs/", fields="timeModified")
+        response = client.list_objects(
+            namespace, bucket, prefix="aictx-runs/", fields="timeModified"
+        )
         objects = response.data.objects or []
         for obj in objects:
             if obj.time_modified and obj.time_modified < cutoff:
@@ -115,7 +119,10 @@ def cleanup_stale(
     logger.info(
         "stale cleanup %s scanned=%d deleted=%d bytes=%d max_age_days=%d",
         "dry-run" if dry_run else "completed",
-        scanned_runs, deleted_count, total_bytes, max_age_days,
+        scanned_runs,
+        deleted_count,
+        total_bytes,
+        max_age_days,
     )
     return {
         "max_age_days": max_age_days,

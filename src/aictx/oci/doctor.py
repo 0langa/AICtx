@@ -69,7 +69,9 @@ def run_oci_doctor(
         missing.append("model_id")
 
     if sdk_available and config_exists and profile_exists:
-        auth_ok, region_matches, bucket_access = _validate_runtime(profile, resolved_config, region, bucket)
+        auth_ok, region_matches, bucket_access = _validate_runtime(
+            profile, resolved_config, region, bucket
+        )
         if not auth_ok and (region is not None or bucket is not None):
             missing.append("OCI auth")
         if region and not region_matches:

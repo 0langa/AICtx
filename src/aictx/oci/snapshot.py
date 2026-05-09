@@ -143,9 +143,7 @@ def create_snapshot(
         _scan_snapshot_secrets(repo_root, included_files)
 
     # Build deterministic archive
-    with zipfile.ZipFile(
-        snapshot_path, "w", zipfile.ZIP_DEFLATED, compresslevel=6
-    ) as zf:
+    with zipfile.ZipFile(snapshot_path, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as zf:
         # Write manifest first for deterministic ordering
         for rel_path, full_path in sorted(included_files, key=lambda x: x[0]):
             arcname = f"repo/{rel_path}"
@@ -181,7 +179,10 @@ def create_snapshot(
     logger = __import__("logging").getLogger("aictx.oci.snapshot")
     logger.info(
         "snapshot created path=%s files=%d bytes=%d sha256=%s",
-        snapshot_path, len(included_files), total_bytes, sha256_file(snapshot_path),
+        snapshot_path,
+        len(included_files),
+        total_bytes,
+        sha256_file(snapshot_path),
     )
     return snapshot_path
 

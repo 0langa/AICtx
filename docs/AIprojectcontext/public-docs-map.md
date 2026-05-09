@@ -13,3 +13,4 @@
 - `src/aictx/public_docs/mapper.py` — markdown/doc source
 - `src/aictx/public_docs/patcher.py` — markdown/doc source
 - `src/aictx/public_docs/updater.py` — markdown/doc source
+- `v1-implementation-checklist.md` — markdown/doc source

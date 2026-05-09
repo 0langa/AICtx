@@ -321,11 +321,7 @@ def _compute_context_entropy(context_dir: Path) -> ContextEntropyMetrics:
         total_sections += len(sections)
         if text.strip() == "":
             unused_shards += 1
-        paragraphs = {
-            " ".join(chunk.split())
-            for chunk in text.split("\n\n")
-            if chunk.strip()
-        }
+        paragraphs = {" ".join(chunk.split()) for chunk in text.split("\n\n") if chunk.strip()}
         for paragraph in paragraphs:
             paragraph_counts[paragraph] = paragraph_counts.get(paragraph, 0) + 1
         redundant_sections += max(0, len(sections) - len(set(sections)))

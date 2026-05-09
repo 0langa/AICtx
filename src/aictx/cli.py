@@ -336,9 +336,15 @@ app.add_typer(snapshot_app, name="snapshot")
 
 @snapshot_app.command("create")
 def snapshot_create(
-    project: Annotated[str, typer.Option("--project", "-p", help="Path to the target repository.")] = ".",
-    output_dir: Annotated[Path | None, typer.Option("--output", "-o", help="Output directory.")] = None,
-    skip_secret_scan: Annotated[bool, typer.Option("--skip-secret-scan", help="Skip secret scanning.")] = False,
+    project: Annotated[
+        str, typer.Option("--project", "-p", help="Path to the target repository.")
+    ] = ".",
+    output_dir: Annotated[
+        Path | None, typer.Option("--output", "-o", help="Output directory.")
+    ] = None,
+    skip_secret_scan: Annotated[
+        bool, typer.Option("--skip-secret-scan", help="Skip secret scanning.")
+    ] = False,
 ) -> None:
     """Create a deterministic, sanitised snapshot of the repository."""
     from aictx.oci.snapshot import create_snapshot
@@ -469,6 +475,7 @@ def oci_capabilities(
     try:
         oci_sdk_config = config.oci.to_sdk_config()
         from aictx.oci.object_storage import _get_namespace, _get_object_client
+
         client = _get_object_client(oci_sdk_config)
         namespace = _get_namespace(client)
         caps["object_storage"] = True
@@ -511,9 +518,13 @@ def oci_capabilities(
 
 @oci_app.command("upload-snapshot")
 def oci_upload_snapshot(
-    project: Annotated[str, typer.Option("--project", "-p", help="Path to the target repository.")] = ".",
+    project: Annotated[
+        str, typer.Option("--project", "-p", help="Path to the target repository.")
+    ] = ".",
     run_id: Annotated[str | None, typer.Option("--run-id", help="Run ID for object path.")] = None,
-    snapshot_path: Annotated[Path | None, typer.Option("--snapshot-path", help="Path to snapshot zip.")] = None,
+    snapshot_path: Annotated[
+        Path | None, typer.Option("--snapshot-path", help="Path to snapshot zip.")
+    ] = None,
     max_retries: Annotated[int, typer.Option("--max-retries", help="Upload retry count.")] = 3,
 ) -> None:
     """Upload a snapshot zip to OCI Object Storage."""
@@ -528,7 +539,9 @@ def oci_upload_snapshot(
     config = load_config(repo_root)
 
     oci_sdk_config = config.oci.to_sdk_config()
-    object_name = _upload(oci_sdk_config, config.oci.bucket, snapshot_path, run_id, max_retries=max_retries)
+    object_name = _upload(
+        oci_sdk_config, config.oci.bucket, snapshot_path, run_id, max_retries=max_retries
+    )
     console.print("[bold green]Snapshot uploaded[/bold green]")
     console.print(f"object: {object_name}")
     console.print(f"bucket: {config.oci.bucket}")
@@ -537,8 +550,12 @@ def oci_upload_snapshot(
 
 @oci_app.command("download-result")
 def oci_download_result(
-    project: Annotated[str, typer.Option("--project", "-p", help="Path to the target repository.")] = ".",
-    run_id: Annotated[str | None, typer.Option("--run-id", help="Run ID to download results for.")] = None,
+    project: Annotated[
+        str, typer.Option("--project", "-p", help="Path to the target repository.")
+    ] = ".",
+    run_id: Annotated[
+        str | None, typer.Option("--run-id", help="Run ID to download results for.")
+    ] = None,
     dest: Annotated[Path, typer.Option("--dest", help="Destination directory.")] = Path("."),
     max_retries: Annotated[int, typer.Option("--max-retries", help="Download retry count.")] = 3,
 ) -> None:
@@ -556,10 +573,14 @@ def oci_download_result(
     dest_dir = dest.resolve() if dest.exists() else repo_root / ".aictx" / "runs" / run_id
 
     oci_sdk_config = config.oci.to_sdk_config()
-    result_path = _download(oci_sdk_config, config.oci.bucket, run_id, dest_dir, max_retries=max_retries)
+    result_path = _download(
+        oci_sdk_config, config.oci.bucket, run_id, dest_dir, max_retries=max_retries
+    )
     verify_result = verify_bundle(result_path)
     if not verify_result.get("valid"):
-        console.print(f"[bold red]Bundle verification failed:[/bold red] {verify_result.get('errors')}")
+        console.print(
+            f"[bold red]Bundle verification failed:[/bold red] {verify_result.get('errors')}"
+        )
         raise typer.Exit(code=1)
     unpack_result_bundle(result_path, dest_dir)
     console.print("[bold green]Result downloaded[/bold green]")
@@ -569,8 +590,12 @@ def oci_download_result(
 
 @oci_app.command("estimate")
 def oci_estimate(
-    project: Annotated[str, typer.Option("--project", "-p", help="Path to the target repository.")] = ".",
-    snapshot_path: Annotated[Path | None, typer.Option("--snapshot-path", help="Existing snapshot to estimate.")] = None,
+    project: Annotated[
+        str, typer.Option("--project", "-p", help="Path to the target repository.")
+    ] = ".",
+    snapshot_path: Annotated[
+        Path | None, typer.Option("--snapshot-path", help="Existing snapshot to estimate.")
+    ] = None,
 ) -> None:
     """Estimate cost and resource usage for a remote OCI run."""
     from aictx.config import load_config
@@ -670,8 +695,14 @@ def _handle_oci_remote_run(
     from aictx.oci.snapshot import create_snapshot
     from aictx.scan.scanner import scan_repository
 
-    if mode != "setup-context" or scope not in {"full", "changed"} or write not in {"patch", "apply"}:
-        console.print("[bold red]Remote OCI run only supports setup-context with full/changed and patch/apply options[/bold red]")
+    if (
+        mode != "setup-context"
+        or scope not in {"full", "changed"}
+        or write not in {"patch", "apply"}
+    ):
+        console.print(
+            "[bold red]Remote OCI run only supports setup-context with full/changed and patch/apply options[/bold red]"
+        )
         raise typer.Exit(code=1)
     if write != "patch":
         console.print("[bold red]Remote OCI execution requires --write patch[/bold red]")
@@ -682,7 +713,9 @@ def _handle_oci_remote_run(
     run_id = datetime.now(UTC).strftime("%Y-%m-%dT%H%M%SZ-oci-run")
 
     if not config.oci.enabled:
-        console.print("[bold red]OCI is not enabled. Set [oci] enabled = true in .aictx/config.toml[/bold red]")
+        console.print(
+            "[bold red]OCI is not enabled. Set [oci] enabled = true in .aictx/config.toml[/bold red]"
+        )
         raise typer.Exit(code=1)
 
     # Validate OCI config
@@ -707,7 +740,9 @@ def _handle_oci_remote_run(
     )
     estimate = estimate_remote_cost(
         snapshot_path=snapshot_path,
-        input_tokens=inventory.files and sum(f.size_bytes for f in inventory.files if not f.is_ignored) // 4 or 0,
+        input_tokens=inventory.files
+        and sum(f.size_bytes for f in inventory.files if not f.is_ignored) // 4
+        or 0,
         runtime_minutes=config.oci.max_remote_runtime_minutes,
     )
     console.print("[bold]Cost estimate:[/bold]")
@@ -722,7 +757,10 @@ def _handle_oci_remote_run(
     console.print("[bold]Uploading snapshot...[/bold]")
     oci_sdk_config = config.oci.to_sdk_config()
     snapshot_object = _upload(
-        oci_sdk_config, config.oci.bucket, snapshot_path, run_id,
+        oci_sdk_config,
+        config.oci.bucket,
+        snapshot_path,
+        run_id,
         max_retries=config.oci.max_upload_retries,
     )
     console.print(f"[green]Snapshot uploaded: {snapshot_object}[/green]")
@@ -750,7 +788,8 @@ def _handle_oci_remote_run(
     console.print("[bold]Waiting for job completion...[/bold]")
     try:
         result = wait_for_job(
-            oci_sdk_config, job_id,
+            oci_sdk_config,
+            job_id,
             timeout_minutes=config.oci.max_remote_runtime_minutes,
         )
     except Exception as exc:
@@ -763,16 +802,23 @@ def _handle_oci_remote_run(
     console.print("[bold]Downloading result bundle...[/bold]")
     dest_dir = repo_root / ".aictx" / "runs" / run_id
     from aictx.oci.object_storage import download_result as _download
+
     result_path = _download(
-        oci_sdk_config, config.oci.bucket, run_id, dest_dir,
+        oci_sdk_config,
+        config.oci.bucket,
+        run_id,
+        dest_dir,
         max_retries=config.oci.max_download_retries,
     )
 
     # Unpack bundle
     from aictx.oci.bundle import unpack_result_bundle, verify_bundle
+
     verify_bundle_result = verify_bundle(result_path)
     if not verify_bundle_result.get("valid"):
-        console.print(f"[bold red]Bundle verification failed: {verify_bundle_result.get('errors')}[/bold red]")
+        console.print(
+            f"[bold red]Bundle verification failed: {verify_bundle_result.get('errors')}[/bold red]"
+        )
         raise typer.Exit(code=1)
 
     extracted = unpack_result_bundle(result_path, dest_dir)
@@ -810,7 +856,9 @@ def _handle_oci_cleanup(project: str, run_id: str | None, yes: bool, max_age_day
                 console.print(f"would delete: {item['name']} ({item['size']} bytes)")
             console.print("rerun with --yes to apply")
             raise typer.Exit(code=0)
-        result = cleanup_stale(oci_sdk_config, config.oci.bucket, max_age_days=max_age_days, dry_run=False)
+        result = cleanup_stale(
+            oci_sdk_config, config.oci.bucket, max_age_days=max_age_days, dry_run=False
+        )
         console.print("[bold green]OCI stale cleanup complete[/bold green]")
         console.print(f"deleted: {result['deleted_count']} objects")
         console.print(f"bytes: {result['total_bytes']}")

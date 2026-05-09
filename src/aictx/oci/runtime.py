@@ -126,6 +126,8 @@ def require_runtime_confirmation(estimate: CostEstimate, budget: RuntimeBudget) 
         raise SafetyError("Runtime budget exceeded:\n" + "\n".join(f"  - {e}" for e in errors))
 
     if estimate.above_threshold:
-        logger.warning("Estimated cost $%.2f exceeds default threshold", estimate.estimated_oci_cost_usd)
+        logger.warning(
+            "Estimated cost $%.2f exceeds default threshold", estimate.estimated_oci_cost_usd
+        )
 
     return True

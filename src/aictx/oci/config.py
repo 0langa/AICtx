@@ -100,12 +100,13 @@ class OCIConfig(BaseModel):
     def to_sdk_config(self) -> dict[str, Any]:
         """Load and return the OCI SDK config dict from file/profile."""
         import oci
+
         config_path = self.config_file if self.config_file else str(Path.home() / ".oci" / "config")
         try:
             return dict(
                 oci.config.from_file(
-                file_location=config_path,
-                profile_name=self.profile,
+                    file_location=config_path,
+                    profile_name=self.profile,
                 )
             )
         except Exception as exc:

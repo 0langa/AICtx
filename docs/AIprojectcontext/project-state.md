@@ -2,12 +2,12 @@
 
 - repo_root: `C:\Users\juliu\source\repos\AICtx`
 - branch: `main`
-- head_commit: `ef1ab55d95393f9c9e5f67f9ab29ea6d3d3390bb`
+- head_commit: `26981b2ab198ca1a75aaa8c90ba1d0ec10544d62`
 - dirty_state: `True`
 - project_type: `python_cli`
 - primary_language: `python`
-- selected_files: `6`
-- estimated_token_cost: `4023`
+- selected_files: `69`
+- estimated_token_cost: `72889`
 
 ## Identity Facts
 - Repository includes root README at README.md [source: README.md]

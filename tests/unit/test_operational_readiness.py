@@ -176,7 +176,11 @@ def test_oci_doctor_reports_bucket_and_region_status(
             "config": type(
                 "Cfg",
                 (),
-                {"from_file": staticmethod(lambda file_location, profile_name: {"region": "eu-frankfurt-1"})},
+                {
+                    "from_file": staticmethod(
+                        lambda file_location, profile_name: {"region": "eu-frankfurt-1"}
+                    )
+                },
             ),
             "object_storage": type(
                 "Obj",
@@ -249,7 +253,12 @@ def test_clean_oci_dry_run_requires_yes(monkeypatch: pytest.MonkeyPatch) -> None
         encoding="utf-8",
     )
 
-    monkeypatch.setattr("aictx.cli._handle_oci_cleanup", lambda project, run_id, yes, max_age_days: (_ for _ in ()).throw(SystemExit(0)) if not yes else None)
+    monkeypatch.setattr(
+        "aictx.cli._handle_oci_cleanup",
+        lambda project, run_id, yes, max_age_days: (
+            (_ for _ in ()).throw(SystemExit(0)) if not yes else None
+        ),
+    )
     result = runner.invoke(app, ["clean", "--project", str(repo), "--oci"])
     assert result.exit_code == 0
 

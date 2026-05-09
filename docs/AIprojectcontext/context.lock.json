@@ -1,11 +1,11 @@
 {
   "schema_version": "1.0",
   "tool_version": "0.1.0",
-  "repo_head_commit": "ef1ab55d95393f9c9e5f67f9ab29ea6d3d3390bb",
-  "generated_at": "2026-05-09T03:52:17.363977Z",
+  "repo_head_commit": "26981b2ab198ca1a75aaa8c90ba1d0ec10544d62",
+  "generated_at": "2026-05-09T06:23:37.691476Z",
   "model_provider": "dry_run",
   "model_name": "dry_run",
-  "scanner_config_hash": "d908586fb5ad1a5bc9f81884da4c5e072a230f869fc3f998af60293736f1ad66",
+  "scanner_config_hash": "ecda31014191c238fd39fcec9b8fb6ed1075584205b2c976e034a6a79a50b809",
   "generated_files": [
     {
       "path": "AGENTS.md",
@@ -87,12 +87,12 @@
     },
     {
       "path": "docs/AIprojectcontext/change-impact-map.md",
-      "sha256": "00f83f825ef042683dc1ae19b839a8fe0f56320c976d30c482003da3e0a47d22",
+      "sha256": "902ae136931102bf40b872dde9253d4b6deb77d68a497532ba84ccbcfbbac3ec",
       "generated_from_sections": []
     },
     {
       "path": "docs/AIprojectcontext/code-map.md",
-      "sha256": "533543364d358b9cc1c1deae174ab645a0f13e65c2c5704a2690153708660934",
+      "sha256": "574ac8010c1c0483d77c51f8757a888170a227bf56fd07441ef4a4f42dfb39fa",
       "generated_from_sections": [
         "feature-0a949df3e037",
         "feature-0aa93905bdaf",
@@ -160,14 +160,14 @@
     },
     {
       "path": "docs/AIprojectcontext/project-state.md",
-      "sha256": "7f3046aba3a53e232cd2c9164515ff681b266486a5b2f7e0dee25085d2cba02d",
+      "sha256": "aeba40c5c83d3ed26a13ff8a82a3b90f2b180d8fdea9e556e3a5e6f39aa3b8ec",
       "generated_from_sections": [
         "project_identity-5efe173a4c90"
       ]
     },
     {
       "path": "docs/AIprojectcontext/public-docs-map.md",
-      "sha256": "084086b83f0773ae81a4c2ab6b080da238b9ed1f2d1734211b55a7570cbfa6b3",
+      "sha256": "5fbbdaddec14d32e0a191fbf26bebd89981d48a68afba1d4940bb823bb23fee2",
       "generated_from_sections": [
         "docs-1fc306b29a35"
       ]
@@ -179,12 +179,12 @@
     },
     {
       "path": "docs/AIprojectcontext/validation-report.md",
-      "sha256": "495e268ccdd453e85f1635b0f5137987be7715c0143ab61b75b8bb1ef5b74a6d",
+      "sha256": "81ffd6b20eb80207a687fc08233f8ea0a35aee81e49a90ecc571e538b8cc7710",
       "generated_from_sections": []
     },
     {
       "path": "docs/AIprojectcontext/workflows.md",
-      "sha256": "ef97035afeca1ff36d8c021a2c05e4ae9c42c73061756090a5f4b880370f3861",
+      "sha256": "6e471ba20d8c7c88116fbb8325c5276d777f19e8ba4ca30ee7448fb07c0f3c1f",
       "generated_from_sections": [
         "workflow-16130fea937d",
         "workflow-22b0a05e0c76",
@@ -257,7 +257,7 @@
       "path": "docs/public/oci-storage.md",
       "sha256": "866844f75daab96a26df78d170936c2c594c115a7b9f5eb9678db86798af5886",
       "kind": "doc",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "documentation/ARCHITECTURE.md",
@@ -305,253 +305,253 @@
       "path": "src/aictx/__init__.py",
       "sha256": "f866e4a9672daafa6f8b00c0681d189d7eda093a7faccc832eab6fb398c4249d",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/cli.py",
-      "sha256": "34a9adceca384eed9d9cb12566d8aca552182d2dcd39077efd93e91a2e61bff6",
+      "sha256": "9263875d759f5aecffb0ad854989f8bbd9827222c2f85158a0d63bfc9c83808a",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/config.py",
       "sha256": "d15d3c950b10ee80cb7fd66eb67e253da18a15de91f12715d72a80bbbf4a59d3",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/context/__init__.py",
       "sha256": "b509ca2c8e11f9ead36d2ba7db1132373bb8697bb68b1c2a1995658ea82c53bb",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/context/agents_md.py",
       "sha256": "61d7b8d614615603b49cdf3bd2ebd93d61ae7419c15569de1283e58912784c1d",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/context/compressor.py",
       "sha256": "18bb46718959e88924aedec2d4d9fbd8f9a1c90051bade5b7cae203cafab63e1",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/context/fact_extractor.py",
       "sha256": "7db3a08ce6c71b172f1c171fe5a0d0e17dd9ac76566af5b9436e7dc07be96143",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/context/lockfile.py",
       "sha256": "5047110547d669cc9cec9ba5d9c82c3ccdb427b3e0e3c6c6415096727c652c97",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/context/pipeline.py",
-      "sha256": "56aa353958f688ce38614a04359a1c3c8b532efe51f05315279c579556802489",
+      "sha256": "fdfcc59604adcef09dcce13d55afbc86445575fb3e08fb948e3e2fce0cd28755",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/context/planner.py",
       "sha256": "f62367facc6d3b0717be916c41660b4538eddcb8ff74d9c9992d6e18918cf2b2",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/context/writer.py",
       "sha256": "b298c7c015d93746f9af9fdfeb4567ff44af61592614081b69e554cbf3bb56d9",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/errors.py",
       "sha256": "d6e8a01852e1d3c65a5c91eaa137c23378efd9a4833fcfb85d4a70fb398f4d0a",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/git/__init__.py",
       "sha256": "09b73624e0759437169f3a064048ea33a2b5ec17b3cfa1209a0a03146ec7181a",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/git/diff.py",
       "sha256": "900d3256060b5175f8ee78494d9750f00dec8b67f3fc2e204a203e1471fedfcd",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/git/repo.py",
       "sha256": "87b28d8ddf8609b22b070e47b85411abe2620b52168cd77cfd92dd54ee3ab18a",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/git/status.py",
       "sha256": "d621f8975b023ab80b076e54f33563ae1bb0aff112121bd2d8a4262cd4675afd",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/io/__init__.py",
       "sha256": "b725d8a4268864009d561357529a1dfe07d021bcebe1673fd2a9f71118f5e6f2",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/io/files.py",
       "sha256": "4dac3d0096f3102f4e4bdefe7b01a142bb22fe7102d050262a7f33addb1ca7b1",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/io/jsonl.py",
       "sha256": "102670400876cb20a9bb34a5ea68241902b1f96d079cb1529a6548fb1cf0bed2",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/io/patches.py",
       "sha256": "7928a97fff11af6b79d9de5b24b44d4f847df5faad43a9b5d09c5aef50e5c3ce",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/llm/__init__.py",
       "sha256": "d6e85ca0c70a38a550449896b91eb275a01904f109b145409bd76b8c10feda09",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/llm/base.py",
       "sha256": "1c92089c4fba2a3951b9181eb532ed69ef609bf3dd5e94c6baa1aa18d8834574",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/llm/dry_run.py",
       "sha256": "b931d0cb27e099fca68cdff46b426287703a7141b5ff5ccce1e0378e91691edf",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/llm/oci_genai.py",
       "sha256": "893fc09f36a1196d650c5f1819a18bb45dad9c60e21ae6910cf20f611e01be9e",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/llm/providers.py",
       "sha256": "7d581ba8f4f7a99a7e078b6996cdc1d05ecc573788175ad6cef8e96a74f0e9f7",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/llm/transfer.py",
       "sha256": "97616e859c7fdea66176f32245beb283c4b6b0097f1e46f9e80fd3ef2b286338",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/logging.py",
       "sha256": "0b2cc6a4cb6854c49ae016dfd2c2ff7267b1a6d66056b5efdc7704d3a380e341",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/models/__init__.py",
       "sha256": "36a766a549010a8c263437c7e83193ad51ca410a5aa479c43ef7828a5fa5794c",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/models/context_lock.py",
       "sha256": "6184b379d9b37d73115432b32fa4646ef05fce6473f3e163d93de59c1568c0f1",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/models/docs_map.py",
       "sha256": "db27c6a84f5b85a24bd94c119e2483de49f7ebfc84e1bef0d17e72f476d35eca",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/models/inventory.py",
       "sha256": "2cae62663868380a17bdb06deb50f6561bd9cbe11f37e62af8320f65a06d0b10",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/models/run_report.py",
       "sha256": "9c0e32769c90f2b554099be4077e590c73bbf0d4862cc9cf4934a528b26cfe7d",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/oci/__init__.py",
       "sha256": "496636073d7e84ac90e33ff7e7dbf5100af6e788a812a7f35679ab0cdda51827",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/oci/bundle.py",
-      "sha256": "84ee15a78e0382e98b5a8b139de65b2304bc41688d339c16b6a416b458424488",
+      "sha256": "c502b0205483aef34932661cf44d4879b6214295418f6b7b4146eb2362a9630b",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/oci/cleanup.py",
-      "sha256": "7f6602f2928bba9a4d9f55d6ffdab3a9575da64bc006838a4cb4a76a26d4a0b7",
+      "sha256": "6159b196d257763176fc22c0478351be84d700d48ce2a6ac01172da03e92ef52",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/oci/config.py",
-      "sha256": "4a81433fc667aa556bef6144e8caa371b6f2879715a0f5a8a2d79e21f3805c7d",
+      "sha256": "e48bef79a8a84f5b963e4ba962ed044b890f730bced138addd64fb5890593cb3",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/oci/doctor.py",
-      "sha256": "53fae212de60d99ba7d626ee592a43552c646c50590a300c2a96b2f93267cf5b",
+      "sha256": "73cd6dd4b31789454663335484af5ccd5a85929c4b42cc097d2eaffec75f2802",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/oci/object_storage.py",
-      "sha256": "986a9752c4b372cc5df2b3530e5c95949660d6e4e6f5fb3696a8f1de45a9bbd2",
+      "sha256": "a53aa75b9c4bbe397eb6bec6173a2cea0ff370bfb74926b694f93ce3d512cdd8",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/oci/remote_job.py",
-      "sha256": "402bd00143731897e9c81419fff6e1fb32cf4c4784e959aa0b22837487364d33",
+      "sha256": "5483b7940b1f60543b98fbc77b33a9f1b72b3b58367dd38149818862ec7eb687",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/oci/runtime.py",
-      "sha256": "578ded6c8d6951c36f763a94fadb2849f64bebf15ba8417b99b0e1fa0ac2293b",
+      "sha256": "05a34f855e78ce7ff931ad1925cf493473474ad35fe879c1cdd03ed86f0cea47",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/oci/snapshot.py",
-      "sha256": "572db7e8bf5ecba02f764b85657152cf33174aeb2bd611d5738ce7f8cb467268",
+      "sha256": "f3a8bf6bd2bba44b58ddee9f5e290a6cb0834f93751cd4e84761215652c872fe",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/oci/worker.py",
-      "sha256": "2a4675cff77dce2c5f31df725f38ae2ab96c0ee72542627082f929b8f5a935c9",
+      "sha256": "0cd0e886984319271f00d8885b40f0f6f8d0b2bb3ca21a00c4a051c55991d7e3",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/public_docs/__init__.py",
@@ -581,121 +581,121 @@
       "path": "src/aictx/scan/__init__.py",
       "sha256": "55e9bbb4145c9be46041f8e6f2016c39d78d926c5744e135c27870d3b5572c07",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/scan/classify.py",
       "sha256": "7344165ac67e955be02536dd57c7895f08c9b7979c405858f5b0bfa05f6d22d7",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/scan/ignore.py",
       "sha256": "6d83a527be49a44cffb53a91936550964fa536c7b48c47fa8abf0fac09145fae",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/scan/scanner.py",
       "sha256": "af344a6874f837897cdf61caf28d4b3012ced00e422d8785ea974f696240bdea",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/scan/secrets.py",
       "sha256": "417e65fafc583b12efa117a1b008e074ebaf93a5e63a64c72d8774c56feae617",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/verify/__init__.py",
       "sha256": "21353e3df7271755da5c30bb440d07abaf70ddce867b6a8d8f0ca7d07199697d",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/verify/hashes.py",
       "sha256": "d303be8b38909fc95928127d0e12d50487eaab129c213bbb9dcd8ddd3338e7d9",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/verify/impact.py",
       "sha256": "038a491cc4b5155400e987490e1982dbcff212dc1dac1a58c041f60eb0a12e3a",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/verify/reports.py",
       "sha256": "7ff6004de78c611ea858907f57205b6f83d94081ab707cc5ed948e0ea90ddcb1",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "src/aictx/verify/verifier.py",
-      "sha256": "2adb05f2310f71c199a2daac81549c1c163cf98f088c9a51d85314f4d9f35d6b",
+      "sha256": "2a11c894ebdd74ae76d4caeb77ce3f7cb38bc62b35e64037430f53147df964a8",
       "kind": "source",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "tests/conftest.py",
       "sha256": "5364b5196fcef744fea3d3449a9456ba4bb828fcf81c6143024b6831b9f0bc80",
       "kind": "test",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "tests/fixtures/git_repos.py",
       "sha256": "2c2d4022bdfe0a321b5e57d41b4f42fcc52551117fb0ba2ff5d612ce9c971d4b",
       "kind": "test",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "tests/integration/__init__.py",
       "sha256": "0097760e446648b0657cb6d59dade6f1a98d4c7c04dcbbf47f43c1ba70119416",
       "kind": "test",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "tests/unit/__init__.py",
       "sha256": "c7104abce3571e100b20059afd0d796ceded30e219fde8e5da69aed7d9aa2095",
       "kind": "test",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "tests/unit/test_cli.py",
       "sha256": "5418d06084f8e70b42e6efc6afe4f9e0ff3c79cbd2a160b0697942d1c964f997",
       "kind": "test",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "tests/unit/test_operational_readiness.py",
-      "sha256": "ab83684b3b98cafa8871be7c5faa42b3f64639bd0f0a0f5cb1b571a4e77ba60f",
+      "sha256": "4bea8bd3fce01d095a0475237553914e330f2aeeac14be6fd1a329ec6f832a0e",
       "kind": "test",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "tests/unit/test_run_phase1.py",
       "sha256": "f4c1e42cef9dbc7f99ad60878ebf6aaa0c58968ed26d43cfe2101710da0f4d9b",
       "kind": "test",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "tests/unit/test_scan_integration.py",
       "sha256": "7cde96dd9264af6297af1e65b0ccbe86bdd07352219d1e0eb2700783c4e411b3",
       "kind": "test",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "tests/unit/test_scanner.py",
       "sha256": "421f890c9ecfc8cf6ab973079d9f3822c6cc49e20daf3fbeace61f77247f153a",
       "kind": "test",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "tests/unit/test_verify.py",
       "sha256": "b8d5b16a787249962e31c7d6351d5b19f5c4f01dbb83ec4828096df2657fd3b3",
       "kind": "test",
-      "included_in_generation": false
+      "included_in_generation": true
     },
     {
       "path": "v1-implementation-checklist.md",
@@ -773,7 +773,7 @@
         "src/aictx/oci/bundle.py"
       ],
       "source_hashes": [
-        "84ee15a78e0382e98b5a8b139de65b2304bc41688d339c16b6a416b458424488"
+        "c502b0205483aef34932661cf44d4879b6214295418f6b7b4146eb2362a9630b"
       ],
       "fact_ids": [
         "architecture-0f2d773383a1"
@@ -788,7 +788,7 @@
         "tests/unit/test_operational_readiness.py"
       ],
       "source_hashes": [
-        "ab83684b3b98cafa8871be7c5faa42b3f64639bd0f0a0f5cb1b571a4e77ba60f"
+        "4bea8bd3fce01d095a0475237553914e330f2aeeac14be6fd1a329ec6f832a0e"
       ],
       "fact_ids": [
         "architecture-115d9e817412"
@@ -848,7 +848,7 @@
         "src/aictx/oci/doctor.py"
       ],
       "source_hashes": [
-        "53fae212de60d99ba7d626ee592a43552c646c50590a300c2a96b2f93267cf5b"
+        "73cd6dd4b31789454663335484af5ccd5a85929c4b42cc097d2eaffec75f2802"
       ],
       "fact_ids": [
         "architecture-1c1931721001"
@@ -968,7 +968,7 @@
         "src/aictx/context/pipeline.py"
       ],
       "source_hashes": [
-        "56aa353958f688ce38614a04359a1c3c8b532efe51f05315279c579556802489"
+        "fdfcc59604adcef09dcce13d55afbc86445575fb3e08fb948e3e2fce0cd28755"
       ],
       "fact_ids": [
         "architecture-2bcfd4e31f35"
@@ -1163,7 +1163,7 @@
         "src/aictx/oci/cleanup.py"
       ],
       "source_hashes": [
-        "7f6602f2928bba9a4d9f55d6ffdab3a9575da64bc006838a4cb4a76a26d4a0b7"
+        "6159b196d257763176fc22c0478351be84d700d48ce2a6ac01172da03e92ef52"
       ],
       "fact_ids": [
         "architecture-5b4bb25f66df"
@@ -1193,7 +1193,7 @@
         "src/aictx/cli.py"
       ],
       "source_hashes": [
-        "34a9adceca384eed9d9cb12566d8aca552182d2dcd39077efd93e91a2e61bff6"
+        "9263875d759f5aecffb0ad854989f8bbd9827222c2f85158a0d63bfc9c83808a"
       ],
       "fact_ids": [
         "architecture-6c86d176dcf5"
@@ -1268,7 +1268,7 @@
         "src/aictx/oci/worker.py"
       ],
       "source_hashes": [
-        "2a4675cff77dce2c5f31df725f38ae2ab96c0ee72542627082f929b8f5a935c9"
+        "0cd0e886984319271f00d8885b40f0f6f8d0b2bb3ca21a00c4a051c55991d7e3"
       ],
       "fact_ids": [
         "architecture-a178f5d6ce0a"
@@ -1343,7 +1343,7 @@
         "src/aictx/oci/snapshot.py"
       ],
       "source_hashes": [
-        "572db7e8bf5ecba02f764b85657152cf33174aeb2bd611d5738ce7f8cb467268"
+        "f3a8bf6bd2bba44b58ddee9f5e290a6cb0834f93751cd4e84761215652c872fe"
       ],
       "fact_ids": [
         "architecture-b0456fc9d654"
@@ -1388,7 +1388,7 @@
         "src/aictx/oci/runtime.py"
       ],
       "source_hashes": [
-        "578ded6c8d6951c36f763a94fadb2849f64bebf15ba8417b99b0e1fa0ac2293b"
+        "05a34f855e78ce7ff931ad1925cf493473474ad35fe879c1cdd03ed86f0cea47"
       ],
       "fact_ids": [
         "architecture-be62091a7adf"
@@ -1418,7 +1418,7 @@
         "src/aictx/oci/remote_job.py"
       ],
       "source_hashes": [
-        "402bd00143731897e9c81419fff6e1fb32cf4c4784e959aa0b22837487364d33"
+        "5483b7940b1f60543b98fbc77b33a9f1b72b3b58367dd38149818862ec7eb687"
       ],
       "fact_ids": [
         "architecture-c39924094870"
@@ -1493,7 +1493,7 @@
         "src/aictx/oci/object_storage.py"
       ],
       "source_hashes": [
-        "986a9752c4b372cc5df2b3530e5c95949660d6e4e6f5fb3696a8f1de45a9bbd2"
+        "a53aa75b9c4bbe397eb6bec6173a2cea0ff370bfb74926b694f93ce3d512cdd8"
       ],
       "fact_ids": [
         "architecture-d308af6c8d9e"
@@ -1508,7 +1508,7 @@
         "src/aictx/verify/verifier.py"
       ],
       "source_hashes": [
-        "2adb05f2310f71c199a2daac81549c1c163cf98f088c9a51d85314f4d9f35d6b"
+        "2a11c894ebdd74ae76d4caeb77ce3f7cb38bc62b35e64037430f53147df964a8"
       ],
       "fact_ids": [
         "architecture-de3e2cb306a7"
@@ -1613,7 +1613,7 @@
         "src/aictx/oci/config.py"
       ],
       "source_hashes": [
-        "4a81433fc667aa556bef6144e8caa371b6f2879715a0f5a8a2d79e21f3805c7d"
+        "e48bef79a8a84f5b963e4ba962ed044b890f730bced138addd64fb5890593cb3"
       ],
       "fact_ids": [
         "architecture-f96343160a8d"
@@ -1658,7 +1658,7 @@
         "src/aictx/oci/config.py"
       ],
       "source_hashes": [
-        "4a81433fc667aa556bef6144e8caa371b6f2879715a0f5a8a2d79e21f3805c7d"
+        "e48bef79a8a84f5b963e4ba962ed044b890f730bced138addd64fb5890593cb3"
       ],
       "fact_ids": [
         "feature-0a949df3e037"
@@ -1748,7 +1748,7 @@
         "src/aictx/oci/cleanup.py"
       ],
       "source_hashes": [
-        "7f6602f2928bba9a4d9f55d6ffdab3a9575da64bc006838a4cb4a76a26d4a0b7"
+        "6159b196d257763176fc22c0478351be84d700d48ce2a6ac01172da03e92ef52"
       ],
       "fact_ids": [
         "feature-31dbfb3dddf0"
@@ -1793,7 +1793,7 @@
         "src/aictx/verify/verifier.py"
       ],
       "source_hashes": [
-        "2adb05f2310f71c199a2daac81549c1c163cf98f088c9a51d85314f4d9f35d6b"
+        "2a11c894ebdd74ae76d4caeb77ce3f7cb38bc62b35e64037430f53147df964a8"
       ],
       "fact_ids": [
         "feature-3d4affb3f651"
@@ -1898,7 +1898,7 @@
         "src/aictx/oci/snapshot.py"
       ],
       "source_hashes": [
-        "572db7e8bf5ecba02f764b85657152cf33174aeb2bd611d5738ce7f8cb467268"
+        "f3a8bf6bd2bba44b58ddee9f5e290a6cb0834f93751cd4e84761215652c872fe"
       ],
       "fact_ids": [
         "feature-5e75a99bc03f"
@@ -1958,7 +1958,7 @@
         "src/aictx/oci/object_storage.py"
       ],
       "source_hashes": [
-        "986a9752c4b372cc5df2b3530e5c95949660d6e4e6f5fb3696a8f1de45a9bbd2"
+        "a53aa75b9c4bbe397eb6bec6173a2cea0ff370bfb74926b694f93ce3d512cdd8"
       ],
       "fact_ids": [
         "feature-6b2c959dd07a"
@@ -2033,7 +2033,7 @@
         "src/aictx/oci/doctor.py"
       ],
       "source_hashes": [
-        "53fae212de60d99ba7d626ee592a43552c646c50590a300c2a96b2f93267cf5b"
+        "73cd6dd4b31789454663335484af5ccd5a85929c4b42cc097d2eaffec75f2802"
       ],
       "fact_ids": [
         "feature-7f82e0b01746"
@@ -2183,7 +2183,7 @@
         "tests/unit/test_operational_readiness.py"
       ],
       "source_hashes": [
-        "ab83684b3b98cafa8871be7c5faa42b3f64639bd0f0a0f5cb1b571a4e77ba60f"
+        "4bea8bd3fce01d095a0475237553914e330f2aeeac14be6fd1a329ec6f832a0e"
       ],
       "fact_ids": [
         "feature-9ed9cafafd06"
@@ -2198,7 +2198,7 @@
         "src/aictx/context/pipeline.py"
       ],
       "source_hashes": [
-        "56aa353958f688ce38614a04359a1c3c8b532efe51f05315279c579556802489"
+        "fdfcc59604adcef09dcce13d55afbc86445575fb3e08fb948e3e2fce0cd28755"
       ],
       "fact_ids": [
         "feature-add09883eb7a"
@@ -2273,7 +2273,7 @@
         "src/aictx/cli.py"
       ],
       "source_hashes": [
-        "34a9adceca384eed9d9cb12566d8aca552182d2dcd39077efd93e91a2e61bff6"
+        "9263875d759f5aecffb0ad854989f8bbd9827222c2f85158a0d63bfc9c83808a"
       ],
       "fact_ids": [
         "feature-b802401f2a5c"
@@ -2303,7 +2303,7 @@
         "src/aictx/oci/remote_job.py"
       ],
       "source_hashes": [
-        "402bd00143731897e9c81419fff6e1fb32cf4c4784e959aa0b22837487364d33"
+        "5483b7940b1f60543b98fbc77b33a9f1b72b3b58367dd38149818862ec7eb687"
       ],
       "fact_ids": [
         "feature-bb43df4163bb"
@@ -2513,7 +2513,7 @@
         "src/aictx/oci/runtime.py"
       ],
       "source_hashes": [
-        "578ded6c8d6951c36f763a94fadb2849f64bebf15ba8417b99b0e1fa0ac2293b"
+        "05a34f855e78ce7ff931ad1925cf493473474ad35fe879c1cdd03ed86f0cea47"
       ],
       "fact_ids": [
         "feature-e558124453f1"
@@ -2528,7 +2528,7 @@
         "src/aictx/oci/worker.py"
       ],
       "source_hashes": [
-        "2a4675cff77dce2c5f31df725f38ae2ab96c0ee72542627082f929b8f5a935c9"
+        "0cd0e886984319271f00d8885b40f0f6f8d0b2bb3ca21a00c4a051c55991d7e3"
       ],
       "fact_ids": [
         "feature-ea05ffb84c52"
@@ -2573,7 +2573,7 @@
         "src/aictx/oci/bundle.py"
       ],
       "source_hashes": [
-        "84ee15a78e0382e98b5a8b139de65b2304bc41688d339c16b6a416b458424488"
+        "c502b0205483aef34932661cf44d4879b6214295418f6b7b4146eb2362a9630b"
       ],
       "fact_ids": [
         "feature-fc53b24c9b39"
@@ -2633,7 +2633,7 @@
         "tests/unit/test_operational_readiness.py"
       ],
       "source_hashes": [
-        "ab83684b3b98cafa8871be7c5faa42b3f64639bd0f0a0f5cb1b571a4e77ba60f"
+        "4bea8bd3fce01d095a0475237553914e330f2aeeac14be6fd1a329ec6f832a0e"
       ],
       "fact_ids": [
         "workflow-23689090ea2f"
@@ -2831,7 +2831,7 @@
         "src/aictx/cli.py"
       ],
       "last_verified_source_hashes": [
-        "34a9adceca384eed9d9cb12566d8aca552182d2dcd39077efd93e91a2e61bff6"
+        "9263875d759f5aecffb0ad854989f8bbd9827222c2f85158a0d63bfc9c83808a"
       ],
       "stale_risk": "medium"
     },
@@ -2846,7 +2846,7 @@
       ],
       "last_verified_source_hashes": [
         "af7ee97e4c9b0b37593e9f88900ae44aaf03cebefa2ab35a7a6e3beb86cabcf6",
-        "34a9adceca384eed9d9cb12566d8aca552182d2dcd39077efd93e91a2e61bff6"
+        "9263875d759f5aecffb0ad854989f8bbd9827222c2f85158a0d63bfc9c83808a"
       ],
       "stale_risk": "medium"
     },
@@ -2861,7 +2861,7 @@
       ],
       "last_verified_source_hashes": [
         "af7ee97e4c9b0b37593e9f88900ae44aaf03cebefa2ab35a7a6e3beb86cabcf6",
-        "34a9adceca384eed9d9cb12566d8aca552182d2dcd39077efd93e91a2e61bff6"
+        "9263875d759f5aecffb0ad854989f8bbd9827222c2f85158a0d63bfc9c83808a"
       ],
       "stale_risk": "medium"
     },
@@ -2877,10 +2877,10 @@
         "src/aictx/verify/verifier.py"
       ],
       "last_verified_source_hashes": [
-        "34a9adceca384eed9d9cb12566d8aca552182d2dcd39077efd93e91a2e61bff6",
-        "56aa353958f688ce38614a04359a1c3c8b532efe51f05315279c579556802489",
-        "53fae212de60d99ba7d626ee592a43552c646c50590a300c2a96b2f93267cf5b",
-        "2adb05f2310f71c199a2daac81549c1c163cf98f088c9a51d85314f4d9f35d6b"
+        "9263875d759f5aecffb0ad854989f8bbd9827222c2f85158a0d63bfc9c83808a",
+        "fdfcc59604adcef09dcce13d55afbc86445575fb3e08fb948e3e2fce0cd28755",
+        "73cd6dd4b31789454663335484af5ccd5a85929c4b42cc097d2eaffec75f2802",
+        "2a11c894ebdd74ae76d4caeb77ce3f7cb38bc62b35e64037430f53147df964a8"
       ],
       "stale_risk": "medium"
     },
@@ -2945,14 +2945,14 @@
       ],
       "last_verified_source_hashes": [
         "f866e4a9672daafa6f8b00c0681d189d7eda093a7faccc832eab6fb398c4249d",
-        "34a9adceca384eed9d9cb12566d8aca552182d2dcd39077efd93e91a2e61bff6",
+        "9263875d759f5aecffb0ad854989f8bbd9827222c2f85158a0d63bfc9c83808a",
         "d15d3c950b10ee80cb7fd66eb67e253da18a15de91f12715d72a80bbbf4a59d3",
         "b509ca2c8e11f9ead36d2ba7db1132373bb8697bb68b1c2a1995658ea82c53bb",
         "61d7b8d614615603b49cdf3bd2ebd93d61ae7419c15569de1283e58912784c1d",
         "18bb46718959e88924aedec2d4d9fbd8f9a1c90051bade5b7cae203cafab63e1",
         "7db3a08ce6c71b172f1c171fe5a0d0e17dd9ac76566af5b9436e7dc07be96143",
         "5047110547d669cc9cec9ba5d9c82c3ccdb427b3e0e3c6c6415096727c652c97",
-        "56aa353958f688ce38614a04359a1c3c8b532efe51f05315279c579556802489",
+        "fdfcc59604adcef09dcce13d55afbc86445575fb3e08fb948e3e2fce0cd28755",
         "f62367facc6d3b0717be916c41660b4538eddcb8ff74d9c9992d6e18918cf2b2",
         "b298c7c015d93746f9af9fdfeb4567ff44af61592614081b69e554cbf3bb56d9",
         "d6e8a01852e1d3c65a5c91eaa137c23378efd9a4833fcfb85d4a70fb398f4d0a",
@@ -2977,15 +2977,15 @@
         "2cae62663868380a17bdb06deb50f6561bd9cbe11f37e62af8320f65a06d0b10",
         "9c0e32769c90f2b554099be4077e590c73bbf0d4862cc9cf4934a528b26cfe7d",
         "496636073d7e84ac90e33ff7e7dbf5100af6e788a812a7f35679ab0cdda51827",
-        "84ee15a78e0382e98b5a8b139de65b2304bc41688d339c16b6a416b458424488",
-        "7f6602f2928bba9a4d9f55d6ffdab3a9575da64bc006838a4cb4a76a26d4a0b7",
-        "4a81433fc667aa556bef6144e8caa371b6f2879715a0f5a8a2d79e21f3805c7d",
-        "53fae212de60d99ba7d626ee592a43552c646c50590a300c2a96b2f93267cf5b",
-        "986a9752c4b372cc5df2b3530e5c95949660d6e4e6f5fb3696a8f1de45a9bbd2",
-        "402bd00143731897e9c81419fff6e1fb32cf4c4784e959aa0b22837487364d33",
-        "578ded6c8d6951c36f763a94fadb2849f64bebf15ba8417b99b0e1fa0ac2293b",
-        "572db7e8bf5ecba02f764b85657152cf33174aeb2bd611d5738ce7f8cb467268",
-        "2a4675cff77dce2c5f31df725f38ae2ab96c0ee72542627082f929b8f5a935c9",
+        "c502b0205483aef34932661cf44d4879b6214295418f6b7b4146eb2362a9630b",
+        "6159b196d257763176fc22c0478351be84d700d48ce2a6ac01172da03e92ef52",
+        "e48bef79a8a84f5b963e4ba962ed044b890f730bced138addd64fb5890593cb3",
+        "73cd6dd4b31789454663335484af5ccd5a85929c4b42cc097d2eaffec75f2802",
+        "a53aa75b9c4bbe397eb6bec6173a2cea0ff370bfb74926b694f93ce3d512cdd8",
+        "5483b7940b1f60543b98fbc77b33a9f1b72b3b58367dd38149818862ec7eb687",
+        "05a34f855e78ce7ff931ad1925cf493473474ad35fe879c1cdd03ed86f0cea47",
+        "f3a8bf6bd2bba44b58ddee9f5e290a6cb0834f93751cd4e84761215652c872fe",
+        "0cd0e886984319271f00d8885b40f0f6f8d0b2bb3ca21a00c4a051c55991d7e3",
         "55e9bbb4145c9be46041f8e6f2016c39d78d926c5744e135c27870d3b5572c07",
         "7344165ac67e955be02536dd57c7895f08c9b7979c405858f5b0bfa05f6d22d7",
         "6d83a527be49a44cffb53a91936550964fa536c7b48c47fa8abf0fac09145fae",
@@ -2995,7 +2995,7 @@
         "d303be8b38909fc95928127d0e12d50487eaab129c213bbb9dcd8ddd3338e7d9",
         "038a491cc4b5155400e987490e1982dbcff212dc1dac1a58c041f60eb0a12e3a",
         "7ff6004de78c611ea858907f57205b6f83d94081ab707cc5ed948e0ea90ddcb1",
-        "2adb05f2310f71c199a2daac81549c1c163cf98f088c9a51d85314f4d9f35d6b"
+        "2a11c894ebdd74ae76d4caeb77ce3f7cb38bc62b35e64037430f53147df964a8"
       ],
       "stale_risk": "medium"
     },
@@ -3011,7 +3011,7 @@
       ],
       "last_verified_source_hashes": [
         "af7ee97e4c9b0b37593e9f88900ae44aaf03cebefa2ab35a7a6e3beb86cabcf6",
-        "34a9adceca384eed9d9cb12566d8aca552182d2dcd39077efd93e91a2e61bff6",
+        "9263875d759f5aecffb0ad854989f8bbd9827222c2f85158a0d63bfc9c83808a",
         "d15d3c950b10ee80cb7fd66eb67e253da18a15de91f12715d72a80bbbf4a59d3"
       ],
       "stale_risk": "medium"
@@ -3027,7 +3027,7 @@
       ],
       "last_verified_source_hashes": [
         "af7ee97e4c9b0b37593e9f88900ae44aaf03cebefa2ab35a7a6e3beb86cabcf6",
-        "34a9adceca384eed9d9cb12566d8aca552182d2dcd39077efd93e91a2e61bff6"
+        "9263875d759f5aecffb0ad854989f8bbd9827222c2f85158a0d63bfc9c83808a"
       ],
       "stale_risk": "medium"
     }

@@ -36,12 +36,12 @@ def _get_object_client(config: dict[str, Any]) -> Any:
 
 
 def _checksum_file(path: Path) -> str:
-    """Return base64-encoded SHA-256 of *path* for OCI metadata."""
+    """Return hex-encoded SHA-256 of *path* for OCI metadata."""
     h = hashlib.sha256()
     with path.open("rb") as fh:
         for chunk in iter(lambda: fh.read(8192), b""):
             h.update(chunk)
-    return base64.b64encode(h.digest()).decode("ascii")
+    return h.hexdigest()
 
 
 def _make_object_path(run_id: str, kind: str, filename: str) -> str:
@@ -49,7 +49,9 @@ def _make_object_path(run_id: str, kind: str, filename: str) -> str:
     return f"aictx-runs/{run_id}/{kind}/{filename}"
 
 
-def _retry_upload(client: Any, namespace: str, bucket: str, object_name: str, file_path: Path, max_retries: int) -> str:
+def _retry_upload(
+    client: Any, namespace: str, bucket: str, object_name: str, file_path: Path, max_retries: int
+) -> str:
     """Upload *file_path* with retries and return the OCI object OCID."""
     last_exc: Exception | None = None
     for attempt in range(1, max_retries + 1):
@@ -64,7 +66,10 @@ def _retry_upload(client: Any, namespace: str, bucket: str, object_name: str, fi
                 )
             logger.info(
                 "upload success attempt=%d/%d object=%s size=%d",
-                attempt, max_retries, object_name, file_path.stat().st_size,
+                attempt,
+                max_retries,
+                object_name,
+                file_path.stat().st_size,
             )
             return object_name
         except Exception as exc:
@@ -75,7 +80,9 @@ def _retry_upload(client: Any, namespace: str, bucket: str, object_name: str, fi
     raise RemoteJobError(f"Upload failed after {max_retries} retries: {last_exc}")
 
 
-def _retry_download(client: Any, namespace: str, bucket: str, object_name: str, dest: Path, max_retries: int) -> None:
+def _retry_download(
+    client: Any, namespace: str, bucket: str, object_name: str, dest: Path, max_retries: int
+) -> None:
     """Download *object_name* to *dest* with retries and checksum validation."""
     last_exc: Exception | None = None
     for attempt in range(1, max_retries + 1):
@@ -87,13 +94,21 @@ def _retry_download(client: Any, namespace: str, bucket: str, object_name: str, 
             expected_sha = response.headers.get("opc-meta-sha256", "")
             if expected_sha:
                 actual = hashlib.sha256(data).hexdigest()
-                if actual != expected_sha:
+                # Normalise base64-encoded metadata to hex for comparison
+                try:
+                    expected_hex = base64.b64decode(expected_sha).hex()
+                except Exception:
+                    expected_hex = expected_sha
+                if actual != expected_hex:
                     raise RemoteJobError(
-                        f"Checksum mismatch for {object_name}: expected {expected_sha}, got {actual}"
+                        f"Checksum mismatch for {object_name}: expected {expected_hex}, got {actual}"
                     )
             logger.info(
                 "download success attempt=%d/%d object=%s size=%d",
-                attempt, max_retries, object_name, len(data),
+                attempt,
+                max_retries,
+                object_name,
+                len(data),
             )
             return
         except Exception as exc:
@@ -152,8 +167,38 @@ def download_result(
     namespace = _get_namespace(client)
     _retry_download(client, namespace, bucket, resolved_object_name, dest_path, max_retries)
 
-    logger.info("result downloaded run=%s object=%s dest=%s", run_id, resolved_object_name, dest_path)
+    logger.info(
+        "result downloaded run=%s object=%s dest=%s", run_id, resolved_object_name, dest_path
+    )
     return dest_path
+
+
+def upload_result(
+    config: dict[str, Any],
+    bucket: str,
+    result_path: Path,
+    run_id: str,
+    max_retries: int = _MAX_RETRIES_DEFAULT,
+) -> str:
+    """Upload a result bundle zip to OCI Object Storage.
+
+    Returns the OCI object name for the uploaded result.
+    """
+    if not result_path.is_file():
+        raise RemoteJobError(f"Result path is not a file: {result_path}")
+
+    client = _get_object_client(config)
+    namespace = _get_namespace(client)
+    object_name = _make_object_path(run_id, "output", result_path.name)
+
+    size = result_path.stat().st_size
+    if size > _MULTIPART_THRESHOLD_BYTES:
+        _multipart_upload(client, namespace, bucket, object_name, result_path, max_retries)
+    else:
+        _retry_upload(client, namespace, bucket, object_name, result_path, max_retries)
+
+    logger.info("result uploaded bucket=%s run=%s object=%s", bucket, run_id, object_name)
+    return object_name
 
 
 def upload_logs(
@@ -255,11 +300,22 @@ def _multipart_upload(
                 chunk = fh.read(_PART_SIZE_BYTES)
                 if not chunk:
                     break
-                part = _upload_part(client, namespace, bucket, object_name, upload_id, part_number, chunk, max_retries)
+                part = _upload_part(
+                    client,
+                    namespace,
+                    bucket,
+                    object_name,
+                    upload_id,
+                    part_number,
+                    chunk,
+                    max_retries,
+                )
                 parts.append(part)
                 part_number += 1
         _commit_multipart_upload(client, namespace, bucket, object_name, upload_id, parts)
-        logger.info("multipart upload complete parts=%d size=%d", part_number - 1, file_path.stat().st_size)
+        logger.info(
+            "multipart upload complete parts=%d size=%d", part_number - 1, file_path.stat().st_size
+        )
         return object_name
     except Exception as exc:
         logger.error("multipart upload failed: %s", exc)
@@ -268,7 +324,8 @@ def _multipart_upload(
 
 def _create_multipart_upload(client: Any, namespace: str, bucket: str, object_name: str) -> str:
     response = client.create_multipart_upload(
-        namespace, bucket,
+        namespace,
+        bucket,
         _require_oci().object_storage.models.CreateMultipartUploadDetails(
             object=object_name,
             opc_meta={"sha256": _checksum_file(Path(object_name))} if False else None,
@@ -278,14 +335,24 @@ def _create_multipart_upload(client: Any, namespace: str, bucket: str, object_na
 
 
 def _upload_part(
-    client: Any, namespace: str, bucket: str, object_name: str,
-    upload_id: str, part_number: int, data: bytes, max_retries: int,
+    client: Any,
+    namespace: str,
+    bucket: str,
+    object_name: str,
+    upload_id: str,
+    part_number: int,
+    data: bytes,
+    max_retries: int,
 ) -> dict[str, Any]:
     last_exc: Exception | None = None
     for attempt in range(1, max_retries + 1):
         try:
             response = client.upload_part(
-                namespace, bucket, object_name, upload_id, part_number,
+                namespace,
+                bucket,
+                object_name,
+                upload_id,
+                part_number,
                 data,
             )
             etag = response.headers.get("etag", "")
@@ -294,16 +361,25 @@ def _upload_part(
             last_exc = exc
             if attempt < max_retries:
                 time.sleep(_RETRY_BACKOFF_SEC * attempt)
-    raise RemoteJobError(f"Part {part_number} upload failed after {max_retries} retries: {last_exc}")
+    raise RemoteJobError(
+        f"Part {part_number} upload failed after {max_retries} retries: {last_exc}"
+    )
 
 
 def _commit_multipart_upload(
-    client: Any, namespace: str, bucket: str, object_name: str,
-    upload_id: str, parts: list[dict[str, Any]],
+    client: Any,
+    namespace: str,
+    bucket: str,
+    object_name: str,
+    upload_id: str,
+    parts: list[dict[str, Any]],
 ) -> None:
     oci = _require_oci()
     client.commit_multipart_upload(
-        namespace, bucket, object_name, upload_id,
+        namespace,
+        bucket,
+        object_name,
+        upload_id,
         oci.object_storage.models.CommitMultipartUploadDetails(
             parts_to_commit=parts,
         ),

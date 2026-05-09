@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 from aictx.context.lockfile import SUPPORTED_SCHEMA_VERSIONS, load_lockfile
 from aictx.models.context_lock import ContextLock
 from aictx.models.inventory import RepositoryInventory
+from aictx.scan.ignore import IgnoreMatcher
 from aictx.verify.hashes import sha256_file
 
 VerificationResult = Literal[
@@ -31,7 +32,6 @@ REQUIRED_GENERATED_CONTEXT_FILES = {
     "docs/AIprojectcontext/public-docs-map.md",
     "docs/AIprojectcontext/change-impact-map.md",
     "docs/AIprojectcontext/schema.md",
-    "docs/AIprojectcontext/validation-report.md",
 }
 
 
@@ -101,10 +101,13 @@ def verify_detailed(repo_root: Path, strict: bool = False) -> VerificationReport
             stale_sources.append(source_file.path)
 
     generated_paths: set[str] = set()
+    matcher = IgnoreMatcher(repo_root)
     missing_generated: list[str] = []
     generated_mismatches: list[str] = []
     for generated_file in lock.generated_files:
         generated_paths.add(generated_file.path)
+        if matcher.is_ignored(generated_file.path):
+            continue
         path = repo_root / generated_file.path
         if not path.exists():
             missing_generated.append(generated_file.path)

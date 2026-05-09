@@ -95,9 +95,7 @@ def submit_job(
                 "PYTHONUNBUFFERED": "1",
             },
             command_line_arguments=(
-                f"--run-id {run_id} "
-                f"--snapshot-object {snapshot_object} "
-                f"--bucket {bucket}"
+                f"--run-id {run_id} --snapshot-object {snapshot_object} --bucket {bucket}"
             ),
             maximum_runtime_in_minutes=job_timeout_minutes,
         ),
@@ -161,18 +159,14 @@ def wait_for_job(
         logger.debug("job poll job_id=%s state=%s", job_id, result.lifecycle_state)
         if result.status in _TERMINAL_STATES:
             if result.status == "FAILED":
-                raise RemoteJobError(
-                    f"Job {job_id} failed. lifecycle={result.lifecycle_state}"
-                )
+                raise RemoteJobError(f"Job {job_id} failed. lifecycle={result.lifecycle_state}")
             if result.status == "CANCELED":
                 raise RemoteJobError(f"Job {job_id} was canceled.")
             logger.info("job completed job_id=%s status=%s", job_id, result.status)
             return result
         time.sleep(poll_interval)
 
-    raise RemoteJobError(
-        f"Job {job_id} did not complete within {timeout_minutes} minutes"
-    )
+    raise RemoteJobError(f"Job {job_id} did not complete within {timeout_minutes} minutes")
 
 
 def cancel_job(config: dict[str, Any], job_id: str) -> None:
@@ -216,9 +210,7 @@ def fetch_job_logs(
                     f"job-logs/{job_id}/{log_kind}.txt",
                 ]:
                     try:
-                        obj_response = obj_client.get_object(
-                            namespace, "aictx-logs", attempt_name
-                        )
+                        obj_response = obj_client.get_object(namespace, "aictx-logs", attempt_name)
                         log_path = dest / f"{log_kind}.txt"
                         log_path.write_bytes(obj_response.data.content)
                         saved.append(log_path)

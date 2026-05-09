@@ -40,9 +40,7 @@ def create_result_bundle(
     files_manifest = bundle_manifest["files"]
     assert isinstance(files_manifest, dict)
 
-    with zipfile.ZipFile(
-        bundle_path, "w", zipfile.ZIP_DEFLATED, compresslevel=6
-    ) as zf:
+    with zipfile.ZipFile(bundle_path, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as zf:
         if patch_path and patch_path.is_file():
             data = patch_path.read_bytes()
             _writestr_deterministic(zf, "aictx.patch", data)

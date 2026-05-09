@@ -18,7 +18,7 @@ from aictx.config import load_config
 from aictx.context.pipeline import run_local_context_pipeline
 from aictx.errors import RemoteJobError
 from aictx.oci.bundle import create_result_bundle
-from aictx.oci.object_storage import download_result, upload_snapshot
+from aictx.oci.object_storage import download_result, upload_result
 from aictx.oci.runtime import RuntimeBudget
 from aictx.oci.snapshot import verify_snapshot
 
@@ -99,7 +99,7 @@ def run_remote_pipeline(
     # Upload result bundle
     if bucket:
         oci_sdk_config = _load_oci_sdk_config(config)
-        upload_snapshot(oci_sdk_config, bucket, bundle_path, run_id)
+        upload_result(oci_sdk_config, bucket, bundle_path, run_id)
 
     result = {
         "run_id": run_id,
@@ -115,6 +115,7 @@ def run_remote_pipeline(
 def _load_oci_sdk_config(config: dict[str, object]) -> dict[str, object]:
     """Load OCI SDK config dict from environment or config."""
     import oci
+
     config_file = os.getenv("OCI_CONFIG_FILE", str(Path.home() / ".oci" / "config"))
     profile = os.getenv("OCI_CONFIG_PROFILE", "DEFAULT")
     return dict(oci.config.from_file(config_file, profile))
