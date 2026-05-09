@@ -9,6 +9,7 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 from aictx.errors import ConfigError
+from aictx.oci.config import OCIConfig
 
 
 class ProjectConfig(BaseModel):
@@ -55,6 +56,7 @@ class AictxConfig(BaseModel):
     execution: ExecutionConfig = Field(default_factory=ExecutionConfig)
     limits: LimitsConfig = Field(default_factory=LimitsConfig)
     llm: LLMConfig = Field(default_factory=LLMConfig)
+    oci: OCIConfig = Field(default_factory=OCIConfig)
 
 
 CONFIG_FILENAME = ".aictx/config.toml"

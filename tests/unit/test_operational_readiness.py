@@ -6,6 +6,7 @@ import importlib.util
 import json
 from pathlib import Path
 from typing import Any
+import zipfile
 
 import pytest
 from typer.testing import CliRunner
@@ -18,6 +19,9 @@ from aictx.llm.base import ChatRequest
 from aictx.llm.dry_run import DryRunProvider
 from aictx.llm.providers import create_model_provider
 from aictx.oci.doctor import run_oci_doctor
+from aictx.oci.bundle import create_result_bundle, verify_bundle
+from aictx.oci.snapshot import create_snapshot, verify_snapshot
+from aictx.scan.scanner import scan_repository
 from aictx.verify.verifier import verify_detailed
 from tests.fixtures.git_repos import create_git_repo
 
@@ -96,6 +100,7 @@ def test_provider_creation_validates_model_id_before_sdk(monkeypatch: pytest.Mon
 
 def test_provider_creation_validates_compartment_id(monkeypatch: pytest.MonkeyPatch) -> None:
     _mock_oci_sdk(monkeypatch)
+    monkeypatch.delenv("OCI_COMPARTMENT_ID", raising=False)
     with pytest.raises(ConfigError, match="compartment_id"):
         create_model_provider(LLMConfig(provider="oci_genai", model="test"), allow_ai=True)
 
@@ -134,6 +139,110 @@ def test_oci_doctor_reports_ready_when_all_present(
     assert report.model_id_present is True
     assert report.ready is True
     assert not report.missing
+
+
+def test_oci_doctor_reports_bucket_and_region_status(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    fake_spec = importlib.util.spec_from_loader("oci", loader=None)
+    monkeypatch.setattr(
+        importlib.util, "find_spec", lambda name: fake_spec if name == "oci" else None
+    )
+
+    class FakeObjectClient:
+        def __init__(self, _config: dict[str, Any]) -> None:
+            pass
+
+        def get_namespace(self) -> Any:
+            return type("Resp", (), {"data": "ns"})()
+
+        def head_bucket(self, namespace: str, bucket: str) -> None:
+            assert namespace == "ns"
+            assert bucket == "demo-bucket"
+
+    fake_oci = type(
+        "FakeOCI",
+        (),
+        {
+            "config": type(
+                "Cfg",
+                (),
+                {"from_file": staticmethod(lambda file_location, profile_name: {"region": "eu-frankfurt-1"})},
+            ),
+            "object_storage": type(
+                "Obj",
+                (),
+                {"ObjectStorageClient": FakeObjectClient},
+            ),
+        },
+    )
+    monkeypatch.setitem(__import__("sys").modules, "oci", fake_oci)
+
+    config_path = tmp_path / "oci_config"
+    config_path.write_text("[DEFAULT]\ncompartment_id=ocid1.compartment\n", encoding="utf-8")
+    report = run_oci_doctor(
+        config_file=config_path,
+        model_id="cohere.command",
+        compartment_id="ocid1.compartment",
+        region="eu-frankfurt-1",
+        bucket="demo-bucket",
+    )
+    assert report.auth_ok is True
+    assert report.region_matches is True
+    assert report.bucket_access is True
+
+
+def test_snapshot_create_is_deterministic(tmp_path: Path) -> None:
+    repo = create_git_repo({"README.md": "# Test\n", "src/main.py": "print('ok')\n"})
+    inventory = scan_repository(repo)
+    out_dir = tmp_path / "snapshots"
+    first = create_snapshot(repo, out_dir, inventory=inventory)
+    second = create_snapshot(repo, out_dir, inventory=inventory)
+    assert first.read_bytes() == second.read_bytes()
+    verified = verify_snapshot(first)
+    assert verified["valid"] is True
+
+
+def test_bundle_verification_detects_corruption(tmp_path: Path) -> None:
+    patch_path = tmp_path / "aictx.patch"
+    patch_path.write_text("diff --git a/x b/x\n", encoding="utf-8")
+    bundle = create_result_bundle(
+        output_dir=tmp_path,
+        patch_path=patch_path,
+        validation_report="# ok\n",
+        run_report={"status": "success"},
+    )
+    assert verify_bundle(bundle)["valid"] is True
+
+    corrupt_path = tmp_path / "corrupt.zip"
+    with zipfile.ZipFile(bundle, "r") as src, zipfile.ZipFile(corrupt_path, "w") as dst:
+        for name in src.namelist():
+            data = src.read(name)
+            if name == "aictx.patch":
+                data = b"bad"
+            dst.writestr(name, data)
+    checked = verify_bundle(corrupt_path)
+    assert checked["valid"] is False
+
+
+def test_clean_oci_dry_run_requires_yes(monkeypatch: pytest.MonkeyPatch) -> None:
+    repo = create_git_repo({"README.md": "# Test\n"})
+    config_dir = repo / ".aictx"
+    config_dir.mkdir(exist_ok=True)
+    (config_dir / "config.toml").write_text(
+        "[oci]\n"
+        "enabled = true\n"
+        "region = 'eu-frankfurt-1'\n"
+        "compartment_id = 'ocid1.compartment'\n"
+        "bucket = 'demo-bucket'\n"
+        "profile = 'DEFAULT'\n"
+        "config_file = 'C:/tmp/oci'\n",
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr("aictx.cli._handle_oci_cleanup", lambda project, run_id, yes, max_age_days: (_ for _ in ()).throw(SystemExit(0)) if not yes else None)
+    result = runner.invoke(app, ["clean", "--project", str(repo), "--oci"])
+    assert result.exit_code == 0
 
 
 def test_oci_doctor_reports_missing_model_id(tmp_path: Path) -> None:

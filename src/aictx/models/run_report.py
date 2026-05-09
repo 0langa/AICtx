@@ -8,6 +8,26 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 
+class TimingMetrics(BaseModel):
+    """Performance instrumentation for a single run phase."""
+
+    scan_duration_ms: float = 0.0
+    plan_duration_ms: float = 0.0
+    generation_duration_ms: float = 0.0
+    verify_duration_ms: float = 0.0
+    total_duration_ms: float = 0.0
+
+
+class ContextEntropyMetrics(BaseModel):
+    """Entropy/drift detection for generated AI context."""
+
+    total_bytes: int = 0
+    total_sections: int = 0
+    duplicate_facts: int = 0
+    estimated_redundancy_ratio: float = 0.0
+    warning: str | None = None
+
+
 class RunReport(BaseModel):
     """Summary of a single aictx run."""
 
@@ -30,4 +50,7 @@ class RunReport(BaseModel):
     warnings: list[str] = Field(default_factory=list)
     output_dir: str | None = None
     patch_path: str | None = None
+    patch_size_bytes: int | None = None
     error_message: str | None = None
+    timing: TimingMetrics = Field(default_factory=TimingMetrics)
+    entropy: ContextEntropyMetrics = Field(default_factory=ContextEntropyMetrics)

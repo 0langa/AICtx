@@ -1,0 +1,67 @@
+# AICtx verification workflow
+#
+# Runs strict verification on every push/PR.
+# Fails if context is stale or public docs are impacted.
+# Does NOT require OCI — pure local verification.
+#
+# Install: pip install aictx  (or uv add aictx)
+
+name: aictx-verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+          enable-cache: true
+
+      - name: Install aictx
+        run: uv pip install --system -e .
+
+      - name: Run strict verification
+        id: verify
+        continue-on-error: true
+        run: |
+          uv run aictx verify --project . --strict --json > verify-result.json 2>&1
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Upload verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: aictx-verify-report
+          path: |
+            docs/AIprojectcontext/validation-report.md
+            verify-result.json
+          retention-days: 7
+          if-no-files-found: warn
+
+      - name: Read verification result
+        id: read-result
+        if: always()
+        run: |
+          if [ -f verify-result.json ]; then
+            echo "result=$(jq -r '.result // "unknown"' verify-result.json)" >> "$GITHUB_OUTPUT"
+            echo "command=$(jq -r '.next_command // ""' verify-result.json)" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Fail on stale context
+        if: steps.read-result.outputs.result != 'PASS' && steps.read-result.outputs.result != ''
+        run: |
+          echo "::error::AICtx verification failed: ${{ steps.read-result.outputs.result }}"
+          echo "::warning::Run: ${{ steps.read-result.outputs.command }}"
+          exit 1

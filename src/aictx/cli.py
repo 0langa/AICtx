@@ -161,9 +161,12 @@ def run(
     if mode != "setup-context":
         console.print(f"[bold red]Unsupported mode:[/bold red] {mode}")
         raise typer.Exit(code=1)
-    if execution != "local":
+    if execution not in {"local", "oci-job"}:
         console.print(f"[bold red]Unsupported execution:[/bold red] {execution}")
         raise typer.Exit(code=1)
+    if execution == "oci-job":
+        _handle_oci_remote_run(project, mode, scope, write, provider, allow_ai, allow_dirty)
+        return
     if scope not in {"full", "changed"}:
         console.print(f"[bold red]Unsupported scope:[/bold red] {scope}")
         raise typer.Exit(code=1)
@@ -327,7 +330,58 @@ def public_docs_update(
     raise typer.Exit(code=0)
 
 
-oci_app = typer.Typer(help="OCI readiness helpers.")
+snapshot_app = typer.Typer(help="Snapshot creation and verification.")
+app.add_typer(snapshot_app, name="snapshot")
+
+
+@snapshot_app.command("create")
+def snapshot_create(
+    project: str = typer.Option(".", "--project", "-p", help="Path to the target repository."),
+    output_dir: Path | None = typer.Option(None, "--output", "-o", help="Output directory."),
+    skip_secret_scan: bool = typer.Option(False, "--skip-secret-scan", help="Skip secret scanning."),
+) -> None:
+    """Create a deterministic, sanitised snapshot of the repository."""
+    from aictx.oci.snapshot import create_snapshot
+    from aictx.scan.scanner import scan_repository
+
+    repo_root = _resolve_repo_root(project)
+    dest = output_dir or (repo_root / ".aictx" / "snapshots")
+    dest.mkdir(parents=True, exist_ok=True)
+    inventory = scan_repository(repo_root)
+
+    snapshot_path = create_snapshot(
+        repo_root=repo_root,
+        output_dir=dest,
+        inventory=inventory,
+        skip_secret_scan=skip_secret_scan,
+    )
+    console.print("[bold green]Snapshot created[/bold green]")
+    console.print(f"path: {snapshot_path}")
+    console.print(f"size: {snapshot_path.stat().st_size / 1024:.1f} KiB")
+    raise typer.Exit(code=0)
+
+
+@snapshot_app.command("verify")
+def snapshot_verify(
+    snapshot_path: Path = typer.Argument(..., help="Path to snapshot zip."),
+) -> None:
+    """Verify a snapshot's integrity and safety."""
+    from aictx.oci.snapshot import verify_snapshot
+
+    result = verify_snapshot(snapshot_path)
+    if result.get("valid"):
+        console.print("[bold green]Snapshot valid[/bold green]")
+        console.print(f"files: {result.get('file_count', 0)}")
+    else:
+        console.print("[bold red]Snapshot invalid[/bold red]")
+        errors = result.get("errors", [result.get("error", "unknown")])
+        for err in errors:
+            console.print(f"  - {err}")
+        raise typer.Exit(code=1)
+    raise typer.Exit(code=0)
+
+
+oci_app = typer.Typer(help="OCI operations: readiness, upload, download, capabilities, cleanup.")
 app.add_typer(oci_app, name="oci")
 
 
@@ -352,6 +406,8 @@ def oci_doctor(
         config_file=config_file,
         model_id=config.llm.model,
         compartment_id=config.llm.compartment_id,
+        region=config.oci.region,
+        bucket=config.oci.bucket,
     )
     if json_output:
         console.print_json(report.model_dump_json())
@@ -362,12 +418,175 @@ def oci_doctor(
         console.print(f"profile: {report.profile_exists} ({report.profile})")
         console.print(f"compartment: {report.compartment_id_present}")
         console.print(f"model: {report.model_id_present}")
+        console.print(f"auth: {report.auth_ok}")
+        console.print(f"region: {report.region_matches}")
+        console.print(f"bucket: {report.bucket_access}")
         console.print(f"ready: {report.ready}")
         if report.missing:
             console.print("missing:")
             for item in report.missing:
                 console.print(f"- {item}")
     raise typer.Exit(code=0 if report.ready else 1)
+
+
+@oci_app.command("capabilities")
+def oci_capabilities(
+    project: str = typer.Option(".", "--project", "-p", help="Path to the target repository."),
+    json_output: bool = typer.Option(False, "--json", help="Emit structured JSON."),
+) -> None:
+    """Validate OCI capability: object storage, bucket access, permissions."""
+    from aictx.config import load_config
+    from aictx.errors import RemoteJobError
+    from aictx.oci.doctor import run_oci_doctor
+
+    repo_root = _resolve_repo_root(project)
+    config = load_config(repo_root)
+
+    doctor = run_oci_doctor(
+        profile=config.oci.profile,
+        config_file=Path(config.oci.config_file),
+        model_id=config.llm.model,
+        compartment_id=config.oci.compartment_id or config.llm.compartment_id,
+        region=config.oci.region,
+        bucket=config.oci.bucket,
+    )
+    if not doctor.ready:
+        console.print("[bold red]OCI not ready:[/bold red]")
+        for item in doctor.missing:
+            console.print(f"  - {item}")
+        raise typer.Exit(code=1)
+
+    caps: dict[str, bool] = {
+        "object_storage": doctor.auth_ok,
+        "bucket_access": doctor.bucket_access,
+        "job_execution": False,
+        "log_retrieval": doctor.bucket_access,
+        "cleanup_permissions": doctor.bucket_access,
+        "artifact_exchange": doctor.bucket_access,
+    }
+
+    # Test object storage access
+    try:
+        oci_sdk_config = config.oci.to_sdk_config()
+        from aictx.oci.object_storage import _get_namespace, _get_object_client
+        client = _get_object_client(oci_sdk_config)
+        namespace = _get_namespace(client)
+        caps["object_storage"] = True
+
+        # Test bucket access
+        try:
+            client.head_bucket(namespace, config.oci.bucket)
+            caps["bucket_access"] = True
+        except Exception:
+            caps["bucket_access"] = False
+
+        caps["cleanup_permissions"] = caps["bucket_access"]
+        caps["artifact_exchange"] = caps["bucket_access"]
+
+        if config.oci.project_id:
+            try:
+                import oci
+
+                ds_client = oci.data_science.DataScienceClient(oci_sdk_config)
+                ds_client.get_project(config.oci.project_id)
+                caps["job_execution"] = True
+            except Exception:
+                caps["job_execution"] = False
+    except (RemoteJobError, Exception) as exc:
+        caps["object_storage"] = False
+        if json_output:
+            caps["error"] = str(exc)
+
+    if json_output:
+        console.print_json(json.dumps(caps, indent=2, sort_keys=True))
+    else:
+        console.print("[bold green]OCI capabilities[/bold green]")
+        for cap, ok in caps.items():
+            if cap == "error":
+                continue
+            icon = "[green]✓[/green]" if ok else "[red]✗[/red]"
+            console.print(f"  {icon} {cap}")
+    raise typer.Exit(code=0 if all(v for k, v in caps.items() if k != "error") else 1)
+
+
+@oci_app.command("upload-snapshot")
+def oci_upload_snapshot(
+    project: str = typer.Option(".", "--project", "-p", help="Path to the target repository."),
+    run_id: str = typer.Option(..., "--run-id", help="Run ID for object path."),
+    snapshot_path: Path = typer.Option(..., "--snapshot-path", help="Path to snapshot zip."),
+    max_retries: int = typer.Option(3, "--max-retries", help="Upload retry count."),
+) -> None:
+    """Upload a snapshot zip to OCI Object Storage."""
+    from aictx.config import load_config
+    from aictx.oci.object_storage import upload_snapshot as _upload
+
+    repo_root = _resolve_repo_root(project)
+    config = load_config(repo_root)
+
+    oci_sdk_config = config.oci.to_sdk_config()
+    object_name = _upload(oci_sdk_config, config.oci.bucket, snapshot_path, run_id, max_retries=max_retries)
+    console.print("[bold green]Snapshot uploaded[/bold green]")
+    console.print(f"object: {object_name}")
+    console.print(f"bucket: {config.oci.bucket}")
+    raise typer.Exit(code=0)
+
+
+@oci_app.command("download-result")
+def oci_download_result(
+    project: str = typer.Option(".", "--project", "-p", help="Path to the target repository."),
+    run_id: str = typer.Option(..., "--run-id", help="Run ID to download results for."),
+    dest: Path = typer.Option(".", "--dest", help="Destination directory."),
+    max_retries: int = typer.Option(3, "--max-retries", help="Download retry count."),
+) -> None:
+    """Download a result bundle from OCI Object Storage."""
+    from aictx.config import load_config
+    from aictx.oci.bundle import unpack_result_bundle, verify_bundle
+    from aictx.oci.object_storage import download_result as _download
+
+    repo_root = _resolve_repo_root(project)
+    config = load_config(repo_root)
+    dest_dir = dest.resolve() if dest.exists() else repo_root / ".aictx" / "runs" / run_id
+
+    oci_sdk_config = config.oci.to_sdk_config()
+    result_path = _download(oci_sdk_config, config.oci.bucket, run_id, dest_dir, max_retries=max_retries)
+    verify_result = verify_bundle(result_path)
+    if not verify_result.get("valid"):
+        console.print(f"[bold red]Bundle verification failed:[/bold red] {verify_result.get('errors')}")
+        raise typer.Exit(code=1)
+    unpack_result_bundle(result_path, dest_dir)
+    console.print("[bold green]Result downloaded[/bold green]")
+    console.print(f"path: {result_path}")
+    raise typer.Exit(code=0)
+
+
+@oci_app.command("estimate")
+def oci_estimate(
+    project: str = typer.Option(".", "--project", "-p", help="Path to the target repository."),
+    snapshot_path: Path | None = typer.Option(None, "--snapshot-path", help="Existing snapshot to estimate."),
+) -> None:
+    """Estimate cost and resource usage for a remote OCI run."""
+    from aictx.config import load_config
+    from aictx.oci.runtime import RuntimeBudget, estimate_remote_cost
+
+    repo_root = _resolve_repo_root(project)
+    config = load_config(repo_root)
+
+    budget = RuntimeBudget(
+        max_runtime_minutes=config.oci.max_remote_runtime_minutes,
+        max_snapshot_mb=config.oci.max_snapshot_size_mb,
+        max_upload_retries=config.oci.max_upload_retries,
+        max_download_retries=config.oci.max_download_retries,
+    )
+
+    estimate = estimate_remote_cost(snapshot_path=snapshot_path)
+    console.print("[bold green]OCI cost estimate[/bold green]")
+    console.print(estimate.format_summary())
+    console.print(f"budget runtime: {budget.max_runtime_minutes} min")
+    console.print(f"budget snapshot: {budget.max_snapshot_mb} MiB")
+
+    if estimate.above_threshold:
+        console.print("[yellow]Cost exceeds default threshold ($5.00)[/yellow]")
+    raise typer.Exit(code=0)
 
 
 @app.command()
@@ -377,11 +596,12 @@ def clean(
     run_id: str | None = typer.Option(None, "--run-id", help="Specific run ID to clean."),
     keep_runs: int | None = typer.Option(None, "--keep-runs", help="Keep newest N local runs."),
     yes: bool = typer.Option(False, "--yes", help="Apply local cleanup."),
+    max_age_days: int = typer.Option(7, "--max-age-days", help="Remote artifact max age in days."),
 ) -> None:
     """Clean generated or remote artifacts."""
     if oci:
-        console.print("[bold red]OCI cleanup not implemented; local clean only.[/bold red]")
-        raise typer.Exit(code=1)
+        _handle_oci_cleanup(project, run_id, yes=yes, max_age_days=max_age_days)
+        return
     if keep_runs is not None and keep_runs < 0:
         console.print("[bold red]--keep-runs must be >= 0[/bold red]")
         raise typer.Exit(code=1)
@@ -420,6 +640,172 @@ def clean(
     for target in targets:
         shutil.rmtree(target)
         console.print(f"removed: {target}")
+    raise typer.Exit(code=0)
+
+
+def _handle_oci_remote_run(
+    project: str,
+    mode: str,
+    scope: str,
+    write: str,
+    provider: str | None,
+    allow_ai: bool,
+    allow_dirty: bool,
+) -> None:
+    """Execute the pipeline remotely via OCI Data Science Jobs."""
+    from datetime import UTC, datetime
+
+    from aictx.config import load_config
+    from aictx.oci.object_storage import upload_snapshot as _upload
+    from aictx.oci.remote_job import submit_job, wait_for_job
+    from aictx.oci.runtime import RuntimeBudget, estimate_remote_cost, require_runtime_confirmation
+    from aictx.oci.snapshot import create_snapshot
+    from aictx.scan.scanner import scan_repository
+
+    if mode != "setup-context" or scope not in {"full", "changed"} or write not in {"patch", "apply"}:
+        console.print("[bold red]Remote OCI run only supports setup-context with full/changed and patch/apply options[/bold red]")
+        raise typer.Exit(code=1)
+    if write != "patch":
+        console.print("[bold red]Remote OCI execution requires --write patch[/bold red]")
+        raise typer.Exit(code=1)
+
+    repo_root = _resolve_repo_root(project)
+    config = load_config(repo_root)
+    run_id = datetime.now(UTC).strftime("%Y-%m-%dT%H%M%SZ-oci-run")
+
+    if not config.oci.enabled:
+        console.print("[bold red]OCI is not enabled. Set [oci] enabled = true in .aictx/config.toml[/bold red]")
+        raise typer.Exit(code=1)
+
+    # Validate OCI config
+    errors = config.oci.validate() + config.oci.validate_runtime_access()
+    if errors:
+        for err in errors:
+            console.print(f"[bold red]OCI config error:[/bold red] {err}")
+        raise typer.Exit(code=1)
+
+    console.print("[bold]Creating repository snapshot...[/bold]")
+    inventory = scan_repository(repo_root)
+    snapshot_dir = repo_root / ".aictx" / "snapshots"
+    snapshot_dir.mkdir(parents=True, exist_ok=True)
+    snapshot_path = create_snapshot(repo_root, snapshot_dir, inventory=inventory)
+
+    # Estimate cost
+    budget = RuntimeBudget(
+        max_runtime_minutes=config.oci.max_remote_runtime_minutes,
+        max_snapshot_mb=config.oci.max_snapshot_size_mb,
+        max_upload_retries=config.oci.max_upload_retries,
+        max_download_retries=config.oci.max_download_retries,
+    )
+    estimate = estimate_remote_cost(
+        snapshot_path=snapshot_path,
+        input_tokens=inventory.files and sum(f.size_bytes for f in inventory.files if not f.is_ignored) // 4 or 0,
+        runtime_minutes=config.oci.max_remote_runtime_minutes,
+    )
+    console.print("[bold]Cost estimate:[/bold]")
+    console.print(estimate.format_summary())
+    try:
+        require_runtime_confirmation(estimate, budget)
+    except Exception as exc:
+        console.print(f"[bold red]OCI runtime budget failed:[/bold red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    # Upload snapshot
+    console.print("[bold]Uploading snapshot...[/bold]")
+    oci_sdk_config = config.oci.to_sdk_config()
+    snapshot_object = _upload(
+        oci_sdk_config, config.oci.bucket, snapshot_path, run_id,
+        max_retries=config.oci.max_upload_retries,
+    )
+    console.print(f"[green]Snapshot uploaded: {snapshot_object}[/green]")
+
+    # Submit job
+    console.print("[bold]Submitting remote job...[/bold]")
+    if not config.oci.project_id:
+        console.print("[bold red]oci.project_id is required for remote execution[/bold red]")
+        raise typer.Exit(code=1)
+
+    job_id = submit_job(
+        config=oci_sdk_config,
+        compartment_id=config.oci.resolve_compartment_id(),
+        project_id=config.oci.project_id,
+        run_id=run_id,
+        snapshot_object=snapshot_object,
+        bucket=config.oci.bucket,
+        subnet_id=config.oci.subnet_id or None,
+        log_group_id=config.oci.log_group_id or None,
+        job_timeout_minutes=config.oci.max_remote_runtime_minutes,
+    )
+    console.print(f"[green]Job submitted: {job_id}[/green]")
+
+    # Wait for completion
+    console.print("[bold]Waiting for job completion...[/bold]")
+    try:
+        result = wait_for_job(
+            oci_sdk_config, job_id,
+            timeout_minutes=config.oci.max_remote_runtime_minutes,
+        )
+    except Exception as exc:
+        console.print(f"[bold red]Remote job failed:[/bold red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    console.print(f"[bold green]Job completed: {result.status}[/bold green]")
+
+    # Download result
+    console.print("[bold]Downloading result bundle...[/bold]")
+    dest_dir = repo_root / ".aictx" / "runs" / run_id
+    from aictx.oci.object_storage import download_result as _download
+    result_path = _download(
+        oci_sdk_config, config.oci.bucket, run_id, dest_dir,
+        max_retries=config.oci.max_download_retries,
+    )
+
+    # Unpack bundle
+    from aictx.oci.bundle import unpack_result_bundle, verify_bundle
+    verify_bundle_result = verify_bundle(result_path)
+    if not verify_bundle_result.get("valid"):
+        console.print(f"[bold red]Bundle verification failed: {verify_bundle_result.get('errors')}[/bold red]")
+        raise typer.Exit(code=1)
+
+    extracted = unpack_result_bundle(result_path, dest_dir)
+    console.print("[bold green]Remote run complete[/bold green]")
+    console.print(f"run id: {run_id}")
+    console.print(f"job id: {job_id}")
+    if "patch" in extracted:
+        console.print(f"patch: {extracted['patch']}")
+    if "validation_report" in extracted:
+        console.print(f"validation report: {extracted['validation_report']}")
+    if "generated" in extracted:
+        console.print(f"generated: {extracted['generated']}")
+    raise typer.Exit(code=0)
+
+
+def _handle_oci_cleanup(project: str, run_id: str | None, yes: bool, max_age_days: int) -> None:
+    """Handle the OCI artifact cleanup workflow."""
+    from aictx.config import load_config
+    from aictx.oci.cleanup import cleanup_run, cleanup_stale, list_stale_objects
+
+    repo_root = _resolve_repo_root(project)
+    config = load_config(repo_root)
+    oci_sdk_config = config.oci.to_sdk_config()
+
+    if run_id:
+        result = cleanup_run(oci_sdk_config, config.oci.bucket, run_id, dry_run=not yes)
+        console.print("[bold green]OCI cleanup complete[/bold green]")
+        console.print(f"run: {result['run_id']}")
+        console.print(f"deleted: {result['deleted_count']} objects")
+    else:
+        if not yes:
+            stale = list_stale_objects(oci_sdk_config, config.oci.bucket, max_age_days=max_age_days)
+            console.print("[bold yellow]OCI cleanup dry run[/bold yellow]")
+            for item in stale[:20]:
+                console.print(f"would delete: {item['name']} ({item['size']} bytes)")
+            console.print("rerun with --yes to apply")
+            raise typer.Exit(code=0)
+        result = cleanup_stale(oci_sdk_config, config.oci.bucket, max_age_days=max_age_days, dry_run=False)
+        console.print("[bold green]OCI stale cleanup complete[/bold green]")
+        console.print(f"deleted: {result['deleted_count']} objects")
+        console.print(f"bytes: {result['total_bytes']}")
     raise typer.Exit(code=0)
 
 
