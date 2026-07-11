@@ -72,6 +72,7 @@ temp/
 .github/prompts/
 .github/chatmodes/
 .github/instructions/
+.kimi/
 
 # Generated runtime artifacts
 *.patch
