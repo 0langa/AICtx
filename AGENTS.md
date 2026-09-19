@@ -7,13 +7,13 @@
 ## Rules for all agents
 
 1. Read `docs/AIprojectcontext/ai-index.md` first.
-2. Do **not** read large human-facing public docs for general project context.
-3. Public docs may be read only when the task is documentation-related or `aictx verify --strict` reports a public-docs impact.
+2. Prefer the generated context over large human-facing public docs — it is the cheaper, denser source. Do not read the full public doc set just to orient yourself.
+3. Read public docs freely when the generated context is missing, stale, or does not cover what the task needs; when the task is documentation-related; or when `aictx verify --strict` reports public-docs impact.
 4. Run `aictx verify --strict` before any public commit.
-5. If context is stale, run `aictx run --project . --mode setup-context --scope full --write apply` to regenerate the full context scaffold.
-   - Use `--scope changed` for targeted local refresh after tracked source changes.
+5. If context stale, run `aictx run --project . --mode setup-context --scope full --write apply` to regenerate full context scaffold.
+   - `--scope changed` for targeted local refresh after tracked source changes.
 6. If public docs are impacted, run `aictx public-docs update --project . --scope changed --write patch`.
-   - Current behavior creates deterministic review artifacts; edit public docs manually from source facts.
+   - Current behavior: deterministic review artifacts; edit public docs manually from source facts.
 7. Do not fabricate facts. Mark missing information `unknown` or `needs-source`.
 8. Preserve source references for all important claims.
 
@@ -28,7 +28,7 @@
 
 - Default to ultra-condensed writing in repo docs.
 - Prefer dense, lossless, AI-oriented phrasing over human-friendly filler.
-- Remove repetition, narration, motivational text, and generic best-practice prose unless needed for repo-specific meaning.
+- Remove repetition, narration, motivational text, generic best-practice prose unless needed for repo-specific meaning.
 - Keep facts, constraints, commands, file paths, invariants, and source-linked claims.
-- When updating docs, compress wording without dropping project-relevant information.
-- AI agents working in this repo should also think, plan, and respond tersely by default unless a longer explanation is explicitly needed.
+- Updating docs: compress wording without dropping project-relevant information.
+- AI agents in this repo think, plan, and respond tersely by default. A user asking for detail, a walkthrough, or reasoning overrides this — answer them properly.
