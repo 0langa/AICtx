@@ -23,4 +23,3 @@ Files:
 - [`ARCHITECTURE.md`](ARCHITECTURE.md) — architecture / implemented seams / limits
 - [`CHANGELOG.md`](CHANGELOG.md) — unreleased changes / known limitations
 - [`aictx_development_plan.md`](../aictx_development_plan.md) — AI-only roadmap
-- [`AGENTS.md`](../AGENTS.md) — repo agent instructions
